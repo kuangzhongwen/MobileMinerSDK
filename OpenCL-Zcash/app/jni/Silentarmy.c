@@ -1022,7 +1022,7 @@ uint32_t solve_equihash(cl_context ctx, cl_command_queue queue,
 	    if (round == PARAM_K - 1) {
 	        check_clSetKernelArg(k_rounds[round], 5, &buf_sols);
 	    }
-l
+
 	    check_clEnqueueNDRangeKernel(queue, k_rounds[round], 1, NULL, &global_ws, &local_work_size, 0, NULL, NULL);
 
 	    examine_ht(round, queue, buf_ht[round % 2]);
@@ -1581,17 +1581,16 @@ uint32_t parse_header(uint8_t *h, size_t h_len, const char *hex) {
 
     return bin_len;
 }
-ryb
 
-
+/**
 void tests(void) {
     // if NR_ROWS_LOG is smaller, there is not enough space to store all bits
     // of Xi in a 32-byte slot
     assert(NR_ROWS_LOG >= 12);
-}
+}*/
 
 void Java_suishi_opencl_MainActivity_silentarmyTest(JNIEnv *env, jobject thiz) {
-    tests();
+    // tests();
 
     uint8_t header[ZCASH_BLOCK_HEADER_LEN] = {0, };
     uint32_t header_len;
