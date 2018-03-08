@@ -9,15 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-/**
- * @author kuang
- * @since 2016-11-16
- */
-
 public class MainActivity extends Activity {
 
     static {
-        // System.loadLibrary("testCL");
         try {
             System.loadLibrary("silentarmy");
         } catch (UnsatisfiedLinkError e) {
@@ -25,15 +19,8 @@ public class MainActivity extends Activity {
         }
     }
 
-    private native void openclTest();
-
     private native void silentarmyTest();
 
-    private native void helloWorldOpenCL();
-
-    private native void scaleImage();
-
-    private native void sgemm();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
