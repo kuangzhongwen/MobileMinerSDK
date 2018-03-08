@@ -11,6 +11,10 @@ android {
         versionCode 100
         versionName "1.0"
         multiDexEnabled true
+
+        ndk{
+            moduleName "silentarmy"
+        }
     }
 
     sourceSets {
