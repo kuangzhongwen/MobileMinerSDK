@@ -21,7 +21,6 @@
  * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  ******************************************************************************/
 
-/* $Revision: 28993 $ on $Date: 2011-08-31 18:06:56 +0100 (Wed, 31 Aug 2011) $ */
 
 #ifndef __OPENCL_H
 #define __OPENCL_H

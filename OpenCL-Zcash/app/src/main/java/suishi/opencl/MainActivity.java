@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 copyFile("sgemm.cl");
-                sgemm();
+                silentarmyTest();
             }
         }).start();
     }

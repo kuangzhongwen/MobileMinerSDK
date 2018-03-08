@@ -4,10 +4,10 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := silentarmy
 
-LOCAL_SRC_FILES := common.cpp image.cpp sgemm.cpp
+LOCAL_SRC_FILES := blake.c sha256.c SilentarmyTest.c
 
 LOCAL_LDLIBS:= -llog libGLES_mali.so
 
-LOCAL_CPPFLAGS:=-std=c++11 -frtti
+LOCAL_CFLAGS += -std=c99
 
 include $(BUILD_SHARED_LIBRARY)
