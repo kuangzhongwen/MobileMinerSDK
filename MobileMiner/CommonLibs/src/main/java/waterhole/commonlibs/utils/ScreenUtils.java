@@ -3,16 +3,11 @@ package waterhole.commonlibs.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.ColorRes;
 import android.util.DisplayMetrics;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.githang.statusbar.StatusBarCompat;
-
 import java.lang.reflect.Field;
-
-import waterhole.commonlibs.ContextWrapper;
 
 /**
  * 获取屏幕,分辨率相关
@@ -108,22 +103,5 @@ public final class ScreenUtils {
         if (activity != null) {
             activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         }
-    }
-
-    public static void changeStatusBar(Activity activity, @ColorRes int color) {
-        setCustomStatusBar(activity);
-        StatusBarCompat.setStatusBarColor(activity,
-                UIUtils.getColor(ContextWrapper.getInstance().obtainContext(), color));
-    }
-
-    public static void changeStatusBar(Activity activity, @ColorRes int color, boolean isLightColor) {
-        setCustomStatusBar(activity);
-        StatusBarCompat.setStatusBarColor(activity,
-                UIUtils.getColor(ContextWrapper.getInstance().obtainContext(), color), isLightColor);
-    }
-
-    private static void setCustomStatusBar(Activity activity) {
-        StatusBarCompat.setTranslucent(activity.getWindow(), true);
-        StatusBarCompat.resetActionBarContainerTopMargin(activity.getWindow());
     }
 }

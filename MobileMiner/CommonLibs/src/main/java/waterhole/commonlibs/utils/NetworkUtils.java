@@ -5,11 +5,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
-import org.apache.http.conn.util.InetAddressUtils;
-
-import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
@@ -94,30 +90,5 @@ public final class NetworkUtils {
             return false;
         }
         return false;
-    }
-
-    /**
-     * 当连接wifi时networkInterface中的name字段是wlanx(x是0,1...)
-     * 当使用移动网络时 待查
-     */
-    public static String getIPAddress() {
-        String ipaddress = "";
-        try {
-            Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
-            while (en.hasMoreElements()) {
-                NetworkInterface nif = en.nextElement();
-                Enumeration<InetAddress> inet = nif.getInetAddresses();
-                while (inet.hasMoreElements()) {
-                    InetAddress ip = inet.nextElement();
-                    if (!ip.isLoopbackAddress() &&
-                            InetAddressUtils.isIPv4Address(ip.getHostAddress())) {
-                        return ip.getHostAddress();
-                    }
-                }
-            }
-        } catch (SocketException e) {
-            LogUtils.printStackTrace(e);
-        }
-        return ipaddress;
     }
 }

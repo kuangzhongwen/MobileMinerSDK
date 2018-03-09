@@ -19,8 +19,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.nostra13.universalimageloader.utils.L;
-
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 

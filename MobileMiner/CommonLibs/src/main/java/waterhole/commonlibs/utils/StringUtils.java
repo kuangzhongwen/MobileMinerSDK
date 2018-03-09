@@ -15,8 +15,6 @@ import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
 
-import org.apache.commons.codec.binary.Base64;
-
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -276,70 +274,6 @@ public final class StringUtils {
             return "";
         }
         return tmp.substring(secondIndex + 1);
-    }
-
-    public static String encodeBase64String(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return null;
-        }
-        return encodeBase64String(getBytesUtf8(str));
-    }
-
-    public static String encodeBase64String(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) {
-            return null;
-        }
-        return newStringUtf8(Base64.encodeBase64(bytes));
-    }
-
-    public static byte[] encodeBase64(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return null;
-        }
-        return encodeBase64(getBytesUtf8(str));
-    }
-
-    public static byte[] encodeBase64(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) {
-            return null;
-        }
-        return Base64.encodeBase64(bytes);
-    }
-
-    public static String decodeBase64String(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return "";
-        }
-        return decodeBase64String(getBytesUtf8(str));
-    }
-
-    public static String decodeBase64String(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) {
-            return null;
-        }
-        try {
-            return newStringUtf8(Base64.decodeBase64(bytes));
-        } catch (Exception e) {
-            return newStringUtf8(bytes);
-        }
-    }
-
-    public static byte[] decodeBase64(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return null;
-        }
-        return decodeBase64(getBytesUtf8(str));
-    }
-
-    public static byte[] decodeBase64(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) {
-            return null;
-        }
-        try {
-            return Base64.decodeBase64(bytes);
-        } catch (Exception e) {
-            return bytes;
-        }
     }
 
     public static void autoLinkRefine(TextView textView) {
