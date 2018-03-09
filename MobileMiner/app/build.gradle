@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion COMPILE_SDK_VERSION as int
+    buildToolsVersion BUILD_TOOLS_VERSION as String
     defaultConfig {
         applicationId "io.waterhole.miner"
-        minSdkVersion 11
-        targetSdkVersion 23
-        versionCode 100
-        versionName "1.0"
+        minSdkVersion MIN_SDK_VERSION as int
+        targetSdkVersion TARGET_SDK_VERSION as int
+        versionCode VERSION_CODE as int
+        versionName VERSION_NAME as String
         multiDexEnabled true
     }
 
@@ -36,4 +36,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.2.1'
+
+    compile project(':zcash')
 }
