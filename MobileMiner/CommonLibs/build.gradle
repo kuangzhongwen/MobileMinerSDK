@@ -28,12 +28,8 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile "junit:junit:${JUNIT_VERSION}"
-    compile "com.google.code.gson:gson:${GSON_VERSION}"
-    compile "org.greenrobot:eventbus:${EVENT_BUS_VERSION}"
-    compile "com.nostra13.universalimageloader:universal-image-loader:${IMAGE_LOADER_VERSION}"
     compile "com.android.support:appcompat-v7:${APPCOMPAT_VERSION}"
     compile "com.squareup.okhttp3:okhttp:${OK_HTTP3_VERSION}"
-    compile files('libs/org.apache.http.legacy.jar')
 }
 
 def sdkAarName = 'WaterholeCommonLibs_1.0'

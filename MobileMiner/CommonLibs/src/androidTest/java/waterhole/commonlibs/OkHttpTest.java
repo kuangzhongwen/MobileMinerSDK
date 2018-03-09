@@ -22,14 +22,14 @@ import okhttp3.Response;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import waterhole.commonlibs.net.okhttp.OkHttpUtils;
-import waterhole.commonlibs.net.okhttp.callback.BitmapCallback;
-import waterhole.commonlibs.net.okhttp.callback.Callback;
-import waterhole.commonlibs.net.okhttp.callback.FileCallBack;
-import waterhole.commonlibs.net.okhttp.callback.GenericsCallback;
-import waterhole.commonlibs.net.okhttp.callback.IGenericsSerializator;
-import waterhole.commonlibs.net.okhttp.callback.StringCallback;
-import waterhole.commonlibs.net.okhttp.cookie.CookieJarImpl;
+import waterhole.commonlibs.okhttp.OkHttpUtils;
+import waterhole.commonlibs.okhttp.callback.BitmapCallback;
+import waterhole.commonlibs.okhttp.callback.Callback;
+import waterhole.commonlibs.okhttp.callback.FileCallBack;
+import waterhole.commonlibs.okhttp.callback.GenericsCallback;
+import waterhole.commonlibs.okhttp.callback.IGenericsSerializator;
+import waterhole.commonlibs.okhttp.callback.StringCallback;
+import waterhole.commonlibs.okhttp.cookie.CookieJarImpl;
 import waterhole.commonlibs.utils.LogUtils;
 
 /**
