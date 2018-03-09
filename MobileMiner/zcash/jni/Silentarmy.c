@@ -1403,7 +1403,7 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     cl_program program;
 
     size_t source_len;
-    char* kernel = file_contents("/data/data/suishi.opencl/app_execdir/kernel.cl", &source_len);
+    char* kernel = file_contents("/data/data/io.waterhole.miner/app_execdir/kernel.cl", &source_len);
 
     program = clCreateProgramWithSource(context, 1, (const char **)&kernel, &source_len, &status);
     if (status != CL_SUCCESS || !program) {
