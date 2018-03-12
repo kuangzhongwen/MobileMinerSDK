@@ -2,7 +2,7 @@
 
 #### 1. 获取android手机下的cl库文件
 
-     example: adb pull /vendor/lib/ /Users/kuangzhongwen/Desktop
+     adb pull /vendor/lib/ /Users/kuangzhongwen/Desktop
 
 #### 2. Zcash GPU Miner
      
