@@ -29,6 +29,9 @@ final class KernelTools {
     private KernelTools() {
     }
 
+    /**
+     * 拷贝kernel.cl文件到app安装目录，在jni层去读取kernel文件并构建openCL program.
+     */
     @ExcuteOnAsyn
     static void copyKernel() {
         checkOnChildThread();
