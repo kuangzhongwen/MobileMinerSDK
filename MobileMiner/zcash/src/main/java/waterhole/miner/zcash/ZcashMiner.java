@@ -1,17 +1,9 @@
 package waterhole.miner.zcash;
 
-import android.content.Context;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import waterhole.commonlibs.ContextWrapper;
 import waterhole.commonlibs.NoProGuard;
 import waterhole.commonlibs.asyn.AsyncTaskAssistant;
-import waterhole.commonlibs.utils.IOUtils;
+
+import static waterhole.commonlibs.utils.LogUtils.printStackTrace;
 
 /**
  * Zcash挖矿接口类.
@@ -24,7 +16,7 @@ public final class ZcashMiner implements NoProGuard {
         try {
             System.loadLibrary("silentarmy");
         } catch (Exception e) {
-            e.printStackTrace();
+            printStackTrace(e);
         }
     }
 
@@ -34,27 +26,8 @@ public final class ZcashMiner implements NoProGuard {
         AsyncTaskAssistant.executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
-                InputStream in = null;
-                OutputStream out = null;
-                Context context = ContextWrapper.getInstance().obtainContext();
-                try {
-                    final String kernelFile = "kernel.cl";
-                    in = context.getResources().getAssets().open(kernelFile);
-                    final File of = new File(context.getDir("execdir", Context.MODE_PRIVATE), kernelFile);
-                    out = new FileOutputStream(of);
-                    final byte b[] = new byte[65535];
-                    int sz;
-                    while ((sz = in.read(b)) > 0) {
-                        out.write(b, 0, sz);
-                    }
-
-                    execSilentarmy();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    IOUtils.closeSafely(in);
-                    IOUtils.closeSafely(out);
-                }
+                KernelTools.copyKernel();
+                execSilentarmy();
             }
         });
     }
