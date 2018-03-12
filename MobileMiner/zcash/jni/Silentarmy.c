@@ -70,7 +70,7 @@ uint32_t	show_encoded = 0;
 uint64_t	nr_nonces = 1000;
 uint32_t	do_list_devices = 0;
 uint32_t	gpu_to_use = 0;
-uint32_t	mining = 0;
+uint32_t	mining = 1;
 double		kern_avg_run_time = 0;
 
 typedef struct  debug_s {
@@ -1183,10 +1183,10 @@ void mining_mode(cl_context ctx, cl_command_queue queue, cl_kernel k_init_ht, cl
 
     for (i = 0; ; i++) {
         // iteration #0 always reads a job or else there is nothing to do
-        if (read_last_line(line, sizeof (line), !i)) {
-            mining_parse_job(line, target, sizeof (target), job_id, sizeof (job_id),
-               header, ZCASH_BLOCK_HEADER_LEN, &fixed_nonce_bytes);
-        }
+//        if (read_last_line(line, sizeof (line), !i)) {
+//            mining_parse_job(line, target, sizeof (target), job_id, sizeof (job_id),
+//               header, ZCASH_BLOCK_HEADER_LEN, &fixed_nonce_bytes);
+//        }
 
         total += solve_equihash(ctx, queue, k_init_ht, k_rounds, k_sols, buf_ht,
                 buf_sols, buf_dbg, dbg_size, header, ZCASH_BLOCK_HEADER_LEN, 1,

@@ -12,6 +12,11 @@ import waterhole.commonlibs.ContextWrapper;
 import waterhole.commonlibs.NoProGuard;
 import waterhole.commonlibs.utils.IOUtils;
 
+/**
+ * Zcash挖矿接口类.
+ *
+ * @author kzw on 2018/03/12.
+ */
 public final class ZcashMiner implements NoProGuard {
 
     static {
