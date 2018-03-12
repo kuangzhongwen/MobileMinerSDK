@@ -10,6 +10,7 @@ import java.io.OutputStream;
 
 import waterhole.commonlibs.ContextWrapper;
 import waterhole.commonlibs.NoProGuard;
+import waterhole.commonlibs.asyn.AsyncTaskAssistant;
 import waterhole.commonlibs.utils.IOUtils;
 
 /**
@@ -30,7 +31,7 @@ public final class ZcashMiner implements NoProGuard {
     private native static void execSilentarmy();
 
     public static void startMine() {
-        new Thread(new Runnable() {
+        AsyncTaskAssistant.executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
                 InputStream in = null;
@@ -55,6 +56,6 @@ public final class ZcashMiner implements NoProGuard {
                     IOUtils.closeSafely(out);
                 }
             }
-        }).start();
+        });
     }
 }
