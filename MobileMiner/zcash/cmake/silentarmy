@@ -105,6 +105,7 @@ class StratumClientProtocol(asyncio.Protocol):
         self.transport = transport
         verbose('Successfully connected to %s:%s' %
                 (self.sa.host, self.sa.port))
+        print("send : %s" % self.sa.stratum_msg('mining.subscribe'))
         self.do_send(self.sa.stratum_msg('mining.subscribe'))
         self.sa.st_state = 'SENT_SUBSCRIBE'
 
