@@ -20,6 +20,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <errno.h>
+#include <unistd.h>
 #include "blake.h"
 #include "sha256.h"
 
@@ -72,6 +73,9 @@ uint32_t	do_list_devices = 0;
 uint32_t	gpu_to_use = 0;
 uint32_t	mining = 1;
 double		kern_avg_run_time = 0;
+
+// 挖矿频率 5s
+const unsigned int mining_sleep_seconds = 5;
 
 typedef struct  debug_s {
     uint32_t    dropped_coll;
@@ -1187,7 +1191,7 @@ void mining_mode(cl_context ctx, cl_command_queue queue, cl_kernel k_init_ht, cl
 //            mining_parse_job(line, target, sizeof (target), job_id, sizeof (job_id),
 //               header, ZCASH_BLOCK_HEADER_LEN, &fixed_nonce_bytes);
 //        }
-
+        sleep(mining_sleep_seconds);
         total += solve_equihash(ctx, queue, k_init_ht, k_rounds, k_sols, buf_ht,
                 buf_sols, buf_dbg, dbg_size, header, ZCASH_BLOCK_HEADER_LEN, 1,
                 fixed_nonce_bytes, target, job_id, &shares, rowCounters);
