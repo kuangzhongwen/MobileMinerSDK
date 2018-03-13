@@ -33,7 +33,7 @@ public final class ZcashMiner implements NoProGuard {
                 SocketManager socketManager = SocketManager.instance();
                 socketManager.connect();
                 socketManager.sendMessage("{\"id\": 2, \"params\": [\"silentarmy\", null, " +
-                        "\"us1-zcash.flypool.org\", \"3333\"]," +
+                        "\"zec-cn.waterhole.xyz\", \"3443\"]," +
                         " \"method\": \"mining.subscribe\"}");
 
                 execSilentarmy();
