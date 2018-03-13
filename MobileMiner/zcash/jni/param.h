@@ -5,7 +5,7 @@
 // Approximate log base 2 of number of elements in hash tables
 #define APX_NR_ELMS_LOG                 (PREFIX + 1)
 // Number of rows and slots is affected by this; 20 offers the best performance
-#define NR_ROWS_LOG                     20
+#define NR_ROWS_LOG                     18
 
 // Setting this to 1 might make SILENTARMY faster, see TROUBLESHOOTING.md
 #define OPTIM_SIMPLIFY_ROUND		1
