@@ -1193,6 +1193,7 @@ void mining_mode(cl_context ctx, cl_command_queue queue, cl_kernel k_init_ht, cl
                 fixed_nonce_bytes, target, job_id, &shares, rowCounters);
 
         total_shares += shares;
+        printf("total_shares %" PRId64, total_shares);
 
         if ((t1 = now()) > t0 + status_period) {
             t0 = t1;
@@ -1229,7 +1230,8 @@ void run_opencl(uint8_t *header, size_t header_len, cl_context ctx, cl_command_q
     rowCounters[1] = clCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, NR_ROWS, NULL, &status);
 
     if (mining) {
-	    mining_mode(ctx, queue, k_init_ht, k_rounds, k_sols, buf_ht, buf_sols, buf_dbg, dbg_size, header, rowCounters);
+        fprintf(stderr, "mining_mode...\n");
+        mining_mode(ctx, queue, k_init_ht, k_rounds, k_sols, buf_ht, buf_sols, buf_dbg, dbg_size, header, rowCounters);
     }
 
     fprintf(stderr, "Running...\n");
