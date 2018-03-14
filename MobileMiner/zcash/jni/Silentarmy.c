@@ -2,6 +2,7 @@
 #include <string.h>
 #include <android/log.h>
 #include <CL/cl.h>
+#include"OpenCL_phone.h"
 
 #define  _GNU_SOURCE	1
 #include <stdio.h>
@@ -188,7 +189,7 @@ void get_time(struct timespec *t) {
 
 void check_clSetKernelArg(cl_kernel k, cl_uint a_pos, cl_mem *a) {
     cl_int	status;
-    status = clSetKernelArg(k, a_pos, sizeof (*a), a);
+    status = rclSetKernelArg(k, a_pos, sizeof (*a), a);
 
     if (status != CL_SUCCESS) {
 	    fatal("clSetKernelArg (%d)\n", status);
@@ -201,7 +202,7 @@ void check_clEnqueueNDRangeKernel(cl_command_queue queue, cl_kernel k, cl_uint
 	const cl_event *event_wait_list, cl_event *event) {
 
     cl_uint	status;
-    status = clEnqueueNDRangeKernel(queue, k, work_dim, global_work_offset,
+    status = rclEnqueueNDRangeKernel(queue, k, work_dim, global_work_offset,
 	    global_work_size, local_work_size, num_events_in_wait_list, event_wait_list, event);
 
     if (status != CL_SUCCESS) {
@@ -215,7 +216,7 @@ void check_clEnqueueReadBuffer(cl_command_queue queue, cl_mem buffer, cl_bool bl
     const cl_event *event_wait_list, cl_event *event) {
 
     cl_int	status;
-    status = clEnqueueReadBuffer(queue, buffer, blocking_read, offset, size, ptr,
+    status = rclEnqueueReadBuffer(queue, buffer, blocking_read, offset, size, ptr,
         num_events_in_wait_list, event_wait_list, event);
     if (status != CL_SUCCESS) {
         fatal("clEnqueueReadBuffer (%d)\n", status);
@@ -268,7 +269,7 @@ void get_program_build_log(cl_program program, cl_device_id device) {
     cl_int		status;
     char	    val[2 * 1024 * 1024];
     size_t		ret = 0;
-    status = clGetProgramBuildInfo(program, device,
+    status = rclGetProgramBuildInfo(program, device,
 	    CL_PROGRAM_BUILD_LOG,
 	    sizeof (val),	// size_t param_value_size
 	    &val,		// void *param_value
@@ -299,39 +300,11 @@ void dump(const char *fname, void *data, size_t len) {
 	}
 }
 
-void get_program_bins(cl_program program) {
-    cl_int		status;
-    size_t		sizes;
-    unsigned char	*p;
-    size_t		ret = 0;
-    status = clGetProgramInfo(program, CL_PROGRAM_BINARY_SIZES,
-	    sizeof (sizes),	// size_t param_value_size
-	    &sizes,		// void *param_value
-	    &ret);		// size_t *param_value_size_ret
-    if (status != CL_SUCCESS) {
-	    fatal("clGetProgramInfo(sizes) (%d)\n", status);
-	}
-    if (ret != sizeof (sizes)) {
-	    fatal("clGetProgramInfo(sizes) did not fill sizes (%d)\n", status);
-	}
-    LOGD("Program binary size is %zd bytes\n", sizes);
-    p = (unsigned char *)malloc(sizes);
-    status = clGetProgramInfo(program, CL_PROGRAM_BINARIES,
-	    sizeof (p),	// size_t param_value_size
-	    &p,		// void *param_value
-	    &ret);	// size_t *param_value_size_ret
-    if (status != CL_SUCCESS) {
-	    fatal("clGetProgramInfo (%d)\n", status);
-	}
-    dump("dump.co", p, sizes);
-    LOGD("program: %02x%02x%02x%02x...\n", p[0], p[1], p[2], p[3]);
-}
-
 void print_platform_info(cl_platform_id plat) {
     char	name[1024];
     size_t	len = 0;
     int		status;
-    status = clGetPlatformInfo(plat, CL_PLATFORM_NAME, sizeof (name), &name, &len);
+    status = rclGetPlatformInfo(plat, CL_PLATFORM_NAME, sizeof (name), &name, &len);
     if (status != CL_SUCCESS) {
 	    fatal("clGetPlatformInfo (%d)\n", status);
 	}
@@ -343,7 +316,7 @@ void print_device_info(unsigned i, cl_device_id d) {
     char	name[1024];
     size_t	len = 0;
     int		status;
-    status = clGetDeviceInfo(d, CL_DEVICE_NAME, sizeof (name), &name, &len);
+    status = rclGetDeviceInfo(d, CL_DEVICE_NAME, sizeof (name), &name, &len);
     if (status != CL_SUCCESS) {
 	    fatal("clGetDeviceInfo (%d)\n", status);
 	}
@@ -367,7 +340,7 @@ void print_cl_mem_uint(cl_command_queue queue, cl_mem cl_m) {
          NULL,	// cl_event	*event_wait_list
          NULL);	// cl_event	*event
 
-    clFlush(queue);
+    rclFlush(queue);
 
     for (int i = 0; i < 20; i++) {
          fprintf(stderr, "cl_mem[%d] is: %d\n", i, ht[i]);
@@ -437,8 +410,8 @@ void examine_ht(unsigned round, cl_command_queue queue, cl_mem * buf_ht) {
 */
 
     cl_int status;
-    ht = (uint8_t *) clEnqueueMapBuffer(queue, buf_ht, CL_FALSE, CL_MAP_WRITE, 0, HT_SIZE, 0, NULL, NULL, &status);
-    clEnqueueReadBuffer(queue, buf_ht, CL_FALSE, 0, HT_SIZE, ht, 0, NULL, NULL);
+    ht = (uint8_t *) rclEnqueueMapBuffer(queue, buf_ht, CL_FALSE, CL_MAP_WRITE, 0, HT_SIZE, 0, NULL, NULL, &status);
+    rclEnqueueReadBuffer(queue, buf_ht, CL_FALSE, 0, HT_SIZE, ht, 0, NULL, NULL);
 
     for (int i = 0; i < 128; i++) {
         LOGD ("ht[%d]: %02x\n", i, *ht);
@@ -575,8 +548,8 @@ void init_ht(cl_command_queue queue, cl_kernel k_init_ht, cl_mem buf_ht, cl_mem 
     size_t      global_ws = NR_ROWS / ROWS_PER_UINT;
     size_t      local_ws = 256;
 
-    cl_int status = clSetKernelArg(k_init_ht, 0, sizeof (buf_ht), &buf_ht);
-    clSetKernelArg(k_init_ht, 1, sizeof (rowCounters), &rowCounters);
+    cl_int status = rclSetKernelArg(k_init_ht, 0, sizeof (buf_ht), &buf_ht);
+    rclSetKernelArg(k_init_ht, 1, sizeof (rowCounters), &rowCounters);
 
     if (status != CL_SUCCESS) {
 	    fatal("clSetKernelArg (%d)\n", status);
@@ -878,12 +851,12 @@ uint32_t verify_sols(cl_command_queue queue, cl_mem buf_sols, uint64_t *nonce,
 	    NULL,	// cl_event	*event_wait_list
 	    &readEvent);	// cl_event	*event
     // flushing is crucial to initiate the read *now* before sleeping
-    clFlush(queue);
+    rclFlush(queue);
     struct timespec start_time;
     get_time(&start_time);
     double dtarget = timespec_to_double(target_time);
     cl_int readStatus;
-    clGetEventInfo(readEvent, CL_EVENT_COMMAND_EXECUTION_STATUS, sizeof (cl_int), &readStatus, NULL);
+    rclGetEventInfo(readEvent, CL_EVENT_COMMAND_EXECUTION_STATUS, sizeof (cl_int), &readStatus, NULL);
 
     while (readStatus != CL_COMPLETE && SLEEP_SKIP_RATIO != 1) {
 	    struct timespec t;
@@ -895,10 +868,10 @@ uint32_t verify_sols(cl_command_queue queue, cl_mem buf_sols, uint64_t *nonce,
 	    }
 	    double_to_timespec(delta * SLEEP_RECHECK_RATIO, &t);
 	    nanosleep(&t, NULL);
-	    clGetEventInfo(readEvent, CL_EVENT_COMMAND_EXECUTION_STATUS, sizeof (cl_int), &readStatus, NULL);
+	    rclGetEventInfo(readEvent, CL_EVENT_COMMAND_EXECUTION_STATUS, sizeof (cl_int), &readStatus, NULL);
     }
 
-    clWaitForEvents(1, &readEvent);
+    rclWaitForEvents(1, &readEvent);
     struct timespec end_time;
     get_time(&end_time);
     double dstart, dend, delta;
@@ -989,7 +962,7 @@ uint32_t solve_equihash(cl_context ctx, cl_command_queue queue,
     zcash_blake2b_init(&blake, ZCASH_HASH_LEN, PARAM_N, PARAM_K);
     zcash_blake2b_update(&blake, header, 128, 0);
     cl_int status;
-    buf_blake_st = clCreateBuffer(ctx, CL_MEM_READ_ONLY |
+    buf_blake_st = rclCreateBuffer(ctx, CL_MEM_READ_ONLY |
                                        CL_MEM_COPY_HOST_PTR, sizeof (blake.h), &blake.h, &status);
     if (status != CL_SUCCESS) {
         fatal("EOF on clEnqueueMapBuffer buf_blake_st \n");
@@ -1040,7 +1013,7 @@ uint32_t solve_equihash(cl_context ctx, cl_command_queue queue,
     double_to_timespec(dtarget, &target_time);
     // read solutions
     sol_found = verify_sols(queue, buf_sols, nonce_ptr, header, fixed_nonce_bytes, target, job_id, shares, &target_time);
-    clReleaseMemObject(buf_blake_st);
+    rclReleaseMemObject(buf_blake_st);
 
     return sol_found;
 }
@@ -1226,12 +1199,12 @@ void run_opencl(uint8_t *header, size_t header_len, cl_context ctx, cl_command_q
 	}
 
     cl_int status;
-    buf_dbg = clCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, dbg_size, NULL, &status);
-    buf_ht[0] = clCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, HT_SIZE, NULL, &status);
-    buf_ht[1] = clCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, HT_SIZE, NULL, &status);
-    buf_sols = clCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, sizeof (sols_t), NULL, &status);
-    rowCounters[0] = clCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, NR_ROWS, NULL, &status);
-    rowCounters[1] = clCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, NR_ROWS, NULL, &status);
+    buf_dbg = rclCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, dbg_size, NULL, &status);
+    buf_ht[0] = rclCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, HT_SIZE, NULL, &status);
+    buf_ht[1] = rclCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, HT_SIZE, NULL, &status);
+    buf_sols = rclCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, sizeof (sols_t), NULL, &status);
+    rowCounters[0] = rclCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, NR_ROWS, NULL, &status);
+    rowCounters[1] = rclCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, NR_ROWS, NULL, &status);
 
     if (mining) {
         fprintf(stderr, "mining_mode...\n");
@@ -1250,10 +1223,10 @@ void run_opencl(uint8_t *header, size_t header_len, cl_context ctx, cl_command_q
     fprintf(stderr, "Total %" PRId64 " solutions in %.1f ms (%.1f Sol/s)\n", total, (t1 - t0) / 1e3, total / ((t1 - t0) / 1e6));
 
     // Clean up
-    clReleaseMemObject(buf_dbg);
-    clReleaseMemObject(buf_sols);
-    clReleaseMemObject(buf_ht[0]);
-    clReleaseMemObject(buf_ht[1]);
+    rclReleaseMemObject(buf_dbg);
+    rclReleaseMemObject(buf_sols);
+    rclReleaseMemObject(buf_ht[0]);
+    rclReleaseMemObject(buf_ht[1]);
 }
 
 /*
@@ -1284,7 +1257,7 @@ unsigned scan_platform(cl_platform_id plat, cl_uint *nr_devs_total, cl_platform_
 	    print_platform_info(plat);
 	}
 
-    status = clGetDeviceIDs(plat, typ, 0, NULL, &nr_devs);
+    status = rclGetDeviceIDs(plat, typ, 0, NULL, &nr_devs);
     if (status != CL_SUCCESS) {
 	    fatal("clGetDeviceIDs (%d)\n", status);
 	}
@@ -1294,7 +1267,7 @@ unsigned scan_platform(cl_platform_id plat, cl_uint *nr_devs_total, cl_platform_
 	}
 
     devices = (cl_device_id *)malloc(nr_devs * sizeof (*devices));
-    status = clGetDeviceIDs(plat, typ, nr_devs, devices, NULL);
+    status = rclGetDeviceIDs(plat, typ, nr_devs, devices, NULL);
     if (status != CL_SUCCESS) {
 	    fatal("clGetDeviceIDs (%d)\n", status);
 	}
@@ -1331,7 +1304,7 @@ void scan_platforms(cl_platform_id *plat_id, cl_device_id *dev_id) {
     cl_platform_id	*platforms;
     cl_uint		i, nr_devs_total;
     cl_int		status;
-    status = clGetPlatformIDs(0, NULL, &nr_platforms);
+    status = rclGetPlatformIDs(0, NULL, &nr_platforms);
 
     if (status != CL_SUCCESS) {
 	    fatal("Cannot get OpenCL platforms (%d)\n", status);
@@ -1350,7 +1323,7 @@ void scan_platforms(cl_platform_id *plat_id, cl_device_id *dev_id) {
 	    fatal("malloc: %s\n", strerror(errno));
 	}
 
-    status = clGetPlatformIDs(nr_platforms, platforms, NULL);
+    status = rclGetPlatformIDs(nr_platforms, platforms, NULL);
     if (status != CL_SUCCESS) {
 	    fatal("clGetPlatformIDs (%d)\n", status);
 	}
@@ -1377,19 +1350,21 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     cl_kernel		k_rounds[PARAM_K];
     cl_int		    status;
 
+    int loadedCL=load_Func();
+
     scan_platforms(&plat_id, &dev_id);
     if (!plat_id || !dev_id) {
 	    fatal("Selected device (ID %d) not found; see --list\n", gpu_to_use);
 	}
 
     /* Create context.*/
-    cl_context context = clCreateContext(NULL, 1, &dev_id, NULL, NULL, &status);
+    cl_context context = rclCreateContext(NULL, 1, &dev_id, NULL, NULL, &status);
     if (status != CL_SUCCESS || !context) {
 	    fatal("clCreateContext (%d)\n", status);
 	}
 
     /* Creating command queue associate with the context.*/
-    cl_command_queue queue = clCreateCommandQueue(context, dev_id, 0, &status);
+    cl_command_queue queue = rclCreateCommandQueue(context, dev_id, 0, &status);
     if (status != CL_SUCCESS || !queue) {
 	    fatal("clCreateCommandQueue (%d)\n", status);
 	}
@@ -1400,7 +1375,7 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     size_t source_len;
     char* kernel = file_contents("/data/data/io.waterhole.miner/app_execdir/kernel.cl", &source_len);
 
-    program = clCreateProgramWithSource(context, 1, (const char **)&kernel, &source_len, &status);
+    program = rclCreateProgramWithSource(context, 1, (const char **)&kernel, &source_len, &status);
     if (status != CL_SUCCESS || !program) {
 	    fatal("clCreateProgramWithSource (%d)\n", status);
 	}
@@ -1410,7 +1385,7 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
 	    fprintf(stderr, "Building program\n");
 	}
 
-    status = clBuildProgram(program, 1, &dev_id, "", NULL, NULL);
+    status = rclBuildProgram(program, 1, &dev_id, "", NULL, NULL);
     if (status != CL_SUCCESS) {
        warn("OpenCL build failed (%d). Build log follows:\n", status);
        get_program_build_log(program, dev_id);
@@ -1418,7 +1393,7 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     }
 
 
-    cl_kernel k_self_test = clCreateKernel(program, "selfTest", &status);
+    cl_kernel k_self_test = rclCreateKernel(program, "selfTest", &status);
     if (status != CL_SUCCESS || !k_self_test) {
         fatal("clCreateKernel (%d)\n", status);
     }
@@ -1455,22 +1430,22 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
         printf ("buf[%d] : %f", i, buf[i]);
     }
 
-    cl_mem clbuf1 = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 6 * sizeof(cl_float), buf1, NULL);
-    cl_mem clbuf2 = clCreateBuffer(context, CL_MEM_READ_ONLY, 6 * sizeof(cl_float), NULL, NULL);
-    status = clEnqueueWriteBuffer(queue, clbuf2, 1, 0, 6 * sizeof(cl_float), buf2, 0, 0, 0);
+    cl_mem clbuf1 = rclCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 6 * sizeof(cl_float), buf1, NULL);
+    cl_mem clbuf2 = rclCreateBuffer(context, CL_MEM_READ_ONLY, 6 * sizeof(cl_float), NULL, NULL);
+    status = rclEnqueueWriteBuffer(queue, clbuf2, 1, 0, 6 * sizeof(cl_float), buf2, 0, 0, 0);
 
-    cl_mem buffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 6 * sizeof(cl_float), NULL, NULL);
+    cl_mem buffer = rclCreateBuffer(context, CL_MEM_WRITE_ONLY, 6 * sizeof(cl_float), NULL, NULL);
 
     //设置 Kernel 参数
-    status = clSetKernelArg(k_self_test, 0, sizeof(cl_mem), (void*) &clbuf1);
-    status = clSetKernelArg(k_self_test, 1, sizeof(cl_mem), (void*) &clbuf2);
-    clSetKernelArg(k_self_test, 2, sizeof(cl_mem), (void*) &buffer);
+    status = rclSetKernelArg(k_self_test, 0, sizeof(cl_mem), (void*) &clbuf1);
+    status = rclSetKernelArg(k_self_test, 1, sizeof(cl_mem), (void*) &clbuf2);
+    rclSetKernelArg(k_self_test, 2, sizeof(cl_mem), (void*) &buffer);
 
     cl_event ev;
     size_t global_work_size = 6;
 
     for (int i = 0; i < 20; i++) {
-        clEnqueueNDRangeKernel(queue,
+        rclEnqueueNDRangeKernel(queue,
             k_self_test,
             1,
             NULL,
@@ -1479,7 +1454,7 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     }
 
     cl_float *ptr;
-    ptr = (cl_float *)clEnqueueMapBuffer(queue,
+    ptr = (cl_float *)rclEnqueueMapBuffer(queue,
         buffer,
         CL_TRUE,
         CL_MAP_READ,
@@ -1491,9 +1466,8 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
         printf ("alfter gpu buf[%d] : %f", i, ptr[i]);
     }
 
-    //get_program_bins(program);
     // Create kernel objects
-    cl_kernel k_init_ht = clCreateKernel(program, "kernel_init_ht", &status);
+    cl_kernel k_init_ht = rclCreateKernel(program, "kernel_init_ht", &status);
     if (status != CL_SUCCESS || !k_init_ht) {
 	    fatal("clCreateKernel (%d)\n", status);
 	}
@@ -1501,14 +1475,14 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     for (unsigned round = 0; round < PARAM_K; round++) {
 	    char	name[128];
 	    snprintf(name, sizeof (name), "kernel_round%d", round);
-	    k_rounds[round] = clCreateKernel(program, name, &status);
+	    k_rounds[round] = rclCreateKernel(program, name, &status);
 
 	    if (status != CL_SUCCESS || !k_rounds[round]) {
 	        fatal("clCreateKernel (%d)\n", status);
 	    }
     }
 
-    cl_kernel k_sols = clCreateKernel(program, "kernel_sols", &status);
+    cl_kernel k_sols = rclCreateKernel(program, "kernel_sols", &status);
 
     if (status != CL_SUCCESS || !k_sols) {
 	    fatal("clCreateKernel (%d)\n", status);
@@ -1520,17 +1494,17 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     // Release resources
     assert(CL_SUCCESS == 0);
     status = CL_SUCCESS;
-    status |= clReleaseKernel(k_init_ht);
+    status |= rclReleaseKernel(k_init_ht);
 
     for (unsigned round = 0; round < PARAM_K; round++) {
-	    status |= clReleaseKernel(k_rounds[round]);
+	    status |= rclReleaseKernel(k_rounds[round]);
 	}
 
-    status |= clReleaseKernel(k_sols);
-    status |= clReleaseKernel(k_self_test);
-    status |= clReleaseProgram(program);
-    status |= clReleaseCommandQueue(queue);
-    status |= clReleaseContext(context);
+    status |= rclReleaseKernel(k_sols);
+    status |= rclReleaseKernel(k_self_test);
+    status |= rclReleaseProgram(program);
+    status |= rclReleaseCommandQueue(queue);
+    status |= rclReleaseContext(context);
 
     if (status) {
 	    fprintf(stderr, "Cleaning resources failed\n");
