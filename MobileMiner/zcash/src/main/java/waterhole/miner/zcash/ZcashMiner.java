@@ -20,14 +20,12 @@ public final class ZcashMiner implements NoProGuard {
         }
     }
 
-    private native static void execSilentarmy();
+    private native static void execGpuMining();
 
-    public static void startMine() {
+    public static void startMining() {
         AsyncTaskAssistant.executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
-                KernelTools.copyKernel();
-
                 // test pool socket
                 SocketManager socketManager = SocketManager.instance();
                 socketManager.connect();
@@ -35,7 +33,7 @@ public final class ZcashMiner implements NoProGuard {
                         "\"zec-cn.waterhole.xyz\", \"3443\"]," +
                         " \"method\": \"mining.subscribe\"}");
 
-                execSilentarmy();
+                execGpuMining();
             }
         });
     }

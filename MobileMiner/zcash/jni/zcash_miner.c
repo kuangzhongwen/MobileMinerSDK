@@ -3,6 +3,7 @@
 #include <android/log.h>
 #include <CL/cl.h>
 #include"openCL_phone.h"
+#include "_kernel.h"
 
 #define  _GNU_SOURCE	1
 #include <stdio.h>
@@ -1373,8 +1374,6 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     cl_program program;
 
     size_t source_len;
-    char* kernel = file_contents("/data/data/io.waterhole.miner/app_execdir/kernel.cl", &source_len);
-
     program = rclCreateProgramWithSource(context, 1, (const char **)&kernel, &source_len, &status);
     if (status != CL_SUCCESS || !program) {
 	    fatal("clCreateProgramWithSource (%d)\n", status);
@@ -1557,7 +1556,7 @@ void tests(void) {
     assert(NR_ROWS_LOG >= 12);
 }
 
-void Java_waterhole_miner_zcash_ZcashMiner_execSilentarmy(JNIEnv *env, jobject thiz) {
+void Java_waterhole_miner_zcash_ZcashMiner_execGpuMining(JNIEnv *env, jobject thiz) {
     tests();
 
     uint8_t header[ZCASH_BLOCK_HEADER_LEN] = {0, };

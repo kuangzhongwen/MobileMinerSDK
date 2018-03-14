@@ -18,6 +18,6 @@ public class MainActivity extends Activity {
         ContextWrapper.getInstance().injectContext(getApplicationContext());
         LogUtils.enableDebug(true);
 
-        ZcashMiner.startMine();
+        ZcashMiner.startMining();
     }
 }
