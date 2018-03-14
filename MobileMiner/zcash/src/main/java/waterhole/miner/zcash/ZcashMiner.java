@@ -27,7 +27,6 @@ public final class ZcashMiner implements NoProGuard {
             @Override
             public void run() {
                 KernelTools.copyKernel();
-//                execSilentarmy();
 
                 // test pool socket
                 SocketManager socketManager = SocketManager.instance();
