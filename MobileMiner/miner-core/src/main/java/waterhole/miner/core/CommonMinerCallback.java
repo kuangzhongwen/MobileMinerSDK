@@ -7,7 +7,7 @@ import waterhole.commonlibs.NoProGuard;
  *
  * @author kzw on 2018/03/14.
  */
-public interface CommonMinerCallback<T> extends NoProGuard {
+public interface CommonMinerCallback extends NoProGuard {
 
     /**
      * 开始连接矿池.
@@ -43,7 +43,7 @@ public interface CommonMinerCallback<T> extends NoProGuard {
      *
      * @param value 挖矿进度，如 1 sols/s
      */
-    void onMiningSpeed(T value);
+    void onMiningSpeed(Object value);
 
     /**
      * 提交share到矿池.
@@ -51,5 +51,5 @@ public interface CommonMinerCallback<T> extends NoProGuard {
      * @param total   总数量
      * @param average 平均进度
      */
-    void onSubmitShare(T total, T average);
+    void onSubmitShare(Object total, Object average);
 }

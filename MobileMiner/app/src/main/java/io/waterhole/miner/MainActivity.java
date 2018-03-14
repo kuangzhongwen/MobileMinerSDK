@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
         ContextWrapper.getInstance().injectContext(getApplicationContext());
         LogUtils.enableDebug(true);
 
-        ZcashMiner.instance().startMiningAsyn(new GPUMinerCallback<Double>() {
+        ZcashMiner.instance().startMineAsyn(new GPUMinerCallback() {
             @Override
             public void onLoadOpenCLSuccess() {
                 info(TAG, "onLoadOpenCLSuccess");
@@ -61,12 +61,12 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public void onMiningSpeed(Double value) {
+            public void onMiningSpeed(Object value) {
                 info(TAG, "onMiningSpeed : " + value);
             }
 
             @Override
-            public void onSubmitShare(Double total, Double average) {
+            public void onSubmitShare(Object total, Object average) {
                 info(TAG, "onSubmitShare total = " + total + ", average = " + average);
             }
         });

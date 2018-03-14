@@ -2,10 +2,8 @@ package waterhole.miner.zcash;
 
 import java.io.ObjectStreamException;
 
-import waterhole.commonlibs.NoProGuard;
-import waterhole.commonlibs.annotation.ExcuteOnAsyn;
-import waterhole.commonlibs.annotation.ExcuteOnMain;
 import waterhole.miner.core.GPUMinerCallback;
+import waterhole.miner.core.IMinerAPI;
 import waterhole.miner.core.SocketManager;
 import waterhole.miner.core.StopMingCallback;
 
@@ -20,7 +18,7 @@ import static waterhole.commonlibs.utils.Preconditions.checkOnMainThread;
  *
  * @author kzw on 2018/03/12.
  */
-public final class ZcashMiner implements NoProGuard {
+public final class ZcashMiner implements IMinerAPI<GPUMinerCallback> {
 
     static {
         try {
@@ -47,13 +45,8 @@ public final class ZcashMiner implements NoProGuard {
         return instance();
     }
 
-    /**
-     * 由外部异步去执行挖矿程序.
-     *
-     * @param callback gpu挖矿回调
-     */
-    @ExcuteOnAsyn
-    public void startMining(GPUMinerCallback callback) {
+    @Override
+    public void startMine(GPUMinerCallback callback) {
         checkOnChildThread();
         checkNotNull(callback);
 
@@ -67,44 +60,29 @@ public final class ZcashMiner implements NoProGuard {
         execGpuMining();
     }
 
-    /**
-     * 异步执行挖矿程序.
-     *
-     * @param callback gpu挖矿回调
-     */
-    @ExcuteOnMain
-    public void startMiningAsyn(final GPUMinerCallback callback) {
+    @Override
+    public void startMineAsyn(final GPUMinerCallback callback) {
         checkOnMainThread();
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
-                startMining(callback);
+                startMine(callback);
             }
         });
     }
 
-    /**
-     * 由外部异步去停止执行挖矿程序.
-     *
-     * @param callback 停止挖矿回调.
-     */
-    @ExcuteOnAsyn
-    public void stopMining(StopMingCallback callback) {
+    @Override
+    public void stopMine(StopMingCallback callback) {
         checkOnChildThread();
     }
 
-    /**
-     * 异步停止执行挖矿程序.
-     *
-     * @param callback 停止挖矿回调.
-     */
-    @ExcuteOnMain
-    public void stopMiningAsyn(final StopMingCallback callback) {
+    @Override
+    public void stopMineAsyn(final StopMingCallback callback) {
         checkOnMainThread();
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
-
+                stopMine(callback);
             }
         });
     }

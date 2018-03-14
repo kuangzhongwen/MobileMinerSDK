@@ -5,7 +5,7 @@ package waterhole.miner.core;
  *
  * @author kzw on 2018/03/14.
  */
-public interface GPUMinerCallback<T> extends CommonMinerCallback<T> {
+public interface GPUMinerCallback extends CommonMinerCallback {
 
     /**
      * 初始化openCL成功.
