@@ -6,9 +6,9 @@ import waterhole.miner.core.CommonMinerIterface;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.SocketManager;
 
-import static waterhole.commonlibs.utils.LogUtils.printStackTrace;
-import static waterhole.commonlibs.utils.Preconditions.checkNotNull;
-import static waterhole.commonlibs.utils.Preconditions.checkOnChildThread;
+import static waterhole.miner.core.utils.LogUtils.printStackTrace;
+import static waterhole.miner.core.utils.Preconditions.checkNotNull;
+import static waterhole.miner.core.utils.Preconditions.checkOnChildThread;
 
 /**
  * Zcash挖矿类.

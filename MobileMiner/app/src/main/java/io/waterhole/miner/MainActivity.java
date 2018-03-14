@@ -3,14 +3,14 @@ package io.waterhole.miner;
 import android.app.Activity;
 import android.os.Bundle;
 
-import waterhole.commonlibs.ContextWrapper;
-import waterhole.commonlibs.asyn.AsyncTaskAssistant;
-import waterhole.commonlibs.utils.LogUtils;
+import waterhole.miner.core.ContextWrapper;
 import waterhole.miner.core.MineCallback;
+import waterhole.miner.core.asyn.AsyncTaskAssistant;
+import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.zcash.ZcashMiner;
 
-import static waterhole.commonlibs.utils.LogUtils.info;
-import static waterhole.commonlibs.utils.LogUtils.error;
+import static waterhole.miner.core.utils.LogUtils.info;
+import static waterhole.miner.core.utils.LogUtils.error;
 
 public class MainActivity extends Activity {
 

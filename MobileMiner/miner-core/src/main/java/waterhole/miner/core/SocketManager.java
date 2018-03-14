@@ -11,12 +11,12 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import waterhole.commonlibs.annotation.ExcuteOnAsyn;
+import waterhole.miner.core.annotation.ExcuteOnAsyn;
 
-import static waterhole.commonlibs.utils.LogUtils.error;
-import static waterhole.commonlibs.utils.LogUtils.info;
-import static waterhole.commonlibs.utils.Preconditions.checkOnChildThread;
-import static waterhole.commonlibs.utils.IOUtils.closeSafely;
+import static waterhole.miner.core.utils.LogUtils.error;
+import static waterhole.miner.core.utils.LogUtils.info;
+import static waterhole.miner.core.utils.Preconditions.checkOnChildThread;
+import static waterhole.miner.core.utils.IOUtils.closeSafely;
 
 /**
  * socket管理类，主要功能为连接矿池，绑定地址，提交share数据到矿池.

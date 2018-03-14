@@ -2,14 +2,15 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdkVersion COMPILE_SDK_VERSION as int
-    buildToolsVersion BUILD_TOOLS_VERSION as String
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
     defaultConfig {
         applicationId "io.waterhole.miner"
-        minSdkVersion MIN_SDK_VERSION as int
-        targetSdkVersion TARGET_SDK_VERSION as int
-        versionCode VERSION_CODE as int
-        versionName VERSION_NAME as String
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 20180309
+        versionName "1.0.0"
         multiDexEnabled true
     }
 

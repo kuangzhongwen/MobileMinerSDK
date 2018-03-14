@@ -1,7 +1,6 @@
 package waterhole.miner.core;
 
-import waterhole.commonlibs.NoProGuard;
-import waterhole.commonlibs.annotation.ExcuteOnAsyn;
+import waterhole.miner.core.annotation.ExcuteOnAsyn;
 
 /**
  * 手机挖矿接口，各个币挖矿实现接口需继承此类.

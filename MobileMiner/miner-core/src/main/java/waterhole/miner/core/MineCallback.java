@@ -1,7 +1,5 @@
 package waterhole.miner.core;
 
-import waterhole.commonlibs.NoProGuard;
-
 /**
  * 通用挖矿回调，供接入方使用，如果有特殊需求，可继承此接口.
  *

@@ -1,7 +1,5 @@
 package waterhole.miner.core;
 
-import waterhole.commonlibs.NoProGuard;
-
 /**
  * 错误码表.
  *
