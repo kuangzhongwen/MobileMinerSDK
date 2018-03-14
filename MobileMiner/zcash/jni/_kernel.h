@@ -1,3 +1,6 @@
+#ifndef __KERNEL_H
+#define __KERNEL_H
+
 const char * kernel = "# 1 \"input.cl\"\n"
         "# 1 \"<built-in>\"\n"
         "# 1 \"<command-line>\"\n"
@@ -683,3 +686,5 @@ const char * kernel = "# 1 \"input.cl\"\n"
         "exit1:\n"
         "    potential_sol(htabs, sols, collisions >> 32, collisions & 0xffffffff);\n"
         "}";
+
+#endif
