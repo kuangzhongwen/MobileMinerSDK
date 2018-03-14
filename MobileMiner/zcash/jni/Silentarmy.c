@@ -74,8 +74,8 @@ uint32_t	gpu_to_use = 0;
 uint32_t	mining = 1;
 double		kern_avg_run_time = 0;
 
-// 挖矿频率 5s
-const unsigned int mining_sleep_seconds = 5;
+// 挖矿频率
+const unsigned int mining_sleep_seconds = 0;
 
 typedef struct  debug_s {
     uint32_t    dropped_coll;

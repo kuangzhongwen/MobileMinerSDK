@@ -42,13 +42,15 @@ final class KernelTools {
 
         try {
             final String kernelFile = KERNEL_FILENAME;
-            in = context.getResources().getAssets().open(kernelFile);
             final File of = new File(context.getDir("execdir", MODE_PRIVATE), kernelFile);
-            out = new FileOutputStream(of);
-            final byte b[] = new byte[BUFFER];
-            int sz;
-            while ((sz = in.read(b)) > 0) {
-                out.write(b, 0, sz);
+            if (!of.exists()) {
+                in = context.getResources().getAssets().open(kernelFile);
+                out = new FileOutputStream(of);
+                final byte b[] = new byte[BUFFER];
+                int sz;
+                while ((sz = in.read(b)) > 0) {
+                    out.write(b, 0, sz);
+                }
             }
         } catch (IOException e) {
             printStackTrace(e);
