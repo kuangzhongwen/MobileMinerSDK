@@ -1,4 +1,4 @@
-package waterhole.miner.zcash;
+package waterhole.miner.core;
 
 import android.text.TextUtils;
 
@@ -19,11 +19,11 @@ import static waterhole.commonlibs.utils.Preconditions.checkOnChildThread;
 import static waterhole.commonlibs.utils.IOUtils.closeSafely;
 
 /**
- * Zcash socket管理类，主要功能为连接矿池，绑定地址，提交share数据到矿池.
+ * socket管理类，主要功能为连接矿池，绑定地址，提交share数据到矿池.
  *
  * @author kzw on 2018/03/12.
  */
-final class SocketManager {
+public final class SocketManager {
 
     private static final String TAG = "SocketManager";
 
@@ -37,7 +37,7 @@ final class SocketManager {
     private SocketManager() {
     }
 
-    static SocketManager instance() {
+    public static SocketManager instance() {
         return Holder.instance;
     }
 
@@ -50,7 +50,7 @@ final class SocketManager {
     }
 
     @ExcuteOnAsyn
-    void connect() {
+    public void connect() {
         checkOnChildThread();
         if (isConnected()) {
             return;
@@ -65,7 +65,7 @@ final class SocketManager {
     }
 
     @ExcuteOnAsyn
-    void disconnect() {
+    public void disconnect() {
         checkOnChildThread();
         if (socket != null) {
             try {
@@ -77,7 +77,7 @@ final class SocketManager {
         }
     }
 
-    void sendMessage(String message) {
+    public void sendMessage(String message) {
         if (!TextUtils.isEmpty(message) && isConnected()) {
             OutputStream os = null;
             PrintWriter pw = null;

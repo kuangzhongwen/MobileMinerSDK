@@ -1351,7 +1351,7 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     cl_kernel		k_rounds[PARAM_K];
     cl_int		    status;
 
-    int loadedCL=load_Func();
+    int loadedCL = load_Func();
 
     scan_platforms(&plat_id, &dev_id);
     if (!plat_id || !dev_id) {
