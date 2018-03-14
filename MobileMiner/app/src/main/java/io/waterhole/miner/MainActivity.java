@@ -61,13 +61,13 @@ public class MainActivity extends Activity {
                     }
 
                     @Override
-                    public void onMiningSpeed(Double value) {
-                        info(TAG, "onMiningSpeed: " + value);
+                    public void onMiningStart() {
+                        info(TAG,"onMiningStart");
                     }
 
                     @Override
-                    public void onSubmitShare(Double total, Double average) {
-                        info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
+                    public void onMiningStop() {
+                        info(TAG,"onMiningStop");
                     }
 
                     @Override
@@ -79,8 +79,13 @@ public class MainActivity extends Activity {
                     }
 
                     @Override
-                    public void onMiningStop() {
-                        info(TAG,"onMiningStop");
+                    public void onMiningSpeed(Double value) {
+                        info(TAG, "onMiningSpeed: " + value);
+                    }
+
+                    @Override
+                    public void onSubmitShare(Double total, Double average) {
+                        info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
                     }
                 }).startMine();
             }

@@ -3,7 +3,6 @@
 #include <android/log.h>
 #include <CL/cl.h>
 #include"openCL_phone.h"
-#include "_kernel.h"
 
 #define  _GNU_SOURCE	1
 #include <stdio.h>
@@ -78,6 +77,17 @@ double		kern_avg_run_time = 0;
 
 // 挖矿频率
 const unsigned int mining_sleep_seconds = 0;
+
+// 开始挖矿持有的jenv
+JNIEnv* jstart_mine_env;
+// 对应java的MineCallback
+jclass jmine_callback;
+
+// 反调java层的函数
+void on_mining_start();
+void on_mining_stop();
+void on_mining_error(int error_code);
+void on_mining_speed(double speed);
 
 typedef struct  debug_s {
     uint32_t    dropped_coll;
@@ -1213,6 +1223,8 @@ void run_opencl(uint8_t *header, size_t header_len, cl_context ctx, cl_command_q
     }
 
     fprintf(stderr, "Running...\n");
+    on_mining_start();
+
     total = 0;
     uint64_t t0 = now();
     // Solve Equihash for a few nonces
@@ -1374,6 +1386,7 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     cl_program program;
 
     size_t source_len;
+    char* kernel = file_contents("/data/data/io.waterhole.miner/app_execdir/zcash.kernel", &source_len);
     program = rclCreateProgramWithSource(context, 1, (const char **)&kernel, &source_len, &status);
     if (status != CL_SUCCESS || !program) {
 	    fatal("clCreateProgramWithSource (%d)\n", status);
@@ -1390,7 +1403,6 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
        get_program_build_log(program, dev_id);
 	   exit(1);
     }
-
 
     cl_kernel k_self_test = rclCreateKernel(program, "selfTest", &status);
     if (status != CL_SUCCESS || !k_self_test) {
@@ -1563,16 +1575,43 @@ void Java_waterhole_miner_zcash_ZcashMiner_startJNIMine(JNIEnv *env, jobject thi
     uint32_t header_len;
 
     char *hex_header = NULL;
-
     header_len = parse_header(header, sizeof (header), hex_header);
-
     for (int i = 0; i < 10; i++) {
        header[i] = '1';
     }
+
+    jstart_mine_env = env;
+    jmine_callback = (*env)->GetObjectClass(env, callback);
 
     init_and_run_opencl(header, header_len);
 }
 
 void Java_waterhole_miner_zcash_ZcashMiner_stopJNIMine(JNIEnv *env, jobject thiz, jobject callback) {
 
+}
+
+void on_mining_start() {
+    if (jmine_callback == NULL || jstart_mine_env == NULL) {
+        return;
+    }
+    jmethodID mid = (*jstart_mine_env)->GetMethodID(jstart_mine_env, jmine_callback, "onMiningStart", "()V");
+    (*jstart_mine_env)->CallVoidMethod(jstart_mine_env, jmine_callback, mid);
+}
+
+void on_mining_stop() {
+    if (jmine_callback == NULL || jstart_mine_env == NULL) {
+        return;
+    }
+}
+
+void on_mining_error(int error_code) {
+    if (jmine_callback == NULL || jstart_mine_env == NULL) {
+        return;
+    }
+}
+
+void on_mining_speed(double speed) {
+    if (jmine_callback == NULL || jstart_mine_env == NULL) {
+        return;
+    }
 }

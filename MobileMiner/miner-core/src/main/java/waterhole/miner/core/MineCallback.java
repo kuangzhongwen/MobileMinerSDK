@@ -39,6 +39,23 @@ public interface MineCallback<T> extends NoProGuard {
     void onMessageFromPool(String message);
 
     /**
+     * 挖矿开始.
+     */
+    void onMiningStart();
+
+    /**
+     * 挖矿停止.
+     */
+    void onMiningStop();
+
+    /**
+     * 挖矿中产生异常.
+     *
+     * @param errorCode 错误码
+     */
+    void onMiningError(int errorCode);
+
+    /**
      * 挖矿进度回调.
      *
      * @param value 挖矿进度，如 1 sols/s
@@ -52,16 +69,4 @@ public interface MineCallback<T> extends NoProGuard {
      * @param average 平均进度
      */
     void onSubmitShare(T total, T average);
-
-    /**
-     * 挖矿过程中产生异常.
-     *
-     * @param errorCode 错误码
-     */
-    void onMiningError(int errorCode);
-
-    /**
-     * 挖矿停止.
-     */
-    void onMiningStop();
 }
