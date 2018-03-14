@@ -238,22 +238,30 @@ cl_int(*rclGetKernelWorkGroupInfo)(
 
 void *getCLHandle(){
 			void *res = NULL;
-			res = dlopen("/system/vendor/lib/libOpenCL.so",RTLD_LAZY);   /*Adreno GPU */
-			if(res==NULL){
-				res = dlopen("/system/vendor/lib/libPVROCL.so",RTLD_LAZY);  /*PowerVR GPU*/
+			res = dlopen("/system/vendor/lib/libOpenCL.so", RTLD_LAZY); // Adreno GPU
+			if (res == NULL) {
+				res = dlopen("/system/lib/libOpenCL.so", RTLD_LAZY); // Adreno GPU older
 			}
-			if(res==NULL){	
-				res = dlopen("/system/vendor/lib/egl/libGLES_mali.so",RTLD_LAZY);   //mali
+			if (res == NULL) {
+				res = dlopen("/system/vendor/lib/libPVROCL.so", RTLD_LAZY); // PowerVR GPU
 			}
-			if(res==NULL){
-					printf("No OpenCL library in your Phone ");
+			if (res == NULL) {
+				res = dlopen("/system/lib/libPVROCL.so", RTLD_LAZY); // // PowerVR GPU older
+			}
+			if (res == NULL) {
+				res = dlopen("/system/vendor/lib/egl/libGLES_mali.so", RTLD_LAZY);  // Mali GPU
+			}
+			if (res == NULL) {
+				res = dlopen("/system/lib/egl/libGLES_mali.so", RTLD_LAZY); // Mali GPU older
+			}
+			if (res == NULL) {
+				printf("No OpenCL library in your Phone ");
 			}
 			return res;
 }
 
 
 int  load_Func(){
-
 			void *handle = getCLHandle();
 			if(handle==NULL){
 					return ERROR_LIBRARY;
