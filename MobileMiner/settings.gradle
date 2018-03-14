@@ -1,1 +1,1 @@
-include ':app', ':commonLibs', ':zcash', ':monero'
+include ':app', ':commonLibs', ':miner-core', ':zcash', ':monero'

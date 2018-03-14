@@ -14,7 +14,7 @@ public final class ZcashMiner implements NoProGuard {
 
     static {
         try {
-            System.loadLibrary("silentarmy");
+            System.loadLibrary("zcash-miner");
         } catch (Exception e) {
             printStackTrace(e);
         }
