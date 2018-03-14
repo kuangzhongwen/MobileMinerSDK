@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import waterhole.commonlibs.ContextWrapper;
+import waterhole.commonlibs.utils.LogUtils;
 import waterhole.miner.zcash.ZcashMiner;
 
 public class MainActivity extends Activity {
@@ -21,6 +22,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         ContextWrapper.getInstance().injectContext(getApplicationContext());
+        LogUtils.enableDebug(true);
+
         ZcashMiner.startMine();
     }
 }
