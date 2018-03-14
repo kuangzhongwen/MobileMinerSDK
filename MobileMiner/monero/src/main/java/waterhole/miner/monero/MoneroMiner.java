@@ -44,7 +44,7 @@ public final class MoneroMiner implements CommonMinerIterface {
     }
 
     @Override
-    public CommonMinerIterface setMineCallback(MineCallback callback) {
+    public MoneroMiner setMineCallback(MineCallback callback) {
         mMineCallback = callback;
         return this;
     }

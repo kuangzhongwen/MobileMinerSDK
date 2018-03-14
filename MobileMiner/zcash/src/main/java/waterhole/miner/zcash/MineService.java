@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
+import waterhole.miner.core.ContextWrapper;
 import waterhole.miner.core.KernelCopy;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.NoProGuard;
@@ -21,6 +22,9 @@ import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
  */
 public final class MineService extends Service implements NoProGuard {
 
+    // 上下文对象
+    private final Context mContext = ContextWrapper.getInstance().obtainContext();
+
     // kernel文件名
     private static final String KERNEL_FILENAME = "zcash.kernel";
 
@@ -35,7 +39,7 @@ public final class MineService extends Service implements NoProGuard {
         }
     }
 
-    private native void startJNIMine(MineCallback callback);
+    private native void startJNIMine(String packName, MineCallback callback);
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -56,7 +60,7 @@ public final class MineService extends Service implements NoProGuard {
                         "\"zec-cn.waterhole.xyz\", \"3443\"]," +
                         " \"method\": \"mining.subscribe\"}");
 
-                startJNIMine(callback);
+                startJNIMine(mContext.getPackageName(), callback);
             }
         });
         return START_STICKY;

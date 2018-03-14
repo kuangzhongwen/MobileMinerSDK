@@ -1569,7 +1569,7 @@ void tests(void) {
     assert(NR_ROWS_LOG >= 12);
 }
 
-void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject thiz, jobject callback) {
+void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject thiz, jstring package_name, jobject callback) {
     tests();
 
     uint8_t header[ZCASH_BLOCK_HEADER_LEN] = {0, };
@@ -1583,6 +1583,7 @@ void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject th
 
     jmine_env = env;
     jmine_callback_obj = thiz;
+    // todo 转换package_name字符串，替换固定kernel文件包名
 
     init_and_run_opencl(header, header_len);
 }

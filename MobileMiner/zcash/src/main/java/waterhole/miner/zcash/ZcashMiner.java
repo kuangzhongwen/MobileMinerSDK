@@ -56,7 +56,7 @@ public final class ZcashMiner implements CommonMinerIterface {
     @Override
     public void startMine() {
         if (!isRunningMine.get()) {
-            checkNotNull(mMineCallback, "MineCallback must be not Null");
+            asserts();
             MineService.startService(mContext, mMineCallback);
             isRunningMine.set(true);
         }
@@ -64,7 +64,7 @@ public final class ZcashMiner implements CommonMinerIterface {
 
     @Override
     public void stopMine() {
-        checkNotNull(mMineCallback, "MineCallback must be not Null");
+        asserts();
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
@@ -79,5 +79,9 @@ public final class ZcashMiner implements CommonMinerIterface {
                 });
             }
         });
+    }
+
+    private void asserts() {
+        checkNotNull(mMineCallback, "MineCallback must be not Null");
     }
 }
