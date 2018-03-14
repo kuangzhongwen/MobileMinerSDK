@@ -78,14 +78,13 @@ double		kern_avg_run_time = 0;
 // 挖矿频率
 const unsigned int mining_sleep_seconds = 0;
 
-// 开始挖矿持有的jenv
-JNIEnv* jstart_mine_env;
+// 挖矿持有的jenv
+JNIEnv* jmine_env;
 // 对应java的MineCallback
-jclass jmine_callback;
+jobject jmine_callback_obj;
 
 // 反调java层的函数
 void on_mining_start();
-void on_mining_stop();
 void on_mining_error(int error_code);
 void on_mining_speed(double speed);
 
@@ -1219,6 +1218,8 @@ void run_opencl(uint8_t *header, size_t header_len, cl_context ctx, cl_command_q
 
     if (mining) {
         fprintf(stderr, "mining_mode...\n");
+        on_mining_start();
+
         mining_mode(ctx, queue, k_init_ht, k_rounds, k_sols, buf_ht, buf_sols, buf_dbg, dbg_size, header, rowCounters);
     }
 
@@ -1568,7 +1569,7 @@ void tests(void) {
     assert(NR_ROWS_LOG >= 12);
 }
 
-void Java_waterhole_miner_zcash_ZcashMiner_startJNIMine(JNIEnv *env, jobject thiz, jobject callback) {
+void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject thiz, jobject callback) {
     tests();
 
     uint8_t header[ZCASH_BLOCK_HEADER_LEN] = {0, };
@@ -1580,38 +1581,30 @@ void Java_waterhole_miner_zcash_ZcashMiner_startJNIMine(JNIEnv *env, jobject thi
        header[i] = '1';
     }
 
-    jstart_mine_env = env;
-    jmine_callback = (*env)->GetObjectClass(env, callback);
+    jmine_env = env;
+    jmine_callback_obj = thiz;
 
     init_and_run_opencl(header, header_len);
 }
 
-void Java_waterhole_miner_zcash_ZcashMiner_stopJNIMine(JNIEnv *env, jobject thiz, jobject callback) {
-
-}
-
 void on_mining_start() {
-    if (jmine_callback == NULL || jstart_mine_env == NULL) {
+    if (jmine_env == NULL || jmine_callback_obj == NULL) {
         return;
     }
-    jmethodID mid = (*jstart_mine_env)->GetMethodID(jstart_mine_env, jmine_callback, "onMiningStart", "()V");
-    (*jstart_mine_env)->CallVoidMethod(jstart_mine_env, jmine_callback, mid);
-}
-
-void on_mining_stop() {
-    if (jmine_callback == NULL || jstart_mine_env == NULL) {
-        return;
-    }
+    jclass jmine_callback = (*jmine_env)->GetObjectClass(jmine_env, jmine_callback_obj);
+    jmethodID mid = (*jmine_env)->GetMethodID(jmine_env, jmine_callback, "onMiningStart", "()V");
+    // todo error
+//    (*jmine_env)->CallVoidMethod(jmine_env, jmine_callback, mid);
 }
 
 void on_mining_error(int error_code) {
-    if (jmine_callback == NULL || jstart_mine_env == NULL) {
+    if (jmine_env == NULL || jmine_callback_obj == NULL) {
         return;
     }
 }
 
 void on_mining_speed(double speed) {
-    if (jmine_callback == NULL || jstart_mine_env == NULL) {
+    if (jmine_env == NULL || jmine_callback_obj == NULL) {
         return;
     }
 }

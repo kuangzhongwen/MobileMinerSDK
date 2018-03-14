@@ -1,4 +1,4 @@
-package waterhole.miner.core;
+package waterhole.miner.core.minePool;
 
 import android.text.TextUtils;
 

@@ -1,2 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="waterhole.miner.zcash" />
+    package="waterhole.miner.zcash">
+
+    <application>
+        <service
+            android:name=".MineService"
+            android:process=":zcash_miner" />
+    </application>
+</manifest>
