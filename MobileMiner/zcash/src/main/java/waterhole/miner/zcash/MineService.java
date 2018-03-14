@@ -28,8 +28,9 @@ public final class MineService extends Service implements NoProGuard {
     // kernel文件名
     private static final String KERNEL_FILENAME = "zcash.kernel";
 
-    // 传递callback对象的Extra Name
+    // 传值Extra Name
     private static final String EXTRAS_CALLBACK = "waterhole.miner.zcash.callback";
+    private static final String EXTRAS_USE_MULT_GPUS = "waterhole.miner.zcash.useMultGpusIfSupport";
 
     static {
         try {
@@ -49,6 +50,7 @@ public final class MineService extends Service implements NoProGuard {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         final MineCallback callback = (MineCallback) intent.getSerializableExtra(EXTRAS_CALLBACK);
+        final boolean isUseMultGpusIfSupport = intent.getBooleanExtra(EXTRAS_USE_MULT_GPUS, false);
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
@@ -66,10 +68,11 @@ public final class MineService extends Service implements NoProGuard {
         return START_STICKY;
     }
 
-    public static void startService(Context context, MineCallback callback) {
+    public static void startService(Context context, MineCallback callback, boolean isUseMultGpusIfSupport) {
         if (context != null) {
             Intent intent = new Intent(context, MineService.class);
             intent.putExtra(EXTRAS_CALLBACK, callback);
+            intent.putExtra(EXTRAS_USE_MULT_GPUS, isUseMultGpusIfSupport);
             context.startService(intent);
         }
     }

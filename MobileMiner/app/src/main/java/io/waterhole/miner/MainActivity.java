@@ -85,6 +85,6 @@ public final class MainActivity extends Activity {
             public void onSubmitShare(Double total, Double average) {
                 info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
             }
-        }).startMine();
+        }).useMultGpusIfSupport(true).startMine();
     }
 }

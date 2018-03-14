@@ -26,6 +26,9 @@ public final class ZcashMiner implements CommonMinerIterface {
     // 挖矿回调
     private MineCallback mMineCallback;
 
+    // 是否开启多挖，如果支持多核gpu
+    private boolean isUseMultGpusIfSupport;
+
     // 句柄
     private final android.os.Handler mHandler = new android.os.Handler(Looper.getMainLooper());
 
@@ -54,10 +57,16 @@ public final class ZcashMiner implements CommonMinerIterface {
     }
 
     @Override
+    public ZcashMiner useMultGpusIfSupport(boolean use) {
+        isUseMultGpusIfSupport = use;
+        return this;
+    }
+
+    @Override
     public void startMine() {
         if (!isRunningMine.get()) {
             asserts();
-            MineService.startService(mContext, mMineCallback);
+            MineService.startService(mContext, mMineCallback, isUseMultGpusIfSupport);
             isRunningMine.set(true);
         }
     }

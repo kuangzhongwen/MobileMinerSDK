@@ -22,6 +22,9 @@ public final class MoneroMiner implements CommonMinerIterface {
     // 挖矿回调
     private MineCallback mMineCallback;
 
+    // 是否开启多挖，如果支持多核gpu
+    private boolean isUseMultGpusIfSupport;
+
     // 句柄
     private final android.os.Handler mHandler = new android.os.Handler(Looper.getMainLooper());
 
@@ -46,6 +49,12 @@ public final class MoneroMiner implements CommonMinerIterface {
     @Override
     public MoneroMiner setMineCallback(MineCallback callback) {
         mMineCallback = callback;
+        return this;
+    }
+
+    @Override
+    public MoneroMiner useMultGpusIfSupport(boolean use) {
+        isUseMultGpusIfSupport = use;
         return this;
     }
 
