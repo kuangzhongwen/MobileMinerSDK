@@ -3,11 +3,11 @@ package waterhole.miner.core;
 import waterhole.commonlibs.NoProGuard;
 
 /**
- * 通用挖矿回调，供接入方使用.
+ * 通用挖矿回调，供接入方使用，如果有特殊需求，可继承此接口.
  *
  * @author kzw on 2018/03/14.
  */
-public interface CommonMinerCallback extends NoProGuard {
+public interface MineCallback<T> extends NoProGuard {
 
     /**
      * 开始连接矿池.
@@ -22,19 +22,21 @@ public interface CommonMinerCallback extends NoProGuard {
     /**
      * 连接矿池失败.
      *
-     * @param reason 连接失败原因
+     * @param errorCode 错误码
      */
-    void onConnectPoolFail(String reason);
+    void onConnectPoolFail(int errorCode);
 
     /**
      * 与矿池连接断开.
+     *
+     * @param errorCode 错误码
      */
-    void onPoolDisconnect();
+    void onPoolDisconnect(int errorCode);
 
     /**
      * 矿池推送的数据.
      *
-     * @param message 数据信息
+     * @param message 下发的消息
      */
     void onMessageFromPool(String message);
 
@@ -43,7 +45,7 @@ public interface CommonMinerCallback extends NoProGuard {
      *
      * @param value 挖矿进度，如 1 sols/s
      */
-    void onMiningSpeed(Object value);
+    void onMiningSpeed(T value);
 
     /**
      * 提交share到矿池.
@@ -51,5 +53,17 @@ public interface CommonMinerCallback extends NoProGuard {
      * @param total   总数量
      * @param average 平均进度
      */
-    void onSubmitShare(Object total, Object average);
+    void onSubmitShare(T total, T average);
+
+    /**
+     * 挖矿过程中产生异常.
+     *
+     * @param errorCode 错误码
+     */
+    void onMiningError(int errorCode);
+
+    /**
+     * 挖矿停止.
+     */
+    void onMiningStop();
 }

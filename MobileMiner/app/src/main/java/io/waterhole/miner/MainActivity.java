@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import waterhole.commonlibs.ContextWrapper;
+import waterhole.commonlibs.asyn.AsyncTaskAssistant;
 import waterhole.commonlibs.utils.LogUtils;
-import waterhole.miner.core.GPUMinerCallback;
+import waterhole.miner.core.MineCallback;
 import waterhole.miner.zcash.ZcashMiner;
 
 import static waterhole.commonlibs.utils.LogUtils.info;
@@ -24,50 +25,64 @@ public class MainActivity extends Activity {
         ContextWrapper.getInstance().injectContext(getApplicationContext());
         LogUtils.enableDebug(true);
 
-        ZcashMiner.instance().startMineAsyn(new GPUMinerCallback() {
+        AsyncTaskAssistant.executeOnThreadPool(new Runnable() {
             @Override
-            public void onLoadOpenCLSuccess() {
-                info(TAG, "onLoadOpenCLSuccess");
-            }
+            public void run() {
+                ZcashMiner.instance().setMineCallback(new MineCallback<Double>() {
+                    @Override
+                    public void onConnectPoolBegin() {
+                        info(TAG, "onConnectPoolBegin");
+                    }
 
-            @Override
-            public void onLoadOpenCLFail(String reason) {
-                error(TAG, "onLoadOpenCLFail : " + reason);
-            }
+                    @Override
+                    public void onConnectPoolSuccess() {
+                        info(TAG, "onConnectPoolSuccess");
+                    }
 
-            @Override
-            public void onConnectPoolBegin() {
-                info(TAG, "onConnectPoolBegin");
-            }
+                    @Override
+                    public void onConnectPoolFail(int errorCode) {
+                        /**
+                         * errorCode see {@link waterhole.miner.core.ErrorCode}
+                         */
+                        error(TAG, "onConnectPoolFail: " + errorCode);
+                    }
 
-            @Override
-            public void onConnectPoolSuccess() {
-                info(TAG, "onConnectPoolSuccess");
-            }
+                    @Override
+                    public void onPoolDisconnect(int errorCode) {
+                        /**
+                         * errorCode see {@link waterhole.miner.core.ErrorCode}
+                         */
+                        error(TAG, "onPoolDisconnect: " + errorCode);
+                    }
 
-            @Override
-            public void onConnectPoolFail(String reason) {
-                info(TAG, "onConnectPoolFail : " + reason);
-            }
+                    @Override
+                    public void onMessageFromPool(String message) {
+                        info(TAG, "onMessageFromPool: " + message);
+                    }
 
-            @Override
-            public void onPoolDisconnect() {
-                error(TAG, "onPoolDisconnect");
-            }
+                    @Override
+                    public void onMiningSpeed(Double value) {
+                        info(TAG, "onMiningSpeed: " + value);
+                    }
 
-            @Override
-            public void onMessageFromPool(String message) {
-                info(TAG, "onMessageFromPool : " + message);
-            }
+                    @Override
+                    public void onSubmitShare(Double total, Double average) {
+                        info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
+                    }
 
-            @Override
-            public void onMiningSpeed(Object value) {
-                info(TAG, "onMiningSpeed : " + value);
-            }
+                    @Override
+                    public void onMiningError(int errorCode) {
+                        /**
+                         * errorCode see {@link waterhole.miner.core.ErrorCode}
+                         */
+                        error(TAG, "onMiningError = " + errorCode);
+                    }
 
-            @Override
-            public void onSubmitShare(Object total, Object average) {
-                info(TAG, "onSubmitShare total = " + total + ", average = " + average);
+                    @Override
+                    public void onMiningStop() {
+                        info(TAG,"onMiningStop");
+                    }
+                }).startMine();
             }
         });
     }

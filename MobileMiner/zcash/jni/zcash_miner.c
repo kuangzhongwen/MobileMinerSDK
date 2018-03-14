@@ -1556,7 +1556,7 @@ void tests(void) {
     assert(NR_ROWS_LOG >= 12);
 }
 
-void Java_waterhole_miner_zcash_ZcashMiner_execGpuMining(JNIEnv *env, jobject thiz) {
+void Java_waterhole_miner_zcash_ZcashMiner_startJNIMine(JNIEnv *env, jobject thiz, jobject callback) {
     tests();
 
     uint8_t header[ZCASH_BLOCK_HEADER_LEN] = {0, };
@@ -1571,4 +1571,8 @@ void Java_waterhole_miner_zcash_ZcashMiner_execGpuMining(JNIEnv *env, jobject th
     }
 
     init_and_run_opencl(header, header_len);
+}
+
+void Java_waterhole_miner_zcash_ZcashMiner_stopJNIMine(JNIEnv *env, jobject thiz, jobject callback) {
+
 }

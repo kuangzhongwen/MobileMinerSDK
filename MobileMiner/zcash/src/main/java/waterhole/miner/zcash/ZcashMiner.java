@@ -2,23 +2,20 @@ package waterhole.miner.zcash;
 
 import java.io.ObjectStreamException;
 
-import waterhole.miner.core.GPUMinerCallback;
-import waterhole.miner.core.IMinerAPI;
+import waterhole.miner.core.CommonMinerIterface;
+import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.SocketManager;
-import waterhole.miner.core.StopMingCallback;
 
 import static waterhole.commonlibs.utils.LogUtils.printStackTrace;
-import static waterhole.commonlibs.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.commonlibs.utils.Preconditions.checkNotNull;
 import static waterhole.commonlibs.utils.Preconditions.checkOnChildThread;
-import static waterhole.commonlibs.utils.Preconditions.checkOnMainThread;
 
 /**
  * Zcash挖矿类.
  *
  * @author kzw on 2018/03/12.
  */
-public final class ZcashMiner implements IMinerAPI<GPUMinerCallback> {
+public final class ZcashMiner implements CommonMinerIterface {
 
     static {
         try {
@@ -28,7 +25,11 @@ public final class ZcashMiner implements IMinerAPI<GPUMinerCallback> {
         }
     }
 
-    private native static void execGpuMining();
+    private native void startJNIMine(MineCallback callback);
+
+    private native void stopJNIMine(MineCallback callback);
+
+    private MineCallback mMineCallback;
 
     private ZcashMiner() {
     }
@@ -46,44 +47,29 @@ public final class ZcashMiner implements IMinerAPI<GPUMinerCallback> {
     }
 
     @Override
-    public void startMine(GPUMinerCallback callback) {
-        checkOnChildThread();
-        checkNotNull(callback);
+    public ZcashMiner setMineCallback(MineCallback callback) {
+        mMineCallback = callback;
+        return this;
+    }
 
-        // test pool socket
+    @Override
+    public void startMine() {
+        checkOnChildThread();
+        checkNotNull(mMineCallback, "MineCallback must be not Null");
+
         SocketManager socketManager = SocketManager.instance();
         socketManager.connect();
         socketManager.sendMessage("{\"id\": 2, \"params\": [\"silentarmy\", null, " +
                 "\"zec-cn.waterhole.xyz\", \"3443\"]," +
                 " \"method\": \"mining.subscribe\"}");
 
-        execGpuMining();
+        startJNIMine(mMineCallback);
     }
 
     @Override
-    public void startMineAsyn(final GPUMinerCallback callback) {
-        checkOnMainThread();
-        executeOnThreadPool(new Runnable() {
-            @Override
-            public void run() {
-                startMine(callback);
-            }
-        });
-    }
-
-    @Override
-    public void stopMine(StopMingCallback callback) {
+    public void stopMine() {
         checkOnChildThread();
-    }
-
-    @Override
-    public void stopMineAsyn(final StopMingCallback callback) {
-        checkOnMainThread();
-        executeOnThreadPool(new Runnable() {
-            @Override
-            public void run() {
-                stopMine(callback);
-            }
-        });
+        checkNotNull(mMineCallback, "MineCallback must be not Null");
+        stopJNIMine(mMineCallback);
     }
 }

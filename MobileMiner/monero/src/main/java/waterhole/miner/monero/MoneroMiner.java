@@ -2,15 +2,16 @@ package waterhole.miner.monero;
 
 import java.io.ObjectStreamException;
 
-import waterhole.miner.core.CommonMinerCallback;
-import waterhole.miner.core.IMinerAPI;
-import waterhole.miner.core.StopMingCallback;
+import waterhole.miner.core.MineCallback;
+import waterhole.miner.core.CommonMinerIterface;
 
-public final class MoneroMiner implements IMinerAPI<CommonMinerCallback> {
+public final class MoneroMiner implements CommonMinerIterface<MineCallback> {
 
     static {
         // load library
     }
+
+    private MineCallback mMineCallback;
 
     private MoneroMiner() {
     }
@@ -27,24 +28,19 @@ public final class MoneroMiner implements IMinerAPI<CommonMinerCallback> {
         return instance();
     }
 
+    @Override
+    public CommonMinerIterface<MineCallback> setMineCallback(MineCallback callback) {
+        mMineCallback = callback;
+        return this;
+    }
 
     @Override
-    public void startMine(CommonMinerCallback callback) {
+    public void startMine() {
 
     }
 
     @Override
-    public void startMineAsyn(CommonMinerCallback callback) {
-
-    }
-
-    @Override
-    public void stopMine(StopMingCallback callback) {
-
-    }
-
-    @Override
-    public void stopMineAsyn(StopMingCallback callback) {
+    public void stopMine() {
 
     }
 }
