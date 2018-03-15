@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"/>
+    android:background="@android:color/black">
+
+    <Spinner
+        android:id="@+id/coin_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/coin_spinner"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="prepare"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/miner_button"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/status_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="开始挖矿"
+        android:textColor="#000000"
+        android:textSize="18sp" />
+</RelativeLayout>
