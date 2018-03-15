@@ -3,7 +3,6 @@ package waterhole.miner.zcash;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,10 +10,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import waterhole.miner.core.KernelCopy;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.NoProGuard;
-import waterhole.miner.core.asyn.AsyncTaskAssistant;
 import waterhole.miner.core.minePool.SocketManager;
 
 import static waterhole.miner.core.utils.LogUtils.printStackTrace;
+import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 
 /**
  * 挖矿后台服务.
@@ -26,8 +25,6 @@ public final class MineService extends Service implements NoProGuard {
     // kernel文件名
     private static final String KERNEL_FILENAME = "zcash.kernel";
 
-    // Handler句柄
-    private final Handler mHandler = new Handler();
     // ZcashMiner实例对象
     private final ZcashMiner mZcashMiner = ZcashMiner.instance();
 
@@ -53,7 +50,7 @@ public final class MineService extends Service implements NoProGuard {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        AsyncTaskAssistant.executeOnThreadPool(new Runnable() {
+        executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
                 Context context = mZcashMiner.getContext();
@@ -77,19 +74,10 @@ public final class MineService extends Service implements NoProGuard {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        AsyncTaskAssistant.executeOnThreadPool(new Runnable() {
-            @Override
-            public void run() {
-                stopJNIMine();
-                isRunningMine.set(false);
-                mHandler.postAtFrontOfQueue(new Runnable() {
-                    @Override
-                    public void run() {
-                        mZcashMiner.getMineCallback().onMiningStop();
-                    }
-                });
-            }
-        });
+
+        stopJNIMine();
+        isRunningMine.set(false);
+        mZcashMiner.getMineCallback().onMiningStop();
     }
 
     public static void startService(Context context) {

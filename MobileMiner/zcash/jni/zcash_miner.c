@@ -1603,22 +1603,26 @@ void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject th
 void Java_waterhole_miner_zcash_MineService_stopJNIMine(JNIEnv *env, jobject thiz) {
 }
 
-void on_mining_start() {
+int assert_call_on_java() {
     if (jenv == NULL || jcallback_obj == NULL) {
-        return;
+        return 0;
     }
-    jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
-    jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningStart", "()V");
+    return 1;
+}
+
+void on_mining_start() {
+    if (assert_call_on_java()) {
+        jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
+        jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningStart", "()V");
+    }
 }
 
 void on_mining_error(int error_code) {
-    if (jenv == NULL || jcallback_obj == NULL) {
-        return;
+    if (assert_call_on_java()) {
     }
 }
 
 void on_mining_speed(double speed) {
-    if (jenv == NULL || jcallback_obj == NULL) {
-        return;
+    if (assert_call_on_java()) {
     }
 }
