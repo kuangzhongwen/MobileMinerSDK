@@ -1368,23 +1368,37 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     cl_int		    status;
 
     int loadedCL = load_Func();
+    LOGD("loadedCL : %d", loadedCL);
+    if (loadedCL == ERROR_LIBRARY) {
+        on_mining_error("OpenCL no dynamic library");
+        return;
+    } else if (loadedCL == ERROR_FUN_INIT) {
+        on_mining_error("OpenCL dynamic library function error");
+        return;
+    } else if (loadedCL == ERROR_FUN_CALL) {
+        on_mining_error("OpenCL function execution error");
+        return;
+    }
 
     scan_platforms(&plat_id, &dev_id);
     if (!plat_id || !dev_id) {
-	    fatal("Selected device (ID %d) not found; see --list\n", gpu_to_use);
+        on_mining_error("Selected gpu device ID not found");
+        return;
 	}
 
     /* Create context.*/
     cl_context context = rclCreateContext(NULL, 1, &dev_id, NULL, NULL, &status);
     if (status != CL_SUCCESS || !context) {
-	    fatal("clCreateContext (%d)\n", status);
+        on_mining_error("clCreateContext failed");
+        return;
 	}
 
     /* Creating command queue associate with the context.*/
     cl_command_queue queue = rclCreateCommandQueue(context, dev_id, 0, &status);
     if (status != CL_SUCCESS || !queue) {
-	    fatal("clCreateCommandQueue (%d)\n", status);
-	}
+        on_mining_error("clCreateCommandQueue failed");
+        return;
+    }
 
     /* Create program object */
     cl_program program;
@@ -1402,7 +1416,8 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
 
     program = rclCreateProgramWithSource(context, 1, (const char **)&kernel, &source_len, &status);
     if (status != CL_SUCCESS || !program) {
-	    fatal("clCreateProgramWithSource (%d)\n", status);
+        on_mining_error("clCreateProgramWithSource failed");
+        return;
 	}
 
     /* Build program. */
@@ -1412,14 +1427,16 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
 
     status = rclBuildProgram(program, 1, &dev_id, "", NULL, NULL);
     if (status != CL_SUCCESS) {
-       warn("OpenCL build failed (%d). Build log follows:\n", status);
-       get_program_build_log(program, dev_id);
-	   exit(1);
+        warn("OpenCL build failed (%d). Build log follows:\n", status);
+        get_program_build_log(program, dev_id);
+        on_mining_error("OpenCL build program failed. Build log follows");
+        return;
     }
 
     cl_kernel k_self_test = rclCreateKernel(program, "selfTest", &status);
     if (status != CL_SUCCESS || !k_self_test) {
-        fatal("clCreateKernel (%d)\n", status);
+        on_mining_error("clCreateKernel failed");
+        return;
     }
 
     float *buf1 = 0;
@@ -1493,8 +1510,9 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     // Create kernel objects
     cl_kernel k_init_ht = rclCreateKernel(program, "kernel_init_ht", &status);
     if (status != CL_SUCCESS || !k_init_ht) {
-	    fatal("clCreateKernel (%d)\n", status);
-	}
+        on_mining_error("clCreateKernel k_init_ht failed");
+        return;
+    }
 
     for (unsigned round = 0; round < PARAM_K; round++) {
 	    char	name[128];
@@ -1502,15 +1520,17 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
 	    k_rounds[round] = rclCreateKernel(program, name, &status);
 
 	    if (status != CL_SUCCESS || !k_rounds[round]) {
-	        fatal("clCreateKernel (%d)\n", status);
-	    }
+            on_mining_error("clCreateKernel k_rounds failed");
+            return;
+        }
     }
 
     cl_kernel k_sols = rclCreateKernel(program, "kernel_sols", &status);
 
     if (status != CL_SUCCESS || !k_sols) {
-	    fatal("clCreateKernel (%d)\n", status);
-	}
+        on_mining_error("clCreateKernel k_sols failed");
+        return;
+    }
 
     // Run
     run_opencl(header, header_len, context, queue, k_init_ht, k_rounds, k_sols);
@@ -1622,7 +1642,7 @@ void on_mining_error(const char* error) {
     if (assert_call_on_java()) {
         jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
         jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningError", "(Ljava/lang/String;)V");
-        (*jenv)->CallVoidMethod(jenv, jcallback_obj, mid, error);
+        (*jenv)->CallVoidMethod(jenv, jcallback_obj, mid, (*jenv)->NewStringUTF(jenv, error));
     }
 }
 
