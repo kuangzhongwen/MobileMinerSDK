@@ -44,14 +44,12 @@ public final class KernelCopy {
         OutputStream out = null;
         try {
             final File of = new File(context.getDir("execdir", MODE_PRIVATE), filename);
-            if (!of.exists()) {
-                in = context.getResources().getAssets().open(filename);
-                out = new FileOutputStream(of);
-                final byte b[] = new byte[BUFFER];
-                int sz;
-                while ((sz = in.read(b)) > 0) {
-                    out.write(b, 0, sz);
-                }
+            in = context.getResources().getAssets().open(filename);
+            out = new FileOutputStream(of);
+            final byte b[] = new byte[BUFFER];
+            int sz;
+            while ((sz = in.read(b)) > 0) {
+                out.write(b, 0, sz);
             }
         } catch (IOException e) {
             printStackTrace(e);
