@@ -5,7 +5,7 @@ package waterhole.miner.core;
  *
  * @author kzw on 2018/03/14.
  */
-public interface MineCallback<T> extends NoProGuard {
+public interface MineCallback extends NoProGuard {
 
     /**
      * 开始连接矿池.
@@ -58,9 +58,10 @@ public interface MineCallback<T> extends NoProGuard {
     /**
      * 挖矿进度回调.
      *
-     * @param value 挖矿进度，如 1 sols/s
+     * @param total 算出来的总数
+     * @param total_share 提交的share总数
      */
-    void onMiningSpeed(T value);
+    void onMiningStatus(int total, int total_share);
 
     /**
      * 提交share到矿池.
@@ -68,5 +69,5 @@ public interface MineCallback<T> extends NoProGuard {
      * @param total   总数量
      * @param average 平均进度
      */
-    void onSubmitShare(T total, T average);
+    void onSubmitShare(String total, String average);
 }

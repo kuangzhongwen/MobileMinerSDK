@@ -22,7 +22,7 @@ public final class MainActivity extends Activity {
 
         LogUtils.enableDebug(true);
 
-        ZcashMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback<Double>() {
+        ZcashMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
 
             @Override
             public void onConnectPoolBegin() {
@@ -51,12 +51,12 @@ public final class MainActivity extends Activity {
 
             @Override
             public void onMiningStart() {
-                info(TAG,"onMiningStart");
+                info(TAG, "onMiningStart");
             }
 
             @Override
             public void onMiningStop() {
-                info(TAG,"onMiningStop");
+                info(TAG, "onMiningStop");
             }
 
             @Override
@@ -65,12 +65,12 @@ public final class MainActivity extends Activity {
             }
 
             @Override
-            public void onMiningSpeed(Double value) {
-                info(TAG, "onMiningSpeed: " + value);
+            public void onMiningStatus(int total, int total_share) {
+                info(TAG, "onMiningStatus total = " + total + " sols, total share = " + total_share);
             }
 
             @Override
-            public void onSubmitShare(Double total, Double average) {
+            public void onSubmitShare(String total, String average) {
                 info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
             }
         }).useMultGpusIfSupport(true).startMine();

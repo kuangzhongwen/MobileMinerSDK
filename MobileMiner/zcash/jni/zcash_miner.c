@@ -89,7 +89,7 @@ jobject jcallback_obj;
 // 反调java层的函数
 void on_mining_start();
 void on_mining_error(const char* error);
-void on_mining_speed(double speed);
+void on_mining_status(const int total, const int total_share);
 
 typedef struct  debug_s {
     uint32_t    dropped_coll;
@@ -1189,6 +1189,8 @@ void mining_mode(cl_context ctx, cl_command_queue queue, cl_kernel k_init_ht, cl
             t0 = t1;
             printf("status: %" PRId64 " %" PRId64 "\n", total, total_shares);
             fflush(stdout);
+
+            on_mining_status(total, total_shares);
         }
     }
 }
@@ -1646,7 +1648,10 @@ void on_mining_error(const char* error) {
     }
 }
 
-void on_mining_speed(double speed) {
+void on_mining_status(const int total, const int total_share) {
     if (assert_call_on_java()) {
+        jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
+        jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningStatus", "(II)V");
+        (*jenv)->CallVoidMethod(jenv, jcallback_obj, mid, total, total_share);
     }
 }
