@@ -3,6 +3,7 @@
 #include <android/log.h>
 #include <CL/cl.h>
 #include"openCL_phone.h"
+#include "char_utils.h"
 
 #define  _GNU_SOURCE	1
 #include <stdio.h>
@@ -78,10 +79,12 @@ double		kern_avg_run_time = 0;
 // 挖矿频率
 const unsigned int mining_sleep_seconds = 0;
 
+char* package_name;
+
 // 挖矿持有的jenv
-JNIEnv* jmine_env;
+JNIEnv* jenv;
 // 对应java的MineCallback
-jobject jmine_callback_obj;
+jobject jcallback_obj;
 
 // 反调java层的函数
 void on_mining_start();
@@ -1386,8 +1389,17 @@ void init_and_run_opencl(uint8_t *header, size_t header_len) {
     /* Create program object */
     cl_program program;
 
+    // 读取kernel内容
     size_t source_len;
-    char* kernel = file_contents("/data/data/io.waterhole.miner/app_execdir/zcash.kernel", &source_len);
+    char* kernel_path = (char *) malloc(50);
+    strcpy(kernel_path, "/data/data/");
+    strcat(kernel_path, package_name);
+    strcat(kernel_path, "/app_execdir/zcash.kernel");
+    puts(kernel_path);
+    char* kernel = file_contents(kernel_path, &source_len);
+    // 释放动态内存
+    free(kernel_path);
+
     program = rclCreateProgramWithSource(context, 1, (const char **)&kernel, &source_len, &status);
     if (status != CL_SUCCESS || !program) {
 	    fatal("clCreateProgramWithSource (%d)\n", status);
@@ -1569,7 +1581,7 @@ void tests(void) {
     assert(NR_ROWS_LOG >= 12);
 }
 
-void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject thiz, jstring package_name, jobject callback) {
+void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject thiz, jstring pack_name, jobject callback) {
     tests();
 
     uint8_t header[ZCASH_BLOCK_HEADER_LEN] = {0, };
@@ -1581,9 +1593,9 @@ void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject th
        header[i] = '1';
     }
 
-    jmine_env = env;
-    jmine_callback_obj = thiz;
-    // todo 转换package_name字符串，替换固定kernel文件包名
+    jenv = env;
+    jcallback_obj = thiz;
+    package_name = jstringTostr(env, pack_name);
 
     init_and_run_opencl(header, header_len);
 }
@@ -1592,23 +1604,21 @@ void Java_waterhole_miner_zcash_MineService_stopJNIMine(JNIEnv *env, jobject thi
 }
 
 void on_mining_start() {
-    if (jmine_env == NULL || jmine_callback_obj == NULL) {
+    if (jenv == NULL || jcallback_obj == NULL) {
         return;
     }
-    jclass jmine_callback = (*jmine_env)->GetObjectClass(jmine_env, jmine_callback_obj);
-    jmethodID mid = (*jmine_env)->GetMethodID(jmine_env, jmine_callback, "onMiningStart", "()V");
-    // todo error
-//    (*jmine_env)->CallVoidMethod(jmine_env, jmine_callback, mid);
+    jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
+    jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningStart", "()V");
 }
 
 void on_mining_error(int error_code) {
-    if (jmine_env == NULL || jmine_callback_obj == NULL) {
+    if (jenv == NULL || jcallback_obj == NULL) {
         return;
     }
 }
 
 void on_mining_speed(double speed) {
-    if (jmine_env == NULL || jmine_callback_obj == NULL) {
+    if (jenv == NULL || jcallback_obj == NULL) {
         return;
     }
 }
