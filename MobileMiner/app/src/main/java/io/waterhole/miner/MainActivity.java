@@ -149,6 +149,6 @@ public final class MainActivity extends Activity {
                 info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
                 setupStatusText("提交share： total = " + total + ", average = " + average);
             }
-        }).useMultGpusIfSupport(true).startMine();
+        }).startMine();
     }
 }

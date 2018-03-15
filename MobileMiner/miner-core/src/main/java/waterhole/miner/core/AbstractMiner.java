@@ -17,9 +17,6 @@ public abstract class AbstractMiner implements CommonMinerIterface {
     // 挖矿回调
     private MineCallback mMineCallback;
 
-    // 是否开启多挖，如果支持多核gpu
-    private boolean isUseMultGpusIfSupport;
-
     @Override
     public CommonMinerIterface setContext(Context context) {
         mContext = context;
@@ -40,17 +37,6 @@ public abstract class AbstractMiner implements CommonMinerIterface {
     @Override
     public MineCallback getMineCallback() {
         return mMineCallback;
-    }
-
-    @Override
-    public AbstractMiner useMultGpusIfSupport(boolean use) {
-        isUseMultGpusIfSupport = use;
-        return this;
-    }
-
-    @Override
-    public boolean isUseMultGpusIfSupport() {
-        return isUseMultGpusIfSupport;
     }
 
     protected void asserts() {

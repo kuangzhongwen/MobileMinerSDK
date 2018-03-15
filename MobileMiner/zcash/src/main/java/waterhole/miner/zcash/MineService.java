@@ -68,7 +68,10 @@ public final class MineService extends Service implements NoProGuard {
                         isRunningMine.set(true);
                     }
                 } catch (Exception e) {
-                    mZcashMiner.getMineCallback().onMiningError(e.getMessage());
+                    MineCallback callback = mZcashMiner.getMineCallback();
+                    if (callback != null) {
+                        callback.onMiningError(e.getMessage());
+                    }
                 }
             }
         });
@@ -81,7 +84,10 @@ public final class MineService extends Service implements NoProGuard {
 
         stopJNIMine();
         isRunningMine.set(false);
-        mZcashMiner.getMineCallback().onMiningStop();
+        MineCallback callback = mZcashMiner.getMineCallback();
+        if (callback != null) {
+            callback.onMiningStop();
+        }
     }
 
     public static void startService(Context context) {
