@@ -74,6 +74,7 @@ uint64_t	nr_nonces = 1000;
 uint32_t	do_list_devices = 0;
 uint32_t	gpu_to_use = 0;
 uint32_t	mining = 1;
+uint32_t    stop_mining = 0;
 double		kern_avg_run_time = 0;
 
 // 挖矿频率
@@ -1171,7 +1172,7 @@ void mining_mode(cl_context ctx, cl_command_queue queue, cl_kernel k_init_ht, cl
     uint64_t	t0 = 0, t1;
     uint64_t	status_period = 500e3; // time (usec) between statuses
 
-    for (i = 0; ; i++) {
+    for (i = 0; stop_mining == 0; i++) {
         // iteration #0 always reads a job or else there is nothing to do
 //        if (read_last_line(line, sizeof (line), !i)) {
 //            mining_parse_job(line, target, sizeof (target), job_id, sizeof (job_id),
@@ -1234,7 +1235,7 @@ void run_opencl(uint8_t *header, size_t header_len, cl_context ctx, cl_command_q
     total = 0;
     uint64_t t0 = now();
     // Solve Equihash for a few nonces
-    for (nonce = 0; nonce < nr_nonces; nonce++) {
+    for (nonce = 0; nonce < nr_nonces && stop_mining == 0; nonce++) {
 	    total += solve_equihash(ctx, queue, k_init_ht, k_rounds, k_sols, buf_ht, buf_sols, buf_dbg,
 	        dbg_size, header, header_len, !!nonce, 0, NULL, NULL, NULL, rowCounters);
 	}
@@ -1623,6 +1624,7 @@ void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject th
 }
 
 void Java_waterhole_miner_zcash_MineService_stopJNIMine(JNIEnv *env, jobject thiz) {
+    stop_mining = 1;
 }
 
 int assert_call_on_java() {

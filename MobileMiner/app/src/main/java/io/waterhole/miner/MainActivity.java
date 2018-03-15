@@ -25,6 +25,7 @@ public final class MainActivity extends Activity {
     private TextView mStatusText;
 
     private int mCoinPosition;
+    private boolean isMining;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +61,15 @@ public final class MainActivity extends Activity {
             public void onClick(View v) {
                 switch (mCoinPosition) {
                     case 0:
-                        minerBtn.setText("停止挖矿");
-                        initZcashMiner();
+                        if (isMining) {
+                            ZcashMiner.instance().stopMine();
+                            mStatusText.setText("prepare");
+                            minerBtn.setText("开始挖矿");
+                        } else {
+                            minerBtn.setText("停止挖矿");
+                            initZcashMiner();
+                        }
+                        isMining = !isMining;
                         break;
                     case 1:
                         break;
