@@ -3,7 +3,6 @@ package io.waterhole.miner;
 import android.app.Activity;
 import android.os.Bundle;
 
-import waterhole.miner.core.ContextWrapper;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.zcash.ZcashMiner;
@@ -21,11 +20,9 @@ public final class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
-        // 必须注入context
-        ContextWrapper.getInstance().injectContext(getApplicationContext());
         LogUtils.enableDebug(true);
 
-        ZcashMiner.instance().setMineCallback(new MineCallback<Double>() {
+        ZcashMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback<Double>() {
 
             @Override
             public void onConnectPoolBegin() {

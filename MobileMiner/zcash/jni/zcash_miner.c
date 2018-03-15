@@ -1588,6 +1588,9 @@ void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject th
     init_and_run_opencl(header, header_len);
 }
 
+void Java_waterhole_miner_zcash_MineService_stopJNIMine(JNIEnv *env, jobject thiz) {
+}
+
 void on_mining_start() {
     if (jmine_env == NULL || jmine_callback_obj == NULL) {
         return;

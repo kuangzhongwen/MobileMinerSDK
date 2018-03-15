@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import waterhole.miner.core.ContextWrapper;
 import waterhole.miner.core.annotation.ExcuteOnAsyn;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -32,17 +31,17 @@ public final class KernelCopy {
     /**
      * 拷贝kernel.cl文件到app安装目录，在jni层去读取kernel文件并构建openCL program.
      *
+     * @param context 上下文对象
      * @param filename kernel文件名
      */
     @ExcuteOnAsyn
-    public static void copy(String filename) {
+    public static void copy(Context context, String filename) {
         checkOnChildThread();
+        checkNotNull(context);
         checkNotNull(filename);
 
         InputStream in = null;
         OutputStream out = null;
-        Context context = ContextWrapper.getInstance().obtainContext();
-
         try {
             final File of = new File(context.getDir("execdir", MODE_PRIVATE), filename);
             if (!of.exists()) {

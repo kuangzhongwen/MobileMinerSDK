@@ -1,35 +1,10 @@
 package waterhole.miner.monero;
 
-import android.content.Context;
-import android.os.Looper;
-
 import java.io.ObjectStreamException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import waterhole.miner.core.ContextWrapper;
-import waterhole.miner.core.MineCallback;
-import waterhole.miner.core.CommonMinerIterface;
+import waterhole.miner.core.AbstractMiner;
 
-public final class MoneroMiner implements CommonMinerIterface {
-
-    static {
-        // load library
-    }
-
-    // 上下文对象
-    private final Context mContext = ContextWrapper.getInstance().obtainContext();
-
-    // 挖矿回调
-    private MineCallback mMineCallback;
-
-    // 是否开启多挖，如果支持多核gpu
-    private boolean isUseMultGpusIfSupport;
-
-    // 句柄
-    private final android.os.Handler mHandler = new android.os.Handler(Looper.getMainLooper());
-
-    // 避免重复启动
-    private AtomicBoolean isRunningMine = new AtomicBoolean(false);
+public final class MoneroMiner extends AbstractMiner {
 
     private MoneroMiner() {
     }
@@ -44,18 +19,6 @@ public final class MoneroMiner implements CommonMinerIterface {
 
     private Object readResolve() throws ObjectStreamException {
         return instance();
-    }
-
-    @Override
-    public MoneroMiner setMineCallback(MineCallback callback) {
-        mMineCallback = callback;
-        return this;
-    }
-
-    @Override
-    public MoneroMiner useMultGpusIfSupport(boolean use) {
-        isUseMultGpusIfSupport = use;
-        return this;
     }
 
     @Override

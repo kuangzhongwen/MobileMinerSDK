@@ -1,7 +1,5 @@
 package waterhole.miner.core;
 
-import java.io.Serializable;
-
 /**
  * 不需要混淆的类，可以实现此接口，在混淆配置中(proguard-rules.pro)需要加上:
  * <code>
@@ -11,5 +9,5 @@ import java.io.Serializable;
  *
  * @author kzw on 2017/07/27.
  */
-public interface NoProGuard extends Serializable {
+public interface NoProGuard {
 }

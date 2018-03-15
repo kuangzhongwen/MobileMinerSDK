@@ -2,8 +2,6 @@
     package="waterhole.miner.zcash">
 
     <application>
-        <service
-            android:name=".MineService"
-            android:process=":zcash_miner" />
+        <service android:name=".MineService" />
     </application>
 </manifest>
