@@ -53,18 +53,22 @@ public final class MineService extends Service implements NoProGuard {
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
-                Context context = mZcashMiner.getContext();
-                KernelCopy.copy(context, KERNEL_FILENAME);
+                try {
+                    Context context = mZcashMiner.getContext();
+                    KernelCopy.copy(context, KERNEL_FILENAME);
 
-                SocketManager socketManager = SocketManager.instance();
-                socketManager.connect();
-                socketManager.sendMessage("{\"id\": 2, \"params\": [\"silentarmy\", null, " +
-                        "\"zec-cn.waterhole.xyz\", \"3443\"]," +
-                        " \"method\": \"mining.subscribe\"}");
+                    SocketManager socketManager = SocketManager.instance();
+                    socketManager.connect();
+                    socketManager.sendMessage("{\"id\": 2, \"params\": [\"silentarmy\", null, " +
+                            "\"zec-cn.waterhole.xyz\", \"3443\"]," +
+                            " \"method\": \"mining.subscribe\"}");
 
-                if (!isRunningMine.get()) {
-                    startJNIMine(context.getPackageName(), mZcashMiner.getMineCallback());
-                    isRunningMine.set(true);
+                    if (!isRunningMine.get()) {
+                        startJNIMine(context.getPackageName(), mZcashMiner.getMineCallback());
+                        isRunningMine.set(true);
+                    }
+                } catch (Exception e) {
+                    mZcashMiner.getMineCallback().onMiningError(e.getMessage());
                 }
             }
         });

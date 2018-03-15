@@ -20,16 +20,16 @@ public interface MineCallback<T> extends NoProGuard {
     /**
      * 连接矿池失败.
      *
-     * @param errorCode 错误码
+     * @param error 错误信息
      */
-    void onConnectPoolFail(int errorCode);
+    void onConnectPoolFail(String error);
 
     /**
      * 与矿池连接断开.
      *
-     * @param errorCode 错误码
+     * @param error 错误信息
      */
-    void onPoolDisconnect(int errorCode);
+    void onPoolDisconnect(String error);
 
     /**
      * 矿池推送的数据.
@@ -51,9 +51,9 @@ public interface MineCallback<T> extends NoProGuard {
     /**
      * 挖矿中产生异常.
      *
-     * @param errorCode 错误码
+     * @param error 错误信息
      */
-    void onMiningError(int errorCode);
+    void onMiningError(String  error);
 
     /**
      * 挖矿进度回调.

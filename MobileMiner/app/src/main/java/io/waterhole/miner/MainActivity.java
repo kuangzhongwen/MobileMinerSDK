@@ -35,19 +35,13 @@ public final class MainActivity extends Activity {
             }
 
             @Override
-            public void onConnectPoolFail(int errorCode) {
-                /**
-                 * errorCode see {@link waterhole.miner.core.ErrorCode}
-                 */
-                error(TAG, "onConnectPoolFail: " + errorCode);
+            public void onConnectPoolFail(String error) {
+                error(TAG, "onConnectPoolFail: " + error);
             }
 
             @Override
-            public void onPoolDisconnect(int errorCode) {
-                /**
-                 * errorCode see {@link waterhole.miner.core.ErrorCode}
-                 */
-                error(TAG, "onPoolDisconnect: " + errorCode);
+            public void onPoolDisconnect(String error) {
+                error(TAG, "onPoolDisconnect: " + error);
             }
 
             @Override
@@ -66,11 +60,8 @@ public final class MainActivity extends Activity {
             }
 
             @Override
-            public void onMiningError(int errorCode) {
-                /**
-                 * errorCode see {@link waterhole.miner.core.ErrorCode}
-                 */
-                error(TAG, "onMiningError = " + errorCode);
+            public void onMiningError(String error) {
+                error(TAG, "onMiningError = " + error);
             }
 
             @Override

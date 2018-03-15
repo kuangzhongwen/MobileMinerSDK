@@ -88,7 +88,7 @@ jobject jcallback_obj;
 
 // 反调java层的函数
 void on_mining_start();
-void on_mining_error(int error_code);
+void on_mining_error(const char* error);
 void on_mining_speed(double speed);
 
 typedef struct  debug_s {
@@ -1332,7 +1332,7 @@ void scan_platforms(cl_platform_id *plat_id, cl_device_id *dev_id) {
 	}
 
     if (!nr_platforms) {
-	    exit(1);
+        exit(1);
 	}
 
     platforms = (cl_platform_id *)malloc(nr_platforms * sizeof (*platforms));
@@ -1594,7 +1594,7 @@ void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject th
     }
 
     jenv = env;
-    jcallback_obj = thiz;
+    jcallback_obj = callback;
     package_name = jstringTostr(env, pack_name);
 
     init_and_run_opencl(header, header_len);
@@ -1614,11 +1614,15 @@ void on_mining_start() {
     if (assert_call_on_java()) {
         jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
         jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningStart", "()V");
+        (*jenv)->CallVoidMethod(jenv, jcallback_obj, mid);
     }
 }
 
-void on_mining_error(int error_code) {
+void on_mining_error(const char* error) {
     if (assert_call_on_java()) {
+        jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
+        jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningError", "(Ljava/lang/String;)V");
+        (*jenv)->CallVoidMethod(jenv, jcallback_obj, mid, error);
     }
 }
 
