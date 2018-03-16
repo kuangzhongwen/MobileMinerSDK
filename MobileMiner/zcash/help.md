@@ -15,3 +15,7 @@
      mali GPU：/system/vendor/lib/egl/libGLES_mali.so
      
      android N(7.0) 不能使用dlopen打开私有库
+     
+#### 4. 对比测试服务器kernel
+     
+     scp root@106.14.96.155:/root/silentarmy/_kernel.h  /Users/kuangzhongwen/Desktop/
