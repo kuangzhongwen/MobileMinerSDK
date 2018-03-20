@@ -1,1 +1,1 @@
-include ':app', ':miner-core', ':zcash', ':monero'
+include ':app', ':miner-core', ':zcash', ':eth', ':monero'

@@ -38,5 +38,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     compile project(':zcash')
+    compile project(':eth')
     compile project(':monero')
 }

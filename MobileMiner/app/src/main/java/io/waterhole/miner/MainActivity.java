@@ -38,6 +38,7 @@ public final class MainActivity extends Activity {
         Spinner spinner = (Spinner) findViewById(R.id.coin_spinner);
         final List<String> datas = new ArrayList<>();
         datas.add("zcash");
+        datas.add("eth");
         datas.add("menero");
         CoinAdapter adapter = new CoinAdapter(getApplicationContext());
         adapter.setDatas(datas);
