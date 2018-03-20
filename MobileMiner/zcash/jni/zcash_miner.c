@@ -82,6 +82,8 @@ const unsigned int mining_sleep_seconds = 0;
 
 char* package_name;
 
+char* last_job;
+
 // 挖矿持有的jenv
 JNIEnv* jenv;
 // 对应java的MineCallback
@@ -1173,11 +1175,13 @@ void mining_mode(cl_context ctx, cl_command_queue queue, cl_kernel k_init_ht, cl
     uint64_t	status_period = 500e3; // time (usec) between statuses
 
     for (i = 0; stop_mining == 0; i++) {
-        // iteration #0 always reads a job or else there is nothing to do
-//        if (read_last_line(line, sizeof (line), !i)) {
-//            mining_parse_job(line, target, sizeof (target), job_id, sizeof (job_id),
-//               header, ZCASH_BLOCK_HEADER_LEN, &fixed_nonce_bytes);
-//        }
+        // teration #0 always reads a job or else there is nothing to do
+       printf("%s",last_job);
+       if (last_job!=NULL&&last_job[0]) {
+           mining_parse_job(last_job, target, sizeof (target), job_id, sizeof (job_id),
+               header, ZCASH_BLOCK_HEADER_LEN, &fixed_nonce_bytes);
+           last_job="";
+       }
         sleep(mining_sleep_seconds);
         total += solve_equihash(ctx, queue, k_init_ht, k_rounds, k_sols, buf_ht,
                 buf_sols, buf_dbg, dbg_size, header, ZCASH_BLOCK_HEADER_LEN, 1,
@@ -1194,6 +1198,10 @@ void mining_mode(cl_context ctx, cl_command_queue queue, cl_kernel k_init_ht, cl
             on_mining_status(total, total_shares);
         }
     }
+}
+
+void Java_waterhole_miner_zcash_MineService_writeJob(JNIEnv *env,  jobject thiz, jstring job){
+    last_job=jstringTostr(env , job);
 }
 
 char* itostr(char *str, uint64_t i) {

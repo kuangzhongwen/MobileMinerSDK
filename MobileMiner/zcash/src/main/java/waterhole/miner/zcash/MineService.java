@@ -26,10 +26,13 @@ public final class MineService extends Service implements NoProGuard {
     private static final String KERNEL_FILENAME = "zcash.kernel";
 
     // ZcashMiner实例对象
-    private final ZcashMiner mZcashMiner = ZcashMiner.instance();
+    public final ZcashMiner mZcashMiner = ZcashMiner.instance();
 
     // 避免重复启动
     protected final AtomicBoolean isRunningMine = new AtomicBoolean(false);
+
+    //矿池通讯实例
+    public static MinerPoolCommunicator mMinerPoolCommunicator;
 
     static {
         try {
@@ -39,9 +42,11 @@ public final class MineService extends Service implements NoProGuard {
         }
     }
 
-    private native void startJNIMine(String packName, MineCallback callback);
+    public native void startJNIMine(String packName, MineCallback callback);
 
     private native void stopJNIMine();
+
+    public native void writeJob(String job);
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -50,6 +55,8 @@ public final class MineService extends Service implements NoProGuard {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (mMinerPoolCommunicator == null)
+            mMinerPoolCommunicator = new MinerPoolCommunicator(this);
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
@@ -57,16 +64,12 @@ public final class MineService extends Service implements NoProGuard {
                     Context context = mZcashMiner.getContext();
                     KernelCopy.copy(context, KERNEL_FILENAME);
 
-                    SocketManager socketManager = SocketManager.instance();
-                    socketManager.connect();
-                    socketManager.sendMessage("{\"id\": 2, \"params\": [\"silentarmy\", null, " +
-                            "\"zec-cn.waterhole.xyz\", \"3443\"]," +
-                            " \"method\": \"mining.subscribe\"}");
+                    mMinerPoolCommunicator.startCommunicate();
 
-                    if (!isRunningMine.get()) {
-                        startJNIMine(context.getPackageName(), mZcashMiner.getMineCallback());
-                        isRunningMine.set(true);
-                    }
+//                    if (!isRunningMine.get()) {
+//                        startJNIMine(context.getPackageName(), mZcashMiner.getMineCallback());
+//                        isRunningMine.set(true);
+//                    }
                 } catch (Exception e) {
                     MineCallback callback = mZcashMiner.getMineCallback();
                     if (callback != null) {
@@ -83,6 +86,7 @@ public final class MineService extends Service implements NoProGuard {
         super.onDestroy();
 
         stopJNIMine();
+        mMinerPoolCommunicator.disconnect();
         isRunningMine.set(false);
         MineCallback callback = mZcashMiner.getMineCallback();
         if (callback != null) {

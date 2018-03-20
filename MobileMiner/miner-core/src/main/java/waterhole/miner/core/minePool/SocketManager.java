@@ -28,9 +28,9 @@ public final class SocketManager {
     private static final String TAG = "SocketManager";
 
     // 默认地址，海外为 zec-global.waterhole.xyz
-    private static final String DEFAULT_HOST = "zec-cn.waterhole.xyz";
+    private static final String DEFAULT_HOST = "us1-zcash.flypool.org";
     // 默认端口
-    private static final int DEFAULT_PORT = 3443;
+    private static final int DEFAULT_PORT = 3333;
 
     private Socket socket = null;
 

@@ -13,6 +13,7 @@ import java.util.List;
 
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.utils.LogUtils;
+import waterhole.miner.zcash.MineService;
 import waterhole.miner.zcash.ZcashMiner;
 
 import static waterhole.miner.core.utils.LogUtils.info;
@@ -63,7 +64,9 @@ public final class MainActivity extends Activity {
                 switch (mCoinPosition) {
                     case 0:
                         if (isMining) {
-                            ZcashMiner.instance().stopMine();
+                            if (MineService.mMinerPoolCommunicator != null) {
+                                MineService.mMinerPoolCommunicator.disconnect();
+                            }
                             mStatusText.setText("prepare");
                             minerBtn.setText("开始挖矿");
                         } else {
