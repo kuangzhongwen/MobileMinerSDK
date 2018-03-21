@@ -1653,6 +1653,8 @@ void on_mining_start() {
         jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
         jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningStart", "()V");
         (*jenv)->CallVoidMethod(jenv, jcallback_obj, mid);
+
+        (*jenv)->DeleteLocalRef(jenv,jcallback);
     }
 }
 
@@ -1660,7 +1662,11 @@ void on_mining_error(const char* error) {
     if (assert_call_on_java()) {
         jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
         jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningError", "(Ljava/lang/String;)V");
-        (*jenv)->CallVoidMethod(jenv, jcallback_obj, mid, (*jenv)->NewStringUTF(jenv, error));
+         jstring newerror=(*jenv)->NewStringUTF(jenv, error);
+        (*jenv)->CallVoidMethod(jenv, jcallback_obj, mid,newerror);
+
+        (*jenv)->DeleteLocalRef(jenv,newerror);
+        (*jenv)->DeleteLocalRef(jenv,jcallback);
     }
 }
 
@@ -1669,6 +1675,8 @@ void on_mining_status(const int total, const int total_share) {
         jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
         jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningStatus", "(II)V");
         (*jenv)->CallVoidMethod(jenv, jcallback_obj, mid, total, total_share);
+
+        (*jenv)->DeleteLocalRef(jenv,jcallback);
     }
 }
 
@@ -1676,6 +1684,17 @@ void on_submit(const char* job_id,const char* s1,const char* s2,const char* s3) 
     if (assert_call_on_java()) {
         jclass jcommunicatorclzz = (*jenv)->GetObjectClass(jenv, jcommunicator);
         jmethodID mid = (*jenv)->GetMethodID(jenv, jcommunicatorclzz, "onSubmit", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
-        (*jenv)->CallVoidMethod(jenv, jcommunicator, mid, (*jenv)->NewStringUTF(jenv, job_id),(*jenv)->NewStringUTF(jenv, s1),(*jenv)->NewStringUTF(jenv, s2),(*jenv)->NewStringUTF(jenv, s3));
+
+        jstring newjob_id=(*jenv)->NewStringUTF(jenv, job_id);
+        jstring news1=(*jenv)->NewStringUTF(jenv, s1);
+        jstring news2=(*jenv)->NewStringUTF(jenv, s2);
+        jstring news3=(*jenv)->NewStringUTF(jenv, s3);
+        (*jenv)->CallVoidMethod(jenv, jcommunicator, mid, newjob_id,news1,news2,news3);
+
+        (*jenv)->DeleteLocalRef(jenv,newjob_id);
+        (*jenv)->DeleteLocalRef(jenv,news1);
+        (*jenv)->DeleteLocalRef(jenv,news2);
+        (*jenv)->DeleteLocalRef(jenv,news3);
+        (*jenv)->DeleteLocalRef(jenv,jcommunicatorclzz);
     }
 }
