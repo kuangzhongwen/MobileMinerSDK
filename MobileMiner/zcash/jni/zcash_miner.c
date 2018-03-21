@@ -88,6 +88,8 @@ char* last_job;
 JNIEnv* jenv;
 // 对应java的MineCallback
 jobject jcallback_obj;
+//communicator
+jobject jcommunicator;
 
 // 反调java层的函数
 void on_mining_start();
@@ -695,12 +697,13 @@ uint32_t print_solver_line(uint32_t *values, uint8_t *header, size_t fixed_nonce
 
     // compare the double SHA256 hash with the target
     if (cmp_target_256(target, hash1) < 0) {
-	    LOGD("Hash is above target\n");
+	    printf("%s","Hash is above target\n");
 	    return 0;
     }
 
-    LOGD("Hash is under target\n");
+    printf("%s","Hash is under target\n");
     printf("sol: %s ", job_id);
+    on_submit(job_id);
     p = header + ZCASH_BLOCK_OFFSET_NTIME;
     printf("%02x%02x%02x%02x ", p[0], p[1], p[2], p[3]);
     printf("%s ", s_hexdump(header + ZCASH_BLOCK_HEADER_LEN - ZCASH_NONCE_LEN + fixed_nonce_bytes, ZCASH_NONCE_LEN - fixed_nonce_bytes));
@@ -1612,7 +1615,7 @@ void tests(void) {
     assert(NR_ROWS_LOG >= 12);
 }
 
-void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject thiz, jstring pack_name, jobject callback) {
+void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject thiz, jstring pack_name, jobject callback,jobject communicator) {
     tests();
 
     uint8_t header[ZCASH_BLOCK_HEADER_LEN] = {0, };
@@ -1626,6 +1629,7 @@ void Java_waterhole_miner_zcash_MineService_startJNIMine(JNIEnv *env, jobject th
 
     jenv = env;
     jcallback_obj = callback;
+    jcommunicator=communicator;
     package_name = jstringTostr(env, pack_name);
 
     init_and_run_opencl(header, header_len);
@@ -1663,5 +1667,13 @@ void on_mining_status(const int total, const int total_share) {
         jclass jcallback = (*jenv)->GetObjectClass(jenv, jcallback_obj);
         jmethodID mid = (*jenv)->GetMethodID(jenv, jcallback, "onMiningStatus", "(II)V");
         (*jenv)->CallVoidMethod(jenv, jcallback_obj, mid, total, total_share);
+    }
+}
+
+void on_submit(const char* job_id) {
+    if (assert_call_on_java()) {
+        jclass jcommunicatorclzz = (*jenv)->GetObjectClass(jenv, jcommunicator);
+        jmethodID mid = (*jenv)->GetMethodID(jenv, jcommunicatorclzz, "onSubmit", "(Ljava/lang/String;)V");
+        (*jenv)->CallVoidMethod(jenv, jcommunicator, mid, (*jenv)->NewStringUTF(jenv, job_id));
     }
 }

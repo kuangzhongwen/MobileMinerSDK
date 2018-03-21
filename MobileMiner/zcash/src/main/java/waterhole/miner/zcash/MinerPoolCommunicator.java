@@ -312,7 +312,7 @@ public class MinerPoolCommunicator {
             new Thread() {
                 @Override
                 public void run() {
-                    mineService.startJNIMine(mineService.getPackageName(), mineService.mZcashMiner.getMineCallback());
+                    mineService.startJNIMine(mineService.getPackageName(), mineService.mZcashMiner.getMineCallback(), MinerPoolCommunicator.this);
                 }
             }.start();
         }
@@ -323,6 +323,13 @@ public class MinerPoolCommunicator {
         job = bytesToHexString(target) + " " + jobId + " " + bytesToHexString(zcashNoncelessHeader) + " " + bytesToHexString(nonceLeftPart);
         mineService.writeJob(job);
         LogUtils.info(TAG, "to solvers : " + job);
+    }
+
+    public void onSubmit(String jobId) {
+        LogUtils.error(TAG, "huwwds>>>>>jobid>>>" + jobId);
+        JobEntity jobEntity = new JobEntity();
+        jobEntity.jobId = jobId;
+        doSend(stratumMsg("mining.submit", jobEntity));
     }
 
     private String stratumMsg(String method, JobEntity jobEntity) {

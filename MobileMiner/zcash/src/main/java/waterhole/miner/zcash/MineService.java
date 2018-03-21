@@ -4,14 +4,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import waterhole.miner.core.KernelCopy;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.NoProGuard;
-import waterhole.miner.core.minePool.SocketManager;
-
 import static waterhole.miner.core.utils.LogUtils.printStackTrace;
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 
@@ -39,7 +34,7 @@ public final class MineService extends Service implements NoProGuard {
         }
     }
 
-    public native void startJNIMine(String packName, MineCallback callback);
+    public native void startJNIMine(String packName, MineCallback callback, MinerPoolCommunicator communicator);
 
     private native void stopJNIMine();
 
