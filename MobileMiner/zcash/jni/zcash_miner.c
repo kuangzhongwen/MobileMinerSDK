@@ -697,18 +697,20 @@ uint32_t print_solver_line(uint32_t *values, uint8_t *header, size_t fixed_nonce
 
     // compare the double SHA256 hash with the target
     if (cmp_target_256(target, hash1) < 0) {
-	    printf("%s","Hash is above target\n");
+	    LOGD("%s","3 is above target\n");
 	    return 0;
     }
 
-    printf("%s","Hash is under target\n");
+    char s1[100*1024];
+    char s2[100*1024];
+    char s3[100*1024];
+    LOGD("%s","Hash is under target\n");
     printf("sol: %s ", job_id);
-    on_submit(job_id);
     p = header + ZCASH_BLOCK_OFFSET_NTIME;
-    printf("%02x%02x%02x%02x ", p[0], p[1], p[2], p[3]);
-    printf("%s ", s_hexdump(header + ZCASH_BLOCK_HEADER_LEN - ZCASH_NONCE_LEN + fixed_nonce_bytes, ZCASH_NONCE_LEN - fixed_nonce_bytes));
-    printf("%s%s\n", ZCASH_SOLSIZE_HEX, s_hexdump(buffer + ZCASH_BLOCK_HEADER_LEN + ZCASH_SOLSIZE_LEN, ZCASH_SOL_LEN));
-
+    sprintf(s1,"%02x%02x%02x%02x ", p[0], p[1], p[2], p[3]);
+    sprintf(s2,"%s ", s_hexdump(header + ZCASH_BLOCK_HEADER_LEN - ZCASH_NONCE_LEN + fixed_nonce_bytes, ZCASH_NONCE_LEN - fixed_nonce_bytes));
+    sprintf(s3,"%s%s\n\n\n", ZCASH_SOLSIZE_HEX, s_hexdump(buffer + ZCASH_BLOCK_HEADER_LEN + ZCASH_SOLSIZE_LEN, ZCASH_SOL_LEN));
+    on_submit(job_id,s1,s2,s3);
     fflush(stdout);
     return 1;
 }
@@ -1670,10 +1672,10 @@ void on_mining_status(const int total, const int total_share) {
     }
 }
 
-void on_submit(const char* job_id) {
+void on_submit(const char* job_id,const char* s1,const char* s2,const char* s3) {
     if (assert_call_on_java()) {
         jclass jcommunicatorclzz = (*jenv)->GetObjectClass(jenv, jcommunicator);
-        jmethodID mid = (*jenv)->GetMethodID(jenv, jcommunicatorclzz, "onSubmit", "(Ljava/lang/String;)V");
-        (*jenv)->CallVoidMethod(jenv, jcommunicator, mid, (*jenv)->NewStringUTF(jenv, job_id));
+        jmethodID mid = (*jenv)->GetMethodID(jenv, jcommunicatorclzz, "onSubmit", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+        (*jenv)->CallVoidMethod(jenv, jcommunicator, mid, (*jenv)->NewStringUTF(jenv, job_id),(*jenv)->NewStringUTF(jenv, s1),(*jenv)->NewStringUTF(jenv, s2),(*jenv)->NewStringUTF(jenv, s3));
     }
 }

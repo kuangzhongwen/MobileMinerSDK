@@ -325,10 +325,12 @@ public class MinerPoolCommunicator {
         LogUtils.info(TAG, "to solvers : " + job);
     }
 
-    public void onSubmit(String jobId) {
-        LogUtils.error(TAG, "huwwds>>>>>jobid>>>" + jobId);
+    public void onSubmit(String jobId, String ntime, String nonce_rightpart, String sol) {
         JobEntity jobEntity = new JobEntity();
         jobEntity.jobId = jobId;
+        jobEntity.ntime = ntime;
+        jobEntity.nonceRightPart = nonce_rightpart;
+        jobEntity.sol = sol;
         doSend(stratumMsg("mining.submit", jobEntity));
     }
 
