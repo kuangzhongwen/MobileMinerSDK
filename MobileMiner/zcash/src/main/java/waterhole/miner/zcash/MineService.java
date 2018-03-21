@@ -28,9 +28,6 @@ public final class MineService extends Service implements NoProGuard {
     // ZcashMiner实例对象
     public final ZcashMiner mZcashMiner = ZcashMiner.instance();
 
-    // 避免重复启动
-    protected final AtomicBoolean isRunningMine = new AtomicBoolean(false);
-
     //矿池通讯实例
     public static MinerPoolCommunicator mMinerPoolCommunicator;
 
@@ -65,11 +62,6 @@ public final class MineService extends Service implements NoProGuard {
                     KernelCopy.copy(context, KERNEL_FILENAME);
 
                     mMinerPoolCommunicator.startCommunicate();
-
-//                    if (!isRunningMine.get()) {
-//                        startJNIMine(context.getPackageName(), mZcashMiner.getMineCallback());
-//                        isRunningMine.set(true);
-//                    }
                 } catch (Exception e) {
                     MineCallback callback = mZcashMiner.getMineCallback();
                     if (callback != null) {
@@ -87,7 +79,6 @@ public final class MineService extends Service implements NoProGuard {
 
         stopJNIMine();
         mMinerPoolCommunicator.disconnect();
-        isRunningMine.set(false);
         MineCallback callback = mZcashMiner.getMineCallback();
         if (callback != null) {
             callback.onMiningStop();
