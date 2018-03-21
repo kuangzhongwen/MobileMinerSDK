@@ -23,60 +23,60 @@ public final class GsonUtil {
 
         private Type type;
 
-        public ListDynamicGenericType ( Type type ) {
+        public ListDynamicGenericType(Type type) {
             this.type = type;
         }
 
         @Override
-        public Type[] getActualTypeArguments () {
-            return new Type[] { type };
+        public Type[] getActualTypeArguments() {
+            return new Type[]{type};
         }
 
         @Override
-        public Type getOwnerType () {
+        public Type getOwnerType() {
             return null;
         }
 
         @Override
-        public Type getRawType () {
+        public Type getRawType() {
             return List.class;
         }
     }
 
     static {
-        if ( gson == null ) {
+        if (gson == null) {
             gson = new Gson();
         }
     }
 
-    private GsonUtil () {
+    private GsonUtil() {
     }
 
     /**
      * 对象转成json
      */
-    public static String obj2json ( Object object ) {
+    public static String obj2json(Object object) {
         String gsonString = null;
-        gsonString = gson.toJson( object );
+        gsonString = gson.toJson(object);
         return gsonString;
     }
 
     /**
      * json转成对象
      */
-    public static < T > T json2Obj ( String gsonString, Class< T > cls ) {
+    public static <T> T json2Obj(String gsonString, Class<T> cls) {
         T t = null;
-        t = gson.fromJson( gsonString, cls );
+        t = gson.fromJson(gsonString, cls);
         return t;
     }
 
     /**
      * json转成list
      */
-    public static < T > List< T > json2List ( String gsonString, Class< T > cls ) {
-        List< T > list = null;
-        ListDynamicGenericType type = new ListDynamicGenericType( cls );
-        list = gson.fromJson( gsonString, type );
+    public static <T> List<T> json2List(String gsonString, Class<T> cls) {
+        List<T> list = null;
+        ListDynamicGenericType type = new ListDynamicGenericType(cls);
+        list = gson.fromJson(gsonString, type);
         return list;
     }
 }
