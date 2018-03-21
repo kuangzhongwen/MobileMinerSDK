@@ -6,6 +6,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import waterhole.miner.core.utils.LogUtils;
+
 /**
  * ***************************************************************************
  * * <p/>
@@ -57,7 +59,11 @@ public final class GsonUtil {
      */
     public static String obj2json(Object object) {
         String gsonString = null;
-        gsonString = gson.toJson(object);
+        try {
+            gsonString = gson.toJson(object);
+        } catch (Exception e) {
+            LogUtils.printStackTrace(e);
+        }
         return gsonString;
     }
 

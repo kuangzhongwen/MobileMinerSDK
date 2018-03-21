@@ -181,6 +181,8 @@ public class MinerPoolCommunicator {
 
     public void doSend(String msg) {
         try {
+            if (TextUtils.isEmpty(msg))
+                return;
             LogUtils.info(TAG, "doSend >>>" + msg);
             OutputStreamWriter osw = new OutputStreamWriter(outStr);
             osw.write(msg + "\n");
