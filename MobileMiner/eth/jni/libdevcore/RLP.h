@@ -121,8 +121,8 @@ public:
 	bool operator!=(char const* _s) const { return isData() && toString() != _s; }
 	bool operator==(std::string const& _s) const { return isData() && toString() == _s; }
 	bool operator!=(std::string const& _s) const { return isData() && toString() != _s; }
-	template <unsigned _N> bool operator==(FixedHash<_N> const& _h) const { return isData() && toHash<_N>() == _h; }
-	template <unsigned _N> bool operator!=(FixedHash<_N> const& _s) const { return isData() && toHash<_N>() != _s; }
+	template <unsigned _NUMBER> bool operator==(FixedHash<_NUMBER> const& _h) const { return isData() && toHash<_NUMBER>() == _h; }
+	template <unsigned _NUMBER> bool operator!=(FixedHash<_NUMBER> const& _s) const { return isData() && toHash<_NUMBER>() != _s; }
 	bool operator==(unsigned const& _i) const { return isInt() && toInt<unsigned>() == _i; }
 	bool operator!=(unsigned const& _i) const { return isInt() && toInt<unsigned>() != _i; }
 	bool operator==(u256 const& _i) const { return isInt() && toInt<u256>() == _i; }
@@ -177,7 +177,7 @@ public:
 	explicit operator u160() const { return toInt<u160>(); }
 	explicit operator u256() const { return toInt<u256>(); }
 	explicit operator bigint() const { return toInt<bigint>(); }
-	template <unsigned _N> explicit operator FixedHash<_N>() const { return toHash<FixedHash<_N>>(); }
+	template <unsigned _NUMBER> explicit operator FixedHash<_NUMBER>() const { return toHash<FixedHash<_NUMBER>>(); }
 	template <class T, class U> explicit operator std::pair<T, U>() const { return toPair<T, U>(); }
 	template <class T> explicit operator std::vector<T>() const { return toVector<T>(); }
 	template <class T> explicit operator std::set<T>() const { return toSet<T>(); }
@@ -257,22 +257,22 @@ public:
 		return fromBigEndian<_T>(p);
 	}
 
-	template <class _N> _N toHash(int _flags = Strict) const
+	template <class _NUMBER> _NUMBER toHash(int _flags = Strict) const
 	{
 		requireGood();
 		auto p = payload();
 		auto l = p.size();
-		if (!isData() || (l > _N::size && (_flags & FailIfTooBig)) || (l < _N::size && (_flags & FailIfTooSmall)))
+		if (!isData() || (l > _NUMBER::size && (_flags & FailIfTooBig)) || (l < _NUMBER::size && (_flags & FailIfTooSmall)))
 		{
 			if (_flags & ThrowOnFail)
 				BOOST_THROW_EXCEPTION(BadCast());
 			else
-				return _N();
+				return _NUMBER();
 		}
 
-		_N ret;
-		size_t s = std::min<size_t>(_N::size, l);
-		memcpy(ret.data() + _N::size - s, p.data(), s);
+		_NUMBER ret;
+		size_t s = std::min<size_t>(_NUMBER::size, l);
+		memcpy(ret.data() + _NUMBER::size - s, p.data(), s);
 		return ret;
 	}
 
