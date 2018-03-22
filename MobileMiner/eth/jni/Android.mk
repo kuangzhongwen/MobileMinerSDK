@@ -9,7 +9,7 @@ include $(PREBUILT_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_MODULE    := eth-dev-core
 
-LOCAL_CPPFLAGS += -std=c++11 -fexceptions -frtti
+LOCAL_CPPFLAGS += -std=c++11 -fexceptions -frtti -lpthread
 LOCAL_C_INCLUDES += ./jni/boost/include/
 LOCAL_STATIC_LIBRARIES := libboost_system
 

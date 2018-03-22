@@ -29,8 +29,6 @@
 using namespace std;
 using namespace dev;
 
-//⊳⊲◀▶■▣▢□▷◁▧▨▩▲◆◉◈◇◎●◍◌○◼☑☒☎☢☣☰☀♽♥♠✩✭❓✔✓✖✕✘✓✔✅⚒⚡⦸⬌∅⁕«««»»»⚙
-
 // Logging
 int dev::g_logVerbosity = 5;
 bool dev::g_useColor = true;
@@ -94,6 +92,8 @@ ThreadLocalLogName g_logThreadName("main");
 
 string dev::getThreadName()
 {
+// todo android getThreadName
+/**
 #if defined(__linux__) || defined(__APPLE__)
 	char buffer[128];
 	pthread_getname_np(pthread_self(), buffer, 127);
@@ -102,10 +102,14 @@ string dev::getThreadName()
 #else
 	return ThreadLocalLogName::name ? ThreadLocalLogName::name : "<unknown>";
 #endif
+*/
+	return ThreadLocalLogName::name ? ThreadLocalLogName::name : "<unknown>";
 }
 
 void dev::setThreadName(char const* _n)
 {
+// todo android setThreadName
+/**
 #if defined(__linux__)
 	pthread_setname_np(pthread_self(), _n);
 #elif defined(__APPLE__)
@@ -113,6 +117,7 @@ void dev::setThreadName(char const* _n)
 #else
 	ThreadLocalLogName::name = _n;
 #endif
+*/
 }
 
 void dev::simpleDebugOut(std::string const& _s)
