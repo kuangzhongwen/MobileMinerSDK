@@ -6,6 +6,7 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/boost/include
 LOCAL_SRC_FILES := $(LOCAL_PATH)/boost/lib/libboost_system.a
 include $(PREBUILT_STATIC_LIBRARY)
 
+
 include $(CLEAR_VARS)
 LOCAL_MODULE    := eth-dev-core
 
@@ -20,6 +21,18 @@ LOCAL_SRC_FILES := \
         ./libdevcore/RLP.cpp \
         ./libdevcore/SHA3.cpp \
         ./libdevcore/Worker.cpp
+
+include $(BUILD_SHARED_LIBRARY)
+
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := eth-hash
+LOCAL_C_INCLUDES += ./jni/libethash/
+
+LOCAL_SRC_FILES := \
+        ./libethash/internal.c \
+        ./libethash/sha3.c
+LOCAL_CFLAGS += -std=gnu99
 
 include $(BUILD_SHARED_LIBRARY)
 
