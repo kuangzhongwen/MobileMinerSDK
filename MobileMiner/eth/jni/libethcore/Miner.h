@@ -199,7 +199,8 @@ class Miner: public Worker
 public:
 
 	Miner(std::string const& _name, FarmFace& _farm, size_t _index):
-		Worker(_name + std::to_string(_index)),
+	// todo 矿工名暂时为空
+		Worker(_name + ""),
 		index(_index),
 		farm(_farm)
 	{}

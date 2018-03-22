@@ -10,8 +10,9 @@ include $(PREBUILT_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_MODULE    := eth-dev-core
 
-LOCAL_CPPFLAGS += -std=c++11 -fexceptions -frtti -lpthread
+LOCAL_CPPFLAGS := -std=c++11 -fexceptions -frtti -lpthread
 LOCAL_C_INCLUDES += ./jni/boost/include/
+LOCAL_C_INCLUDES += ./jni/libdevcore/
 LOCAL_STATIC_LIBRARIES := libboost_system
 
 LOCAL_SRC_FILES := \
@@ -22,7 +23,7 @@ LOCAL_SRC_FILES := \
         ./libdevcore/SHA3.cpp \
         ./libdevcore/Worker.cpp
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
 
 
 include $(CLEAR_VARS)
@@ -34,6 +35,19 @@ LOCAL_SRC_FILES := \
         ./libethash/sha3.c
 LOCAL_CFLAGS += -std=gnu99
 
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+LOCAL_CPPFLAGS := -std=c++11 -fexceptions -frtti
+LOCAL_MODULE    := eth-core
+LOCAL_C_INCLUDES += ./jni/libethcore/
+
+LOCAL_STATIC_LIBRARIES := eth-dev-core eth-hash
+
+LOCAL_SRC_FILES := \
+        ./libethcore/BlockHeader.cpp \
+        ./libethcore/EthashAux.cpp \
+        ./libethcore/Miner.cpp
+
 include $(BUILD_SHARED_LIBRARY)
-
-
