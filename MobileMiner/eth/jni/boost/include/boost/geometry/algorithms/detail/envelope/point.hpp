@@ -4,10 +4,9 @@
 // Copyright (c) 2008-2015 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2015, 2016.
-// Modifications copyright (c) 2015-2016, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015.
+// Modifications copyright (c) 2015, Oracle and/or its affiliates.
 
-// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 
 // Distributed under the Boost Software License, Version 1.0.
@@ -59,8 +58,8 @@ struct envelope_one_point
             >::apply(point, box_corner);
     }
 
-    template <typename Point, typename Box, typename Strategy>
-    static inline void apply(Point const& point, Box& mbr, Strategy const&)
+    template <typename Point, typename Box>
+    static inline void apply(Point const& point, Box& mbr)
     {
         apply<min_corner>(point, mbr);
         apply<max_corner>(point, mbr);
@@ -70,8 +69,8 @@ struct envelope_one_point
 
 struct envelope_point_on_spheroid
 {
-    template<typename Point, typename Box, typename Strategy>
-    static inline void apply(Point const& point, Box& mbr, Strategy const& strategy)
+    template<typename Point, typename Box>
+    static inline void apply(Point const& point, Box& mbr)
     {
         Point normalized_point = detail::return_normalized<Point>(point);
 
@@ -89,7 +88,7 @@ struct envelope_point_on_spheroid
         envelope_one_point
             <
                 2, dimension<Point>::value
-            >::apply(normalized_point, mbr, strategy);
+            >::apply(normalized_point, mbr);
     }
 };
 

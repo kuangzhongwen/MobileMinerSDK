@@ -23,7 +23,7 @@ namespace boost
   class user_scheduler
   {
     /// type-erasure to store the works to do
-    typedef  executors::work work;
+    typedef  thread_detail::work work;
 
     /// the thread safe work queue
     sync_queue<work > work_queue;

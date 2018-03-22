@@ -22,8 +22,6 @@ namespace compute {
 
 /// Stores the result of \p generator for each element in the range
 /// [\p first, \p last).
-///
-/// Space complexity: \Omega(1)
 template<class OutputIterator, class Generator>
 inline void generate(OutputIterator first,
                      OutputIterator last,

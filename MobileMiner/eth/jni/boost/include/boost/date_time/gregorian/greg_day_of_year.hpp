@@ -9,8 +9,7 @@
  * $Date$
  */
 
-#include <boost/date_time/constrained_value.hpp>
-#include <boost/date_time/compiler_config.hpp>
+#include "boost/date_time/constrained_value.hpp"
 #include <stdexcept>
 #include <string>
 
@@ -18,7 +17,7 @@ namespace boost {
 namespace gregorian {
 
   //! Exception type for day of year (1..366)
-  struct BOOST_SYMBOL_VISIBLE bad_day_of_year : public std::out_of_range
+  struct bad_day_of_year : public std::out_of_range
   {
     bad_day_of_year() : 
       std::out_of_range(std::string("Day of year value is out of range 1..366")) 

@@ -22,8 +22,6 @@ namespace compute {
 /// Removes each element equal to \p value in the range [\p first,
 /// \p last).
 ///
-/// Space complexity: \Omega(3n)
-///
 /// \see remove_if()
 template<class Iterator, class T>
 inline Iterator remove(Iterator first,

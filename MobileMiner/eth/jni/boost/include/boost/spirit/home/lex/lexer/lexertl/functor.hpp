@@ -98,7 +98,11 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
         };
 
     public:
-        functor() {}
+        functor()
+#if defined(__PGI)
+          : eof()
+#endif 
+        {}
 
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1310)
         // somehow VC7.1 needs this (meaningless) assignment operator

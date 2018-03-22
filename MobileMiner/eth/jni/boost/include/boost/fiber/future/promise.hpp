@@ -12,8 +12,8 @@
 #include <utility>
 
 #include <boost/config.hpp>
-#include <boost/core/pointer_traits.hpp>
 
+#include <boost/fiber/detail/convert.hpp>
 #include <boost/fiber/exceptions.hpp>
 #include <boost/fiber/future/detail/shared_state.hpp>
 #include <boost/fiber/future/detail/shared_state_object.hpp>
@@ -25,10 +25,10 @@ namespace detail {
 
 template< typename R >
 struct promise_base {
-    typedef typename shared_state< R >::ptr_type   ptr_type;
+    typedef typename shared_state< R >::ptr_t   ptr_t;
 
     bool            obtained_{ false };
-    ptr_type        future_{};
+    ptr_t           future_{};
 
     promise_base() :
         promise_base{ std::allocator_arg, std::allocator< promise_base >{} } {
@@ -36,20 +36,18 @@ struct promise_base {
 
     template< typename Allocator >
     promise_base( std::allocator_arg_t, Allocator alloc) {
-        typedef detail::shared_state_object< R, Allocator >  object_type;
-        typedef std::allocator_traits< typename object_type::allocator_type > traits_type;
-        typedef pointer_traits< typename traits_type::pointer > ptrait_type;
-        typename object_type::allocator_type a{ alloc };
-        typename traits_type::pointer ptr{ traits_type::allocate( a, 1) };
-        typename ptrait_type::element_type* p = ptrait_type::to_address(ptr);
+        typedef detail::shared_state_object< R, Allocator >  object_t;
+        typedef std::allocator_traits< typename object_t::allocator_t > traits_t;
+        typename object_t::allocator_t a{ alloc };
+        typename traits_t::pointer ptr{ traits_t::allocate( a, 1) };
 
         try {
-            traits_type::construct( a, p, a);
+            traits_t::construct( a, ptr, a);
         } catch (...) {
-            traits_type::deallocate( a, ptr, 1);
+            traits_t::deallocate( a, ptr, 1);
             throw;
         }
-        future_.reset(p);
+        future_.reset( convert( ptr) );
     }
 
     ~promise_base() {
@@ -68,18 +66,17 @@ struct promise_base {
     }
 
     promise_base & operator=( promise_base && other) noexcept {
-        if ( BOOST_LIKELY( this != & other) ) {
-            promise_base tmp{ std::move( other) };
-            swap( tmp);
-        }
+        if ( this == & other) return * this;
+        promise_base tmp{ std::move( other) };
+        swap( tmp);
         return * this;
     }
 
     future< R > get_future() {
-        if ( BOOST_UNLIKELY( obtained_) ) {
+        if ( obtained_) {
             throw future_already_retrieved{};
         }
-        if ( BOOST_UNLIKELY( ! future_) ) {
+        if ( ! future_) {
             throw promise_uninitialized{};
         }
         obtained_ = true;
@@ -92,7 +89,7 @@ struct promise_base {
     }
 
     void set_exception( std::exception_ptr p) {
-        if ( BOOST_UNLIKELY( ! future_) ) {
+        if ( ! future_) {
             throw promise_uninitialized{};
         }
         future_->set_exception( p);
@@ -104,14 +101,14 @@ struct promise_base {
 template< typename R >
 class promise : private detail::promise_base< R > {
 private:
-    typedef detail::promise_base< R >  base_type;
+    typedef detail::promise_base< R >  base_t;
 
 public:
     promise() = default;
 
     template< typename Allocator >
     promise( std::allocator_arg_t, Allocator alloc) :
-        base_type{ std::allocator_arg, alloc } {
+        base_t{ std::allocator_arg, alloc } {
     }
 
     promise( promise const&) = delete;
@@ -121,38 +118,38 @@ public:
     promise & operator=( promise && other) = default;
 
     void set_value( R const& value) {
-        if ( BOOST_UNLIKELY( ! base_type::future_) ) {
+        if ( ! base_t::future_) {
             throw promise_uninitialized{};
         }
-        base_type::future_->set_value( value);
+        base_t::future_->set_value( value);
     }
 
     void set_value( R && value) {
-        if ( BOOST_UNLIKELY( ! base_type::future_) ) {
+        if ( ! base_t::future_) {
             throw promise_uninitialized{};
         }
-        base_type::future_->set_value( std::move( value) );
+        base_t::future_->set_value( std::move( value) );
     }
 
     void swap( promise & other) noexcept {
-        base_type::swap( other);
+        base_t::swap( other);
     }
 
-    using base_type::get_future;
-    using base_type::set_exception;
+    using base_t::get_future;
+    using base_t::set_exception;
 };
 
 template< typename R >
 class promise< R & > : private detail::promise_base< R & > {
 private:
-    typedef detail::promise_base< R & >  base_type;
+    typedef detail::promise_base< R & >  base_t;
 
 public:
     promise() = default;
 
     template< typename Allocator >
     promise( std::allocator_arg_t, Allocator alloc) :
-        base_type{ std::allocator_arg, alloc } {
+        base_t{ std::allocator_arg, alloc } {
     }
 
     promise( promise const&) = delete;
@@ -162,31 +159,31 @@ public:
     promise & operator=( promise && other) noexcept = default;
 
     void set_value( R & value) {
-        if ( BOOST_UNLIKELY( ! base_type::future_) ) {
+        if ( ! base_t::future_) {
             throw promise_uninitialized{};
         }
-        base_type::future_->set_value( value);
+        base_t::future_->set_value( value);
     }
 
     void swap( promise & other) noexcept {
-        base_type::swap( other);
+        base_t::swap( other);
     }
 
-    using base_type::get_future;
-    using base_type::set_exception;
+    using base_t::get_future;
+    using base_t::set_exception;
 };
 
 template<>
 class promise< void > : private detail::promise_base< void > {
 private:
-    typedef detail::promise_base< void >  base_type;
+    typedef detail::promise_base< void >  base_t;
 
 public:
     promise() = default;
 
     template< typename Allocator >
     promise( std::allocator_arg_t, Allocator alloc) :
-        base_type{ std::allocator_arg, alloc } {
+        base_t{ std::allocator_arg, alloc } {
     }
 
     promise( promise const&) = delete;
@@ -197,19 +194,19 @@ public:
 
     inline
     void set_value() {
-        if ( BOOST_UNLIKELY( ! base_type::future_) ) {
+        if ( ! base_t::future_) {
             throw promise_uninitialized{};
         }
-        base_type::future_->set_value();
+        base_t::future_->set_value();
     }
 
     inline
     void swap( promise & other) noexcept {
-        base_type::swap( other);
+        base_t::swap( other);
     }
 
-    using base_type::get_future;
-    using base_type::set_exception;
+    using base_t::get_future;
+    using base_t::set_exception;
 };
 
 template< typename R >

@@ -27,11 +27,11 @@
 namespace boost {
 namespace movelib{
 
-template<class T, class RandItUninit>
+template<class T>
 class destruct_n
 {
    public:
-   explicit destruct_n(RandItUninit raw)
+   explicit destruct_n(T *raw)
       : m_ptr(raw), m_size()
    {}
 
@@ -48,6 +48,7 @@ class destruct_n
    void release()
    {
       m_size = 0u;
+      m_ptr = 0;
    }
 
    ~destruct_n()
@@ -57,7 +58,7 @@ class destruct_n
       }
    }
    private:
-   RandItUninit m_ptr;
+   T *m_ptr;
    std::size_t m_size;
 };
 

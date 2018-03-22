@@ -22,14 +22,14 @@ namespace detail {
 
 template< typename R, typename ... Args >
 struct task_base : public shared_state< R > {
-    typedef intrusive_ptr< task_base >  ptr_type;
+    typedef intrusive_ptr< task_base >  ptr_t;
 
     virtual ~task_base() {
     }
 
     virtual void run( Args && ... args) = 0;
 
-    virtual ptr_type reset() = 0;
+    virtual ptr_t reset() = 0;
 };
 
 }}}

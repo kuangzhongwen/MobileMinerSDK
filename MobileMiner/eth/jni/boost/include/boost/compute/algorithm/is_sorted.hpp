@@ -30,8 +30,6 @@ namespace compute {
 ///
 /// \return \c true if the range [\p first, \p last) is sorted
 ///
-/// Space complexity: \Omega(1)
-///
 /// \see sort()
 template<class InputIterator, class Compare>
 inline bool is_sorted(InputIterator first,

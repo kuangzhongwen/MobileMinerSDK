@@ -17,11 +17,6 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 
-#include <utility>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/detail/stack_constructor.hpp>
-#include <boost/move/utility_core.hpp>
-
 namespace boost {
 namespace serialization {
 
@@ -41,7 +36,11 @@ struct archive_input_unordered_set
         // borland fails silently w/o full namespace
         ar >> boost::serialization::make_nvp("item", t.reference());
         std::pair<typename Container::const_iterator, bool> result = 
-            s.insert(boost::move(t.reference()));
+            #ifdef BOOST_NO_CXX11_HDR_UNORDERED_SET
+                s.insert(t.reference());
+            #else
+                s.emplace(t.reference());
+            #endif
         if(result.second)
             ar.reset_object_address(& (* result.first), & t.reference());
     }
@@ -60,7 +59,11 @@ struct archive_input_unordered_multiset
         detail::stack_construct<Archive, type> t(ar, v);
         ar >> boost::serialization::make_nvp("item", t.reference());
         typename Container::const_iterator result =
-            s.insert(boost::move(t.reference()));
+            #ifdef BOOST_NO_CXX11_HDR_UNORDERED_SET
+                s.insert(t.reference());
+            #else
+                s.emplace(t.reference());
+            #endif
         ar.reset_object_address(& (* result), & t.reference());
     }
 };

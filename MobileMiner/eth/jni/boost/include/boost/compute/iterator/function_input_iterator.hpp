@@ -53,7 +53,7 @@ struct function_input_iterator_expr
     {
     }
 
-    const Function m_function;
+    Function m_function;
 };
 
 template<class Function>

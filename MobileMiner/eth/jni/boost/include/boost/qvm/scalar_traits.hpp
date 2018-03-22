@@ -47,7 +47,6 @@ boost
         template <> struct is_scalar<unsigned long> { static bool const value=true; };
         template <> struct is_scalar<float> { static bool const value=true; };
         template <> struct is_scalar<double> { static bool const value=true; };
-        template <> struct is_scalar<long double> { static bool const value=true; };
 
         namespace
         qvm_detail

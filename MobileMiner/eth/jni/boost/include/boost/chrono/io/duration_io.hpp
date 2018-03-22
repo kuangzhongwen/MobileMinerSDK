@@ -21,7 +21,7 @@
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 #include <locale>
-#include <iosfwd>
+#include <iostream>
 #include <sstream>
 
 namespace boost

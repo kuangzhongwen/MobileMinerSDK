@@ -10,7 +10,7 @@
 #define BOOST_SPIRIT_TST_IPP
 
 ///////////////////////////////////////////////////////////////////////////////
-#include <boost/move/unique_ptr.hpp>
+#include <memory> // for std::auto_ptr
 #include <boost/spirit/home/classic/core/assert.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ BOOST_SPIRIT_CLASSIC_NAMESPACE_BEGIN
         tst_node*
         clone() const
         {
-            boost::movelib::unique_ptr<tst_node> copy(new tst_node(value));
+            std::auto_ptr<tst_node> copy(new tst_node(value));
 
             if (left)
                 copy->left = left->clone();
@@ -75,7 +75,7 @@ BOOST_SPIRIT_CLASSIC_NAMESPACE_BEGIN
             }
             else
             {
-                boost::movelib::unique_ptr<T> mid_data(new T(*middle.data));
+                std::auto_ptr<T> mid_data(new T(*middle.data));
                 copy->middle.data = mid_data.release();
             }
 

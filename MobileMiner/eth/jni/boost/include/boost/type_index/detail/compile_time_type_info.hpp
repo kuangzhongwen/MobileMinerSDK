@@ -11,7 +11,7 @@
 
 /// \file compile_time_type_info.hpp
 /// \brief Contains helper macros and implementation details of boost::typeindex::ctti_type_index.
-/// Not intended for inclusion from user's code.
+/// Not intended for inclusion from user's code. 
 
 #include <boost/config.hpp>
 #include <boost/static_assert.hpp>
@@ -59,12 +59,9 @@
     // sizeof("static const char *boost::detail::ctti<") - 1, sizeof("]") - 1, true, "int>::n() [T = int"
     // note: checked on 3.1, 3.4
     BOOST_TYPE_INDEX_REGISTER_CTTI_PARSING_PARAMS(39, 1, true, "T = ")
-#elif defined(__GNUC__) && (__GNUC__ < 7) && !defined(BOOST_NO_CXX14_CONSTEXPR)
-    // sizeof("static constexpr char boost::detail::ctti<T>::s() [with unsigned int I = 0u; T = ") - 1, sizeof("]") - 1
-    BOOST_TYPE_INDEX_REGISTER_CTTI_PARSING_PARAMS(81, 1, false, "")
-#elif defined(__GNUC__) && (__GNUC__ >= 7) && !defined(BOOST_NO_CXX14_CONSTEXPR)
-    // sizeof("static constexpr char boost::detail::ctti<T>::s() [with unsigned int I = 0; T = ") - 1, sizeof("]") - 1
-    BOOST_TYPE_INDEX_REGISTER_CTTI_PARSING_PARAMS(80, 1, false, "")
+#elif defined(__GNUC__) && !defined(BOOST_NO_CXX14_CONSTEXPR)
+    // sizeof("static contexpr char boost::detail::ctti<T>::s() [with long unsigned int I = 0ul; T = ") - 1, sizeof("]") - 1
+    BOOST_TYPE_INDEX_REGISTER_CTTI_PARSING_PARAMS(87, 1, false, "")
 #elif defined(__GNUC__) && defined(BOOST_NO_CXX14_CONSTEXPR)
     // sizeof("static const char* boost::detail::ctti<T>::n() [with T = ") - 1, sizeof("]") - 1
     BOOST_TYPE_INDEX_REGISTER_CTTI_PARSING_PARAMS(57, 1, false, "")
@@ -75,7 +72,7 @@
 
 #undef BOOST_TYPE_INDEX_REGISTER_CTTI_PARSING_PARAMS
 
-namespace boost { namespace typeindex { namespace detail {
+namespace boost { namespace typeindex { namespace detail { 
     template <bool Condition>
     BOOST_CXX14_CONSTEXPR inline void assert_compile_time_legths() BOOST_NOEXCEPT {
         BOOST_STATIC_ASSERT_MSG(
@@ -97,7 +94,7 @@ namespace boost { namespace typeindex { namespace detail {
         );
     }
 
-    template <unsigned int ArrayLength>
+    template <std::size_t ArrayLength>
     BOOST_CXX14_CONSTEXPR inline const char* skip_begining_runtime(const char* begin, boost::mpl::false_) BOOST_NOEXCEPT {
         return begin;
     }
@@ -139,7 +136,7 @@ namespace boost { namespace typeindex { namespace detail {
         return static_cast<int>(*v1) - *v2;
     }
 
-    template <unsigned int ArrayLength>
+    template <std::size_t ArrayLength>
     BOOST_CXX14_CONSTEXPR inline const char* skip_begining_runtime(const char* begin, boost::mpl::true_) BOOST_NOEXCEPT {
         const char* const it = constexpr_search(
             begin, begin + ArrayLength,
@@ -148,28 +145,28 @@ namespace boost { namespace typeindex { namespace detail {
         return (it == begin + ArrayLength ? begin : it + sizeof(ctti_skip_until_runtime) - 1);
     }
 
-    template <unsigned int ArrayLength>
+    template <std::size_t ArrayLength>
     BOOST_CXX14_CONSTEXPR inline const char* skip_begining(const char* begin) BOOST_NOEXCEPT {
         assert_compile_time_legths<(ArrayLength > ctti_skip_size_at_begin + ctti_skip_size_at_end)>();
         return skip_begining_runtime<ArrayLength - ctti_skip_size_at_begin>(
-            begin + ctti_skip_size_at_begin,
+            begin + ctti_skip_size_at_begin, 
             boost::mpl::bool_<ctti_skip_more_at_runtime>()
         );
     }
 
 #if !defined(__clang__) && defined(__GNUC__) && !defined(BOOST_NO_CXX14_CONSTEXPR)
-    template <unsigned int... I>
+    template <std::size_t... I>
     struct index_seq {};
 
     template <typename Left, typename Right>
     struct make_index_sequence_join;
 
-    template <unsigned int... Left, unsigned int... Right>
+    template <std::size_t... Left, std::size_t... Right>
     struct make_index_sequence_join<index_seq<Left...>, index_seq<Right...> > {
         typedef index_seq<Left..., Right...> type;
     };
 
-    template <unsigned int C, unsigned int D>
+    template <std::size_t C, std::size_t D>
     struct make_index_seq_impl {
         typedef typename make_index_sequence_join<
             typename make_index_seq_impl<C, D / 2>::type,
@@ -177,19 +174,19 @@ namespace boost { namespace typeindex { namespace detail {
         >::type type;
     };
 
-    template <unsigned int C>
+    template <std::size_t C>
     struct make_index_seq_impl<C, 0> {
         typedef index_seq<> type;
     };
 
-    template <unsigned int C>
+    template <std::size_t C>
     struct make_index_seq_impl<C, 1> {
         typedef index_seq<C> type;
     };
 
     template <char... C>
     struct cstring {
-        static constexpr unsigned int size_ = sizeof...(C);
+        static constexpr std::size_t size_ = sizeof...(C);
         static constexpr char data_[size_] = { C... };
     };
 
@@ -206,12 +203,12 @@ namespace boost { namespace detail {
 /// This name must be as short as possible, to avoid code bloat
 template <class T>
 struct ctti {
-
+   
 #if !defined(__clang__) && defined(__GNUC__) && !defined(BOOST_NO_CXX14_CONSTEXPR)
     //helper functions
-    template <unsigned int I>
+    template <std::size_t I>
     constexpr static char s() BOOST_NOEXCEPT { // step
-        constexpr unsigned int offset =
+        constexpr std::size_t offset =
                   (I >= 10u      ? 1u : 0u)
                 + (I >= 100u     ? 1u : 0u)
                 + (I >= 1000u    ? 1u : 0u)
@@ -229,17 +226,17 @@ struct ctti {
     #endif
     }
 
-    template <unsigned int ...Indexes>
+    template <std::size_t ...Indexes>
     constexpr static const char* impl(::boost::typeindex::detail::index_seq<Indexes...> ) BOOST_NOEXCEPT {
         return ::boost::typeindex::detail::cstring<s<Indexes>()...>::data_;
     }
 
-    template <unsigned int D = 0> // `D` means `Dummy`
+    template <std::size_t D = 0> // `D` means `Dummy`
     constexpr static const char* n() BOOST_NOEXCEPT {
     #if defined(BOOST_TYPE_INDEX_FUNCTION_SIGNATURE)
-        constexpr unsigned int size = sizeof(BOOST_TYPE_INDEX_FUNCTION_SIGNATURE);
+        constexpr std::size_t size = sizeof(BOOST_TYPE_INDEX_FUNCTION_SIGNATURE);
     #elif defined(__FUNCSIG__)
-        constexpr unsigned int size = sizeof(__FUNCSIG__);
+        constexpr std::size_t size = sizeof(__FUNCSIG__);
     #elif defined(__PRETTY_FUNCTION__) \
                     || defined(__GNUC__) \
                     || (defined(__SUNPRO_CC) && (__SUNPRO_CC >= 0x5130)) \
@@ -247,7 +244,7 @@ struct ctti {
                     || (defined(__ICC) && (__ICC >= 600)) \
                     || defined(__ghs__) \
                     || defined(__DMC__)
-        constexpr unsigned int size = sizeof(__PRETTY_FUNCTION__);
+        constexpr std::size_t size = sizeof(__PRETTY_FUNCTION__);
     #else
         boost::typeindex::detail::failed_to_get_function_name();
     #endif
@@ -289,3 +286,4 @@ struct ctti {
 }} // namespace boost::detail
 
 #endif // BOOST_TYPE_INDEX_DETAIL_COMPILE_TIME_TYPE_INFO_HPP
+

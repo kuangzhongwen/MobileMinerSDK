@@ -1,9 +1,8 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2017, Oracle and/or its affiliates.
+// Copyright (c) 2014-2015, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
-// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -39,8 +38,7 @@ namespace detail { namespace is_simple
 template <typename MultiPoint>
 struct is_simple_multipoint
 {
-    template <typename Strategy>
-    static inline bool apply(MultiPoint const& multipoint, Strategy const&)
+    static inline bool apply(MultiPoint const& multipoint)
     {
         if (boost::empty(multipoint))
         {

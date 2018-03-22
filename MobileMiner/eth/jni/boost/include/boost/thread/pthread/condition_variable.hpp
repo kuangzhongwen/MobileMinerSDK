@@ -45,17 +45,9 @@ namespace boost
                 m_.unlock();
                 m=&m_;
             }
-            void deactivate()
+            ~lock_on_exit()
             {
-                if (m)
-                {
-                    m->lock();
-                }
-                m = 0;
-            }
-            ~lock_on_exit() BOOST_NOEXCEPT_IF(false)
-            {
-                if (m)
+                if(m)
                 {
                     m->lock();
                 }
@@ -78,18 +70,17 @@ namespace boost
             detail::interruption_checker check_for_interruption(&internal_mutex,&cond);
             pthread_mutex_t* the_mutex = &internal_mutex;
             guard.activate(m);
-            res = pthread_cond_wait(&cond,the_mutex);
-            check_for_interruption.check();
-            guard.deactivate();
 #else
             pthread_mutex_t* the_mutex = m.mutex()->native_handle();
-            res = pthread_cond_wait(&cond,the_mutex);
 #endif
+            do {
+              res = pthread_cond_wait(&cond,the_mutex);
+            } while (res == EINTR);
         }
 #if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
         this_thread::interruption_point();
 #endif
-        if(res && res != EINTR)
+        if(res)
         {
             boost::throw_exception(condition_error(res, "boost::condition_variable::wait failed in pthread_cond_wait"));
         }
@@ -112,13 +103,10 @@ namespace boost
             detail::interruption_checker check_for_interruption(&internal_mutex,&cond);
             pthread_mutex_t* the_mutex = &internal_mutex;
             guard.activate(m);
-            cond_res=pthread_cond_timedwait(&cond,the_mutex,&timeout);
-            check_for_interruption.check();
-            guard.deactivate();
 #else
             pthread_mutex_t* the_mutex = m.mutex()->native_handle();
-            cond_res=pthread_cond_timedwait(&cond,the_mutex,&timeout);
 #endif
+            cond_res=pthread_cond_timedwait(&cond,the_mutex,&timeout);
         }
 #if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
         this_thread::interruption_point();
@@ -190,8 +178,6 @@ namespace boost
 #endif
                 guard.activate(m);
                 res=pthread_cond_wait(&cond,&internal_mutex);
-                check_for_interruption.check();
-                guard.deactivate();
             }
 #if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
             this_thread::interruption_point();
@@ -420,8 +406,6 @@ namespace boost
 #endif
               guard.activate(m);
               res=pthread_cond_timedwait(&cond,&internal_mutex,&timeout);
-              check_for_interruption.check();
-              guard.deactivate();
           }
 #if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
           this_thread::interruption_point();

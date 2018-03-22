@@ -202,7 +202,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         static bool call(
             Parser const& parser
           , Iterator& first, Iterator const& last, Context const& context
-          , RContext& rcontext, Attribute& /* attr */, mpl::false_)
+          , RContext& rcontext, Attribute& attr, mpl::false_)
         {
             return parser.parse(first, last, context, rcontext, unused);
         }
@@ -251,13 +251,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
           , Iterator& first, Iterator const& last
           , Context const& context, RContext& rcontext, Attribute& attr, mpl::true_)
         {
-            if (attr.empty())
-                return parser.parse(first, last, context, rcontext, attr);
-            Attribute rest;
-            bool r = parser.parse(first, last, context, rcontext, rest);
-            if (r)
-                attr.insert(attr.end(), rest.begin(), rest.end());
-            return r;
+            return parser.parse(first, last, context, rcontext, attr);
         }
 
         template <typename Iterator, typename Attribute>

@@ -26,12 +26,7 @@ namespace boost { namespace program_options {
     inline std::string strip_prefixes(const std::string& text)
     {
         // "--foo-bar" -> "foo-bar"
-        std::string::size_type i = text.find_first_not_of("-/");
-        if (i == std::string::npos) {
-            return text;
-        } else {
-            return text.substr(i);
-        }
+        return text.substr(text.find_first_not_of("-/"));
     }
 
     /** Base class for all errors in the library. */
@@ -174,7 +169,7 @@ namespace boost { namespace program_options {
         virtual void set_option_name(const std::string& option_name)
         {           set_substitute("option", option_name);}
 
-        std::string get_option_name() const
+        std::string get_option_name() const throw()
         {           return get_canonical_option_name();         }
 
         void set_original_token(const std::string& original_token)

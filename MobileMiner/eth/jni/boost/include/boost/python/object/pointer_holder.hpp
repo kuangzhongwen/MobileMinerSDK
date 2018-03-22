@@ -21,7 +21,6 @@
 #  include <boost/python/detail/wrapper_base.hpp>
 #  include <boost/python/detail/force_instantiate.hpp>
 #  include <boost/python/detail/preprocessor.hpp>
-# include <boost/python/detail/type_traits.hpp>
 
 
 #  include <boost/mpl/if.hpp>
@@ -35,6 +34,8 @@
 #  include <boost/preprocessor/repetition/enum_binary_params.hpp>
 
 #  include <boost/detail/workaround.hpp>
+
+#  include <boost/type_traits/remove_const.hpp>
 
 namespace boost { namespace python {
 
@@ -106,28 +107,20 @@ struct pointer_holder_back_reference : instance_holder
 
 template <class Pointer, class Value>
 inline pointer_holder<Pointer,Value>::pointer_holder(Pointer p)
-#if __cplusplus < 201103L
     : m_p(p)
-#else
-    : m_p(std::move(p))
-#endif
 {
 }
 
 template <class Pointer, class Value>
 inline pointer_holder_back_reference<Pointer,Value>::pointer_holder_back_reference(Pointer p)
-#if __cplusplus < 201103L
     : m_p(p)
-#else
-    : m_p(std::move(p))
-#endif
 {
 }
 
 template <class Pointer, class Value>
 void* pointer_holder<Pointer, Value>::holds(type_info dst_t, bool null_ptr_only)
 {
-    typedef typename boost::python::detail::remove_const< Value >::type non_const_value;
+    typedef typename boost::remove_const< Value >::type non_const_value;
 
     if (dst_t == python::type_id<Pointer>()
         && !(null_ptr_only && get_pointer(this->m_p))

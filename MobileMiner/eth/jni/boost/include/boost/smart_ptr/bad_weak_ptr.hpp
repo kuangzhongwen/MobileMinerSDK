@@ -17,7 +17,6 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <boost/config.hpp>
 #include <exception>
 
 #ifdef __BORLANDC__
@@ -37,12 +36,6 @@ namespace boost
 # pragma option push -pc
 #endif
 
-#if defined(BOOST_CLANG)
-// Intel C++ on Mac defines __clang__ but doesn't support the pragma
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wweak-vtables"
-#endif
-
 class bad_weak_ptr: public std::exception
 {
 public:
@@ -52,10 +45,6 @@ public:
         return "tr1::bad_weak_ptr";
     }
 };
-
-#if defined(BOOST_CLANG)
-# pragma clang diagnostic pop
-#endif
 
 #if defined(__BORLANDC__) && __BORLANDC__ <= 0x564
 # pragma option pop

@@ -2,8 +2,7 @@
 @file
 Defines `boost::hana::tuple`.
 
-@copyright Louis Dionne 2013-2017
-@copyright Jason Rice 2017
+@copyright Louis Dionne 2013-2016
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
  */
@@ -28,7 +27,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/fwd/at.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/drop_front.hpp>
-#include <boost/hana/fwd/index_if.hpp>
+#include <boost/hana/fwd/find_if.hpp>
 #include <boost/hana/fwd/is_empty.hpp>
 #include <boost/hana/fwd/length.hpp>
 #include <boost/hana/fwd/optional.hpp>
@@ -45,30 +44,12 @@ BOOST_HANA_NAMESPACE_BEGIN
         template <typename Xs, typename Ys, std::size_t ...n>
         constexpr void assign(Xs& xs, Ys&& ys, std::index_sequence<n...>) {
             int sequence[] = {int{}, ((void)(
-                hana::at_c<n>(xs) = hana::at_c<n>(static_cast<Ys&&>(ys))
+                hana::get_impl<n>(xs) = hana::get_impl<n>(static_cast<Ys&&>(ys))
             ), int{})...};
             (void)sequence;
         }
 
         struct from_index_sequence_t { };
-
-        template <typename Tuple, typename ...Yn>
-        struct is_same_tuple : std::false_type { };
-
-        template <typename Tuple>
-        struct is_same_tuple<typename detail::decay<Tuple>::type, Tuple>
-            : std::true_type
-        { };
-
-        template <bool SameTuple, bool SameNumberOfElements, typename Tuple, typename ...Yn>
-        struct enable_tuple_variadic_ctor;
-
-        template <typename ...Xn, typename ...Yn>
-        struct enable_tuple_variadic_ctor<false, true, hana::tuple<Xn...>, Yn...>
-            : std::enable_if<
-                detail::fast_and<BOOST_HANA_TT_IS_CONSTRUCTIBLE(Xn, Yn&&)...>::value
-            >
-        { };
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -94,7 +75,7 @@ BOOST_HANA_NAMESPACE_BEGIN
     private:
         template <typename Other, std::size_t ...n>
         explicit constexpr tuple(detail::from_index_sequence_t, std::index_sequence<n...>, Other&& other)
-            : storage_(hana::at_c<n>(static_cast<Other&&>(other))...)
+            : storage_(hana::get_impl<n>(static_cast<Other&&>(other))...)
         { }
 
     public:
@@ -112,9 +93,8 @@ BOOST_HANA_NAMESPACE_BEGIN
             : storage_(xn...)
         { }
 
-        template <typename ...Yn, typename = typename detail::enable_tuple_variadic_ctor<
-            detail::is_same_tuple<tuple, Yn...>::value,
-            sizeof...(Xn) == sizeof...(Yn), tuple, Yn...
+        template <typename ...Yn, typename = typename std::enable_if<
+            detail::fast_and<BOOST_HANA_TT_IS_CONSTRUCTIBLE(Xn, Yn&&)...>::value
         >::type>
         constexpr tuple(Yn&& ...yn)
             : storage_(static_cast<Yn&&>(yn)...)
@@ -141,7 +121,7 @@ BOOST_HANA_NAMESPACE_BEGIN
         // The three following constructors are required to make sure that
         // the tuple(Yn&&...) constructor is _not_ preferred over the copy
         // constructor for unary tuples containing a type that is constructible
-        // from tuple<...>. See test/tuple/cnstr.trap.cpp
+        // from tuple<...>. See test/tuple/trap_construct.cpp
         template <typename ...dummy, typename = typename std::enable_if<
             detail::fast_and<BOOST_HANA_TT_IS_CONSTRUCTIBLE(Xn, Xn const&, dummy...)...>::value
         >::type>
@@ -241,7 +221,7 @@ BOOST_HANA_NAMESPACE_BEGIN
         template <typename Xs, typename N>
         static constexpr decltype(auto) apply(Xs&& xs, N const&) {
             constexpr std::size_t index = N::value;
-            return hana::at_c<index>(static_cast<Xs&&>(xs).storage_);
+            return hana::get_impl<index>(static_cast<Xs&&>(xs).storage_);
         }
     };
 
@@ -271,26 +251,18 @@ BOOST_HANA_NAMESPACE_BEGIN
     // compile-time optimizations (to reduce the # of function instantiations)
     template <std::size_t n, typename ...Xs>
     constexpr decltype(auto) at_c(tuple<Xs...> const& xs) {
-        return hana::at_c<n>(xs.storage_);
+        return hana::get_impl<n>(xs.storage_);
     }
 
     template <std::size_t n, typename ...Xs>
     constexpr decltype(auto) at_c(tuple<Xs...>& xs) {
-        return hana::at_c<n>(xs.storage_);
+        return hana::get_impl<n>(xs.storage_);
     }
 
     template <std::size_t n, typename ...Xs>
     constexpr decltype(auto) at_c(tuple<Xs...>&& xs) {
-        return hana::at_c<n>(static_cast<tuple<Xs...>&&>(xs).storage_);
+        return hana::get_impl<n>(static_cast<tuple<Xs...>&&>(xs).storage_);
     }
-
-    template <>
-    struct index_if_impl<tuple_tag> {
-        template <typename ...Xs, typename Pred>
-        static constexpr auto apply(tuple<Xs...> const&, Pred const&)
-            -> typename detail::index_if<Pred, Xs...>::type
-        { return {}; }
-    };
 
     //////////////////////////////////////////////////////////////////////////
     // Sequence
@@ -306,6 +278,27 @@ BOOST_HANA_NAMESPACE_BEGIN
         static constexpr
         tuple<typename detail::decay<Xs>::type...> apply(Xs&& ...xs)
         { return {static_cast<Xs&&>(xs)...}; }
+    };
+
+    template <>
+    struct find_if_impl<tuple_tag> {
+        template <std::size_t index, typename Xs>
+        static constexpr auto helper(Xs&&, hana::true_) {
+            return hana::nothing;
+        }
+
+        template <std::size_t index, typename Xs>
+        static constexpr auto helper(Xs&& xs, hana::false_) {
+            return hana::just(hana::at_c<index>(static_cast<Xs&&>(xs)));
+        }
+
+        template <typename Xs, typename Pred>
+        static constexpr auto apply(Xs&& xs, Pred&&) {
+            using Pack = typename detail::make_pack<Xs>::type;
+            constexpr std::size_t index = detail::index_if<Pred&&, Pack>::value;
+            constexpr std::size_t len = Pack::length;
+            return helper<index>(static_cast<Xs&&>(xs), hana::bool_c<index == len>);
+        }
     };
 BOOST_HANA_NAMESPACE_END
 

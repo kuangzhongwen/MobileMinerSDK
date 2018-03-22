@@ -34,8 +34,7 @@ struct nothrow
 };
 
 template <int Dummy>
-std::nothrow_t *nothrow<Dummy>::pnothrow =
-   reinterpret_cast<std::nothrow_t *>(0x1234);  //Avoid sanitizer warnings on references to null
+std::nothrow_t *nothrow<Dummy>::pnothrow;
 
 }}  //namespace boost{ namespace interprocess {
 

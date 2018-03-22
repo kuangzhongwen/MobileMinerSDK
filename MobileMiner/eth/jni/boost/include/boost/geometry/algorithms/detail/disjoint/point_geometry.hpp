@@ -39,12 +39,11 @@ namespace detail { namespace disjoint
 
 struct reverse_covered_by
 {
-    template <typename Geometry1, typename Geometry2, typename Strategy>
-    static inline bool apply(Geometry1 const& geometry1,
-                             Geometry2 const& geometry2,
-                             Strategy const& strategy)
+    template <typename Geometry1, typename Geometry2>
+    static inline
+    bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2)
     {
-        return ! geometry::covered_by(geometry1, geometry2, strategy);
+        return ! geometry::covered_by(geometry1, geometry2);
     }
 };
 

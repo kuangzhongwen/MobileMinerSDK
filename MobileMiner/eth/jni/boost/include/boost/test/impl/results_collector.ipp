@@ -59,12 +59,6 @@ test_results::passed() const
             !p_aborted;
 }
 
-bool
-test_results::aborted() const
-{
-    return  p_aborted;
-}
-
 //____________________________________________________________________________//
 
 int

@@ -52,8 +52,6 @@ struct reverse_kernel : public meta_kernel
 
 /// Reverses the elements in the range [\p first, \p last).
 ///
-/// Space complexity: \Omega(1)
-///
 /// \see reverse_copy()
 template<class Iterator>
 inline void reverse(Iterator first,

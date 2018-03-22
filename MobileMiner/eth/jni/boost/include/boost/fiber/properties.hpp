@@ -28,7 +28,7 @@ class context;
 
 namespace algo {
 
-class algorithm;
+struct algorithm;
 
 }
 

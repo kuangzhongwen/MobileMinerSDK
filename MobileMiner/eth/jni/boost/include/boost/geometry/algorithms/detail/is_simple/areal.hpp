@@ -1,9 +1,8 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2017, Oracle and/or its affiliates.
+// Copyright (c) 2014-2015, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
-// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -38,12 +37,6 @@ namespace detail { namespace is_simple
 template <typename Ring>
 struct is_simple_ring
 {
-    template <typename Strategy>
-    static inline bool apply(Ring const& ring, Strategy const&)
-    {
-        return apply(ring);
-    }
-
     static inline bool apply(Ring const& ring)
     {
         simplicity_failure_policy policy;
@@ -76,12 +69,6 @@ private:
     }
 
 public:
-    template <typename Strategy>
-    static inline bool apply(Polygon const& polygon, Strategy const&)
-    {
-        return apply(polygon);
-    }
-
     static inline bool apply(Polygon const& polygon)
     {
         return
@@ -132,8 +119,7 @@ struct is_simple<Polygon, polygon_tag>
 template <typename MultiPolygon>
 struct is_simple<MultiPolygon, multi_polygon_tag>
 {
-    template <typename Strategy>
-    static inline bool apply(MultiPolygon const& multipolygon, Strategy const&)
+    static inline bool apply(MultiPolygon const& multipolygon)
     {
         return
             detail::check_iterator_range

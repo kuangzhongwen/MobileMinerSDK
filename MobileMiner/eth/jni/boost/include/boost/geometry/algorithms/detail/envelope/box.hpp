@@ -4,10 +4,9 @@
 // Copyright (c) 2008-2015 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2015, 2016.
-// Modifications copyright (c) 2015-2016, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015.
+// Modifications copyright (c) 2015, Oracle and/or its affiliates.
 
-// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 
 // Distributed under the Boost Software License, Version 1.0.
@@ -98,10 +97,8 @@ struct envelope_indexed_box_on_spheroid
 
 struct envelope_box
 {
-    template<typename BoxIn, typename BoxOut, typename Strategy>
-    static inline void apply(BoxIn const& box_in,
-                             BoxOut& mbr,
-                             Strategy const&)
+    template<typename BoxIn, typename BoxOut>
+    static inline void apply(BoxIn const& box_in, BoxOut& mbr)
     {
         envelope_indexed_box
             <
@@ -118,10 +115,8 @@ struct envelope_box
 
 struct envelope_box_on_spheroid
 {
-    template <typename BoxIn, typename BoxOut, typename Strategy>
-    static inline void apply(BoxIn const& box_in,
-                             BoxOut& mbr,
-                             Strategy const&)
+    template <typename BoxIn, typename BoxOut>
+    static inline void apply(BoxIn const& box_in, BoxOut& mbr)
     {
         BoxIn box_in_normalized = detail::return_normalized<BoxIn>(box_in);
 

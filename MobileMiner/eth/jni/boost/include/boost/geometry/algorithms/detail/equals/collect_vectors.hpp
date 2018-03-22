@@ -3,12 +3,7 @@
 // Copyright (c) 2007-2014 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2008-2014 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2014 Mateusz Loskot, London, UK.
-// Copyright (c) 2014-2017 Adam Wulkiewicz, Lodz, Poland.
-
-// This file was modified by Oracle on 2017.
-// Modifications copyright (c) 2017 Oracle and/or its affiliates.
-
-// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+// Copyright (c) 2014 Adam Wulkiewicz, Lodz, Poland.
 
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
 // (geolib/GGL), copyright (c) 1995-2010 Geodan, Amsterdam, the Netherlands.
@@ -25,7 +20,6 @@
 
 #include <boost/geometry/algorithms/detail/interior_iterator.hpp>
 #include <boost/geometry/algorithms/detail/normalize.hpp>
-#include <boost/geometry/algorithms/not_implemented.hpp>
 
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/interior_rings.hpp>
@@ -38,37 +32,21 @@
 #include <boost/geometry/util/math.hpp>
 #include <boost/geometry/util/range.hpp>
 
-#include <boost/geometry/views/detail/normalized_view.hpp>
-
-#include <boost/geometry/strategies/cartesian/side_by_triangle.hpp>
-#include <boost/geometry/strategies/spherical/ssf.hpp>
-
 
 namespace boost { namespace geometry
 {
 
-// TODO: dispatch only by SideStrategy instead of Geometry/CSTag?
-
 // Since these vectors (though ray would be a better name) are used in the
 // implementation of equals() for Areal geometries the internal representation
-// should be consistent with the side strategy.
-template
-<
+// should be consistent with the default side strategy for CS because currently
+// it's used in other relops.
+
+template <
     typename T,
     typename Geometry,
-    typename SideStrategy,
     typename CSTag = typename cs_tag<Geometry>::type
 >
 struct collected_vector
-    : nyi::not_implemented_tag
-{};
-
-// compatible with side_by_triangle cartesian strategy
-template <typename T, typename Geometry, typename CT, typename CSTag>
-struct collected_vector
-    <
-        T, Geometry, strategy::side::side_by_triangle<CT>, CSTag
-    >
 {
     typedef T type;
     
@@ -158,13 +136,8 @@ private:
     //T dx_0, dy_0;
 };
 
-// Compatible with spherical_side_formula which currently
-// is the default spherical and geographical strategy
-template <typename T, typename Geometry, typename CT, typename CSTag>
-struct collected_vector
-    <
-        T, Geometry, strategy::side::spherical_side_formula<CT>, CSTag
-    >
+template <typename T, typename Geometry>
+struct collected_vector<T, Geometry, spherical_equatorial_tag>
 {
     typedef T type;
     
@@ -259,27 +232,11 @@ private:
     vector_type next; // used for collinearity check
 };
 
-// Specialization for spherical polar
-template <typename T, typename Geometry, typename CT>
-struct collected_vector
-    <
-        T, Geometry,
-        strategy::side::spherical_side_formula<CT>,
-        spherical_polar_tag
-    >
-    : public collected_vector
-        <
-            T, Geometry,
-            strategy::side::spherical_side_formula<CT>,
-            spherical_equatorial_tag
-        >
+template <typename T, typename Geometry>
+struct collected_vector<T, Geometry, spherical_polar_tag>
+    : public collected_vector<T, Geometry, spherical_equatorial_tag>
 {
-    typedef collected_vector
-        <
-            T, Geometry,
-            strategy::side::spherical_side_formula<CT>,
-            spherical_equatorial_tag
-        > base_type;
+    typedef collected_vector<T, Geometry, spherical_equatorial_tag> base_type;
 
     collected_vector() {}
 
@@ -308,6 +265,24 @@ private:
     }
 };
 
+// This is consistent with the currently used default geographic side
+// and intersection strategies. Spherical strategies are used by default.
+// When default strategies are changed in the future this specialization
+// should be changed too.
+template <typename T, typename Geometry>
+struct collected_vector<T, Geometry, geographic_tag>
+    : public collected_vector<T, Geometry, spherical_equatorial_tag>
+{
+    typedef collected_vector<T, Geometry, spherical_equatorial_tag> base_type;
+
+    collected_vector() {}
+
+    template <typename Point>
+    collected_vector(Point const& p1, Point const& p2)
+        : base_type(p1, p2)
+    {}
+};
+
 
 #ifndef DOXYGEN_NO_DETAIL
 namespace detail { namespace collect_vectors
@@ -322,18 +297,6 @@ struct range_collect_vectors
 
     static inline void apply(Collection& collection, Range const& range)
     {
-        typedef geometry::detail::normalized_view
-            <
-                Range const
-            > normalized_range_type;
-
-        apply_impl(collection, normalized_range_type(range));
-    }
-
-private:
-    template <typename NormalizedRange>
-    static inline void apply_impl(Collection& collection, NormalizedRange const& range)
-    {
         if (boost::size(range) < 2)
         {
             return;
@@ -342,7 +305,7 @@ private:
         typedef typename boost::range_size<Collection>::type collection_size_t;
         collection_size_t c_old_size = boost::size(collection);
 
-        typedef typename boost::range_iterator<NormalizedRange const>::type iterator;
+        typedef typename boost::range_iterator<Range const>::type iterator;
 
         bool is_first = true;
         iterator it = boost::begin(range);

@@ -177,7 +177,6 @@ namespace boost
             thread_data_base* const thread_info;
             pthread_mutex_t* m;
             bool set;
-            bool done;
 
             void check_for_interruption()
             {
@@ -194,7 +193,7 @@ namespace boost
         public:
             explicit interruption_checker(pthread_mutex_t* cond_mutex,pthread_cond_t* cond):
                 thread_info(detail::get_current_thread_data()),m(cond_mutex),
-                set(thread_info && thread_info->interrupt_enabled), done(false)
+                set(thread_info && thread_info->interrupt_enabled)
             {
                 if(set)
                 {
@@ -209,10 +208,9 @@ namespace boost
                     BOOST_VERIFY(!pthread_mutex_lock(m));
                 }
             }
-            void check()
+            ~interruption_checker()
             {
-              if ( ! done) {
-                if (set)
+                if(set)
                 {
                     BOOST_VERIFY(!pthread_mutex_unlock(m));
                     lock_guard<mutex> guard(thread_info->data_mutex);
@@ -223,13 +221,6 @@ namespace boost
                 {
                     BOOST_VERIFY(!pthread_mutex_unlock(m));
                 }
-                done = true;
-              }
-            }
-
-            ~interruption_checker() BOOST_NOEXCEPT_IF(false)
-            {
-                check();
             }
         };
 #endif

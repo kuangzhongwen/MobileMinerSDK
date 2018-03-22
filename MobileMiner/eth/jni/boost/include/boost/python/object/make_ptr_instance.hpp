@@ -7,7 +7,7 @@
 
 # include <boost/python/object/make_instance.hpp>
 # include <boost/python/converter/registry.hpp>
-# include <boost/python/detail/type_traits.hpp>
+# include <boost/type_traits/is_polymorphic.hpp>
 # include <boost/get_pointer.hpp>
 # include <boost/detail/workaround.hpp>
 # include <typeinfo>
@@ -21,11 +21,7 @@ struct make_ptr_instance
     template <class Arg>
     static inline Holder* construct(void* storage, PyObject*, Arg& x)
     {
-#if __cplusplus < 201103L
-      return new (storage) Holder(x);
-#else
-      return new (storage) Holder(std::move(x));
-#endif
+        return new (storage) Holder(x);
     }
     
     template <class Ptr>
@@ -47,7 +43,7 @@ struct make_ptr_instance
             return 0; // means "return None".
 
         PyTypeObject* derived = get_derived_class_object(
-            BOOST_DEDUCED_TYPENAME boost::python::detail::is_polymorphic<U>::type(), p);
+            BOOST_DEDUCED_TYPENAME is_polymorphic<U>::type(), p);
         
         if (derived)
             return derived;
@@ -55,7 +51,7 @@ struct make_ptr_instance
     }
     
     template <class U>
-    static inline PyTypeObject* get_derived_class_object(boost::python::detail::true_, U const volatile* x)
+    static inline PyTypeObject* get_derived_class_object(mpl::true_, U const volatile* x)
     {
         converter::registration const* r = converter::registry::query(
             type_info(typeid(*get_pointer(x)))
@@ -64,7 +60,7 @@ struct make_ptr_instance
     }
     
     template <class U>
-    static inline PyTypeObject* get_derived_class_object(boost::python::detail::false_, U*)
+    static inline PyTypeObject* get_derived_class_object(mpl::false_, U*)
     {
         return 0;
     }

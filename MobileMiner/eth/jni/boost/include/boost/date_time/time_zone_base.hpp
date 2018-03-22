@@ -11,7 +11,6 @@
 
 #include <string>
 #include <sstream>
-#include <boost/date_time/compiler_config.hpp>
 
 namespace boost {
 namespace date_time {
@@ -32,7 +31,7 @@ namespace date_time {
    * resource (hence the derivation from boost::counted_base.
    */
   template<typename time_type, typename CharT>
-  class BOOST_SYMBOL_VISIBLE time_zone_base  {
+  class time_zone_base  {
   public:
     typedef CharT char_type;
     typedef std::basic_string<CharT> string_type;

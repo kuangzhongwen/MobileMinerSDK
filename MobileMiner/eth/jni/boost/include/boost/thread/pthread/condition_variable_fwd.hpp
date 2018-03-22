@@ -17,7 +17,6 @@
 #if defined BOOST_THREAD_USES_DATETIME
 #include <boost/thread/xtime.hpp>
 #endif
-
 #ifdef BOOST_THREAD_USES_CHRONO
 #include <boost/chrono/system_clocks.hpp>
 #include <boost/chrono/ceil.hpp>
@@ -69,20 +68,7 @@ namespace boost
             unique_lock<mutex>& lock,
             struct timespec const &timeout)
         {
-#if ! defined BOOST_THREAD_USEFIXES_TIMESPEC
-            return do_wait_until(lock, boost::detail::timespec_plus(timeout, boost::detail::timespec_now()));
-#elif ! defined BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC
-            //using namespace chrono;
-            //nanoseconds ns = chrono::system_clock::now().time_since_epoch();
-
-            struct timespec ts = boost::detail::timespec_now_realtime();
-            //ts.tv_sec = static_cast<long>(chrono::duration_cast<chrono::seconds>(ns).count());
-            //ts.tv_nsec = static_cast<long>((ns - chrono::duration_cast<chrono::seconds>(ns)).count());
-            return do_wait_until(lock, boost::detail::timespec_plus(timeout, ts));
-#else
-            // old behavior was fine for monotonic
-            return do_wait_until(lock, boost::detail::timespec_plus(timeout, boost::detail::timespec_now_realtime()));
-#endif
+          return do_wait_until(lock, boost::detail::timespec_plus(timeout, boost::detail::timespec_now()));
         }
 
     public:

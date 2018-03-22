@@ -23,7 +23,8 @@
 # endif
 #endif
 
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1910)
+// MSVC variadics at this point in time is not ready yet (ICE!)
+#if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1900))
 # if defined(BOOST_FUSION_HAS_VARIADIC_MAP)
 #   undef BOOST_FUSION_HAS_VARIADIC_MAP
 # endif

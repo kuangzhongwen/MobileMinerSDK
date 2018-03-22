@@ -2,7 +2,7 @@
 @file
 Defines `boost::hana::pair`.
 
-@copyright Louis Dionne 2013-2017
+@copyright Louis Dionne 2013-2016
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
  */
@@ -12,9 +12,9 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include <boost/hana/fwd/pair.hpp>
 
+#include <boost/hana/basic_tuple.hpp>
 #include <boost/hana/config.hpp>
 #include <boost/hana/detail/decay.hpp>
-#include <boost/hana/detail/ebo.hpp>
 #include <boost/hana/detail/intrinsics.hpp>
 #include <boost/hana/detail/operators/adl.hpp>
 #include <boost/hana/detail/operators/comparable.hpp>
@@ -28,37 +28,26 @@ Distributed under the Boost Software License, Version 1.0.
 
 
 BOOST_HANA_NAMESPACE_BEGIN
-    namespace detail {
-        template <int> struct pix; // pair index
-    }
-
     //////////////////////////////////////////////////////////////////////////
     // pair
     //////////////////////////////////////////////////////////////////////////
     //! @cond
     template <typename First, typename Second>
-    struct pair : detail::operators::adl<pair<First, Second>>
-                , private detail::ebo<detail::pix<0>, First>
-                , private detail::ebo<detail::pix<1>, Second>
-    {
-        // Default constructor
+    struct pair : detail::operators::adl<pair<First, Second>> {
         template <typename ...dummy, typename = typename std::enable_if<
             BOOST_HANA_TT_IS_CONSTRUCTIBLE(First, dummy...) &&
             BOOST_HANA_TT_IS_CONSTRUCTIBLE(Second, dummy...)
         >::type>
         constexpr pair()
-            : detail::ebo<detail::pix<0>, First>()
-            , detail::ebo<detail::pix<1>, Second>()
+            : storage_()
         { }
 
-        // Variadic constructors
         template <typename ...dummy, typename = typename std::enable_if<
             BOOST_HANA_TT_IS_CONSTRUCTIBLE(First, First const&, dummy...) &&
             BOOST_HANA_TT_IS_CONSTRUCTIBLE(Second, Second const&, dummy...)
         >::type>
-        constexpr pair(First const& fst, Second const& snd)
-            : detail::ebo<detail::pix<0>, First>(fst)
-            , detail::ebo<detail::pix<1>, Second>(snd)
+        constexpr pair(First const& first, Second const& second)
+            : storage_{first, second}
         { }
 
         template <typename T, typename U, typename = typename std::enable_if<
@@ -66,43 +55,34 @@ BOOST_HANA_NAMESPACE_BEGIN
             BOOST_HANA_TT_IS_CONVERTIBLE(U&&, Second)
         >::type>
         constexpr pair(T&& t, U&& u)
-            : detail::ebo<detail::pix<0>, First>(static_cast<T&&>(t))
-            , detail::ebo<detail::pix<1>, Second>(static_cast<U&&>(u))
+            : storage_{static_cast<T&&>(t), static_cast<U&&>(u)}
         { }
 
-
-        // Possibly converting copy and move constructors
         template <typename T, typename U, typename = typename std::enable_if<
-            BOOST_HANA_TT_IS_CONSTRUCTIBLE(First, T const&) &&
-            BOOST_HANA_TT_IS_CONSTRUCTIBLE(Second, U const&) &&
             BOOST_HANA_TT_IS_CONVERTIBLE(T const&, First) &&
             BOOST_HANA_TT_IS_CONVERTIBLE(U const&, Second)
         >::type>
         constexpr pair(pair<T, U> const& other)
-            : detail::ebo<detail::pix<0>, First>(hana::first(other))
-            , detail::ebo<detail::pix<1>, Second>(hana::second(other))
+            : storage_{hana::get_impl<0>(other.storage_),
+                       hana::get_impl<1>(other.storage_)}
         { }
 
         template <typename T, typename U, typename = typename std::enable_if<
-            BOOST_HANA_TT_IS_CONSTRUCTIBLE(First, T&&) &&
-            BOOST_HANA_TT_IS_CONSTRUCTIBLE(Second, U&&) &&
             BOOST_HANA_TT_IS_CONVERTIBLE(T&&, First) &&
             BOOST_HANA_TT_IS_CONVERTIBLE(U&&, Second)
         >::type>
         constexpr pair(pair<T, U>&& other)
-            : detail::ebo<detail::pix<0>, First>(hana::first(static_cast<pair<T, U>&&>(other)))
-            , detail::ebo<detail::pix<1>, Second>(hana::second(static_cast<pair<T, U>&&>(other)))
+            : storage_{static_cast<T&&>(hana::get_impl<0>(other.storage_)),
+                       static_cast<U&&>(hana::get_impl<1>(other.storage_))}
         { }
 
-
-        // Copy and move assignment
         template <typename T, typename U, typename = typename std::enable_if<
             BOOST_HANA_TT_IS_ASSIGNABLE(First&, T const&) &&
             BOOST_HANA_TT_IS_ASSIGNABLE(Second&, U const&)
         >::type>
         constexpr pair& operator=(pair<T, U> const& other) {
-            hana::first(*this) = hana::first(other);
-            hana::second(*this) = hana::second(other);
+            hana::get_impl<0>(storage_) = hana::get_impl<0>(other.storage_);
+            hana::get_impl<1>(storage_) = hana::get_impl<1>(other.storage_);
             return *this;
         }
 
@@ -111,25 +91,15 @@ BOOST_HANA_NAMESPACE_BEGIN
             BOOST_HANA_TT_IS_ASSIGNABLE(Second&, U&&)
         >::type>
         constexpr pair& operator=(pair<T, U>&& other) {
-            hana::first(*this) = hana::first(static_cast<pair<T, U>&&>(other));
-            hana::second(*this) = hana::second(static_cast<pair<T, U>&&>(other));
+            hana::get_impl<0>(storage_) = static_cast<T&&>(hana::get_impl<0>(other.storage_));
+            hana::get_impl<1>(storage_) = static_cast<U&&>(hana::get_impl<1>(other.storage_));
             return *this;
         }
 
-        // Prevent the compiler from defining the default copy and move
-        // constructors, which interfere with the SFINAE above.
-        ~pair() = default;
-
-        friend struct first_impl<pair_tag>;
-        friend struct second_impl<pair_tag>;
-        template <typename F, typename S> friend struct pair;
+        using hana_tag = pair_tag;
+        basic_tuple<First, Second> storage_;
     };
     //! @endcond
-
-    template <typename First, typename Second>
-    struct tag_of<pair<First, Second>> {
-        using type = pair_tag;
-    };
 
     //////////////////////////////////////////////////////////////////////////
     // Operators
@@ -161,46 +131,16 @@ BOOST_HANA_NAMESPACE_BEGIN
 
     template <>
     struct first_impl<pair_tag> {
-        template <typename First, typename Second>
-        static constexpr decltype(auto) apply(hana::pair<First, Second>& p) {
-            return detail::ebo_get<detail::pix<0>>(
-                static_cast<detail::ebo<detail::pix<0>, First>&>(p)
-            );
-        }
-        template <typename First, typename Second>
-        static constexpr decltype(auto) apply(hana::pair<First, Second> const& p) {
-            return detail::ebo_get<detail::pix<0>>(
-                static_cast<detail::ebo<detail::pix<0>, First> const&>(p)
-            );
-        }
-        template <typename First, typename Second>
-        static constexpr decltype(auto) apply(hana::pair<First, Second>&& p) {
-            return detail::ebo_get<detail::pix<0>>(
-                static_cast<detail::ebo<detail::pix<0>, First>&&>(p)
-            );
-        }
+        template <typename P>
+        static constexpr decltype(auto) apply(P&& p)
+        { return hana::get_impl<0>(static_cast<P&&>(p).storage_); }
     };
 
     template <>
     struct second_impl<pair_tag> {
-        template <typename First, typename Second>
-        static constexpr decltype(auto) apply(hana::pair<First, Second>& p) {
-            return detail::ebo_get<detail::pix<1>>(
-                static_cast<detail::ebo<detail::pix<1>, Second>&>(p)
-            );
-        }
-        template <typename First, typename Second>
-        static constexpr decltype(auto) apply(hana::pair<First, Second> const& p) {
-            return detail::ebo_get<detail::pix<1>>(
-                static_cast<detail::ebo<detail::pix<1>, Second> const&>(p)
-            );
-        }
-        template <typename First, typename Second>
-        static constexpr decltype(auto) apply(hana::pair<First, Second>&& p) {
-            return detail::ebo_get<detail::pix<1>>(
-                static_cast<detail::ebo<detail::pix<1>, Second>&&>(p)
-            );
-        }
+        template <typename P>
+        static constexpr decltype(auto) apply(P&& p)
+        { return hana::get_impl<1>(static_cast<P&&>(p).storage_); }
     };
 BOOST_HANA_NAMESPACE_END
 

@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2016 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014, 2017.
-// Modifications copyright (c) 2014-2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014, 2016.
+// Modifications copyright (c) 2014-2016 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -11,12 +11,23 @@
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_GEOMETRY_STRATEGIES_GEOGRAPHIC_DISTANCE_DETAIL_HPP
-#define BOOST_GEOMETRY_STRATEGIES_GEOGRAPHIC_DISTANCE_DETAIL_HPP
+#ifndef BOOST_GEOMETRY_STRATEGIES_GEOGRAPHIC_ANDOYER_HPP
+#define BOOST_GEOMETRY_STRATEGIES_GEOGRAPHIC_ANDOYER_HPP
 
 
-#include <boost/geometry/strategies/geographic/distance.hpp>
-#include <boost/geometry/strategies/geographic/parameters.hpp>
+#include <boost/geometry/core/coordinate_type.hpp>
+#include <boost/geometry/core/radian_access.hpp>
+#include <boost/geometry/core/radius.hpp>
+#include <boost/geometry/core/srs.hpp>
+
+#include <boost/geometry/algorithms/detail/andoyer_inverse.hpp>
+#include <boost/geometry/algorithms/detail/flattening.hpp>
+
+#include <boost/geometry/strategies/distance.hpp>
+
+#include <boost/geometry/util/math.hpp>
+#include <boost/geometry/util/promote_floating_point.hpp>
+#include <boost/geometry/util/select_calculation_type.hpp>
 
 
 namespace boost { namespace geometry
@@ -45,28 +56,55 @@ are about the same as Vincenty. In my (Barend's) testcases the results didn't di
 */
 template
 <
-    typename Spheroid = srs::spheroid<double>,
+    typename Spheroid,
     typename CalculationType = void
 >
 class andoyer
-    : public strategy::distance::geographic
-        <
-            strategy::andoyer, Spheroid, CalculationType
-        >
 {
-    typedef strategy::distance::geographic
-        <
-            strategy::andoyer, Spheroid, CalculationType
-        > base_type;
-
 public :
+    template <typename Point1, typename Point2>
+    struct calculation_type
+        : promote_floating_point
+          <
+              typename select_calculation_type
+                  <
+                      Point1,
+                      Point2,
+                      CalculationType
+                  >::type
+          >
+    {};
+
+    typedef Spheroid model_type;
+
     inline andoyer()
-        : base_type()
+        : m_spheroid()
     {}
 
     explicit inline andoyer(Spheroid const& spheroid)
-        : base_type(spheroid)
+        : m_spheroid(spheroid)
     {}
+
+    template <typename Point1, typename Point2>
+    inline typename calculation_type<Point1, Point2>::type
+    apply(Point1 const& point1, Point2 const& point2) const
+    {
+        return geometry::detail::andoyer_inverse
+            <
+                typename calculation_type<Point1, Point2>::type,
+                true, false
+            >::apply(get_as_radian<0>(point1), get_as_radian<1>(point1),
+                     get_as_radian<0>(point2), get_as_radian<1>(point2),
+                     m_spheroid).distance;
+    }
+
+    inline Spheroid const& model() const
+    {
+        return m_spheroid;
+    }
+
+private :
+    Spheroid m_spheroid;
 };
 
 
@@ -115,6 +153,19 @@ struct result_from_distance<andoyer<Spheroid, CalculationType>, P1, P2>
 };
 
 
+template <typename Point1, typename Point2>
+struct default_strategy<point_tag, point_tag, Point1, Point2, geographic_tag, geographic_tag>
+{
+    typedef strategy::distance::andoyer
+                <
+                    srs::spheroid
+                        <
+                            typename select_coordinate_type<Point1, Point2>::type
+                        >
+                > type;
+};
+
+
 } // namespace services
 #endif // DOXYGEN_NO_STRATEGY_SPECIALIZATIONS
 
@@ -125,4 +176,4 @@ struct result_from_distance<andoyer<Spheroid, CalculationType>, P1, P2>
 }} // namespace boost::geometry
 
 
-#endif // BOOST_GEOMETRY_STRATEGIES_GEOGRAPHIC_DISTANCE_DETAIL_HPP
+#endif // BOOST_GEOMETRY_STRATEGIES_GEOGRAPHIC_ANDOYER_HPP

@@ -8,8 +8,7 @@
  * Author: Jeff Garland, Bart Garst
  * $Date$
  */
-
-#include <boost/date_time/compiler_config.hpp>
+                                                                                
 #include <boost/date_time/int_adapter.hpp>
 #include <boost/date_time/special_defs.hpp>
 #include <boost/date_time/date_duration.hpp>
@@ -20,7 +19,7 @@ namespace date_time {
 
   //! Additional duration type that represents a number of n*7 days
   template <class duration_config>
-  class BOOST_SYMBOL_VISIBLE weeks_duration : public date_duration<duration_config> {
+  class weeks_duration : public date_duration<duration_config> {
   public:
     weeks_duration(typename duration_config::impl_type w) 
       : date_duration<duration_config>(w * 7) {}
@@ -30,7 +29,7 @@ namespace date_time {
 
   // predeclare
   template<class t>
-  class BOOST_SYMBOL_VISIBLE years_duration;
+  class years_duration;
 
   //! additional duration type that represents a logical month
   /*! A logical month enables things like: "date(2002,Mar,2) + months(2) -> 
@@ -38,7 +37,7 @@ namespace date_time {
    * also be a last-day-of-the-month.
    */
   template<class base_config>
-  class BOOST_SYMBOL_VISIBLE months_duration
+  class months_duration 
   {
     private:
       typedef typename base_config::int_rep int_rep;
@@ -160,7 +159,7 @@ namespace date_time {
    * 2004-Feb-29).
    */
   template<class base_config>
-  class BOOST_SYMBOL_VISIBLE years_duration
+  class years_duration 
   {
     private:
       typedef typename base_config::int_rep int_rep;

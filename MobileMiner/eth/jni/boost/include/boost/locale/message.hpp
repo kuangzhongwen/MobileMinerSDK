@@ -20,13 +20,6 @@
 #include <memory>
 #include <boost/locale/formatting.hpp>
 
-// glibc < 2.3.4 declares those as macros if compiled with optimization turned on
-#ifdef gettext
-#  undef gettext
-#  undef ngettext
-#  undef dgettext
-#  undef dngettext
-#endif
 
 namespace boost {
     namespace locale {

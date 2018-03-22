@@ -30,8 +30,8 @@ namespace container {
       static ::std::allocator_arg_t *dummy;
    };
 
-   template <int Dummy>                                             //Silence null-reference compiler warnings
-   ::std::allocator_arg_t *std_allocator_arg_holder<Dummy>::dummy = reinterpret_cast< ::std::allocator_arg_t * >(0x1234);
+   template <int Dummy>
+   ::std::allocator_arg_t *std_allocator_arg_holder<Dummy>::dummy;
 
 typedef const std::allocator_arg_t & allocator_arg_t;
 

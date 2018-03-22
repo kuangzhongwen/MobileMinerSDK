@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014-2017.
-// Modifications copyright (c) 2014-2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014, 2015.
+// Modifications copyright (c) 2014-2015 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -15,7 +15,9 @@
 #define BOOST_GEOMETRY_STRATEGIES_GEOGRAPHIC_SIDE_THOMAS_HPP
 
 
-#include <boost/geometry/strategies/geographic/side.hpp>
+#include <boost/geometry/algorithms/detail/thomas_inverse.hpp>
+
+#include <boost/geometry/strategies/geographic/side_detail.hpp>
 
 
 namespace boost { namespace geometry
@@ -29,24 +31,17 @@ namespace strategy { namespace side
 \brief Check at which side of a segment a point lies
          left of segment (> 0), right of segment (< 0), on segment (0)
 \ingroup strategies
-\tparam Spheroid Reference model of coordinate system.
+\tparam Model Reference model of coordinate system.
 \tparam CalculationType \tparam_calculation
  */
-template
-<
-    typename Spheroid = srs::spheroid<double>,
-    typename CalculationType = void
->
+template <typename Model, typename CalculationType = void>
 class thomas
-    : public side::geographic<strategy::thomas, Spheroid, CalculationType>
+    : public detail::by_azimuth<geometry::detail::thomas_inverse, Model, CalculationType>
 {
-    typedef side::geographic<strategy::thomas, Spheroid, CalculationType> base_t;
+    typedef detail::by_azimuth<geometry::detail::thomas_inverse, Model, CalculationType> base_t;
 
 public:
-    thomas()
-    {}
-
-    explicit thomas(Spheroid const& model)
+    thomas(Model const& model = Model())
         : base_t(model)
     {}
 };

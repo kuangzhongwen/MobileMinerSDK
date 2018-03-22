@@ -13,11 +13,10 @@
 #include <vector>
 
 #include <boost/config.hpp>
-#include <boost/context/continuation.hpp>
+#include <boost/context/execution_context.hpp>
 #include <boost/intrusive/list.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/intrusive/set.hpp>
-#include <boost/intrusive/slist.hpp>
 
 #include <boost/fiber/algo/algorithm.hpp>
 #include <boost/fiber/context.hpp>
@@ -49,62 +48,49 @@ public:
                 context,
                 intrusive::member_hook<
                     context, detail::ready_hook, & context::ready_hook_ >,
-                intrusive::constant_time_size< false >
-            >                                               ready_queue_type;
+                intrusive::constant_time_size< false > >    ready_queue_t;
 private:
-    typedef intrusive::multiset<
+    typedef std::vector< context * >                        remote_ready_queue_t;
+    typedef intrusive::set<
                 context,
                 intrusive::member_hook<
                     context, detail::sleep_hook, & context::sleep_hook_ >,
                 intrusive::constant_time_size< false >,
-                intrusive::compare< timepoint_less >
-            >                                               sleep_queue_type;
+                intrusive::compare< timepoint_less > >      sleep_queue_t;
+    typedef intrusive::list<
+                context,
+                intrusive::member_hook<
+                    context, detail::terminated_hook, & context::terminated_hook_ >,
+                intrusive::constant_time_size< false > >    terminated_queue_t;
     typedef intrusive::list<
                 context,
                 intrusive::member_hook<
                     context, detail::worker_hook, & context::worker_hook_ >,
-                intrusive::constant_time_size< false >
-            >                                               worker_queue_type;
-    typedef intrusive::slist<
-                context,
-                intrusive::member_hook<
-                    context, detail::terminated_hook, & context::terminated_hook_ >,
-                intrusive::linear< true >,
-                intrusive::cache_last< true >
-            >                                               terminated_queue_type;
-    typedef intrusive::slist<
-                context,
-                intrusive::member_hook<
-                    context, detail::remote_ready_hook, & context::remote_ready_hook_ >,
-                intrusive::linear< true >,
-                intrusive::cache_last< true >
-            >                                               remote_ready_queue_type;
+                intrusive::constant_time_size< false > >    worker_queue_t;
 
-#if ! defined(BOOST_FIBERS_NO_ATOMICS)
-    // remote ready-queue contains context' signaled by schedulers
-    // running in other threads
-    detail::spinlock                                            remote_ready_splk_{};
-    remote_ready_queue_type                                     remote_ready_queue_{};
-#endif
-    algo::algorithm::ptr_t             algo_;
-    // sleep-queue contains context' which have been called
-    // scheduler::wait_until()
-    sleep_queue_type                                            sleep_queue_{};
+    std::unique_ptr< algo::algorithm >  algo_;
+    context                         *   main_ctx_{ nullptr };
+    intrusive_ptr< context >            dispatcher_ctx_{};
     // worker-queue contains all context' mananged by this scheduler
     // except main-context and dispatcher-context
     // unlink happens on destruction of a context
-    worker_queue_type                                           worker_queue_{};
+    worker_queue_t                      worker_queue_{};
     // terminated-queue contains context' which have been terminated
-    terminated_queue_type                                       terminated_queue_{};
-    intrusive_ptr< context >                                    dispatcher_ctx_{};
-    context                                                 *   main_ctx_{ nullptr };
-    bool                                                        shutdown_{ false };
+    terminated_queue_t                  terminated_queue_{};
+    // remote ready-queue contains context' signaled by schedulers
+    // running in other threads
+    remote_ready_queue_t                remote_ready_queue_{};
+    // sleep-queue cotnains context' whic hahve been called
+    // scheduler::wait_until()
+    sleep_queue_t                       sleep_queue_{};
+    bool                                shutdown_{ false };
+    std::mutex                          remote_ready_mtx_{};
+
+    context * get_next_() noexcept;
 
     void release_terminated_() noexcept;
 
-#if ! defined(BOOST_FIBERS_NO_ATOMICS)
     void remote_ready2ready_() noexcept;
-#endif
 
     void sleep2ready_() noexcept;
 
@@ -116,15 +102,19 @@ public:
 
     virtual ~scheduler();
 
-    void schedule( context *) noexcept;
+    void set_ready( context *) noexcept;
 
-#if ! defined(BOOST_FIBERS_NO_ATOMICS)
-    void schedule_from_remote( context *) noexcept;
+    void set_remote_ready( context *) noexcept;
+
+#if (BOOST_EXECUTION_CONTEXT==1)
+    void dispatch() noexcept;
+
+    void set_terminated( context *) noexcept;
+#else
+    boost::context::execution_context< detail::data_t * > dispatch() noexcept;
+
+    boost::context::execution_context< detail::data_t * > set_terminated( context *) noexcept;
 #endif
-
-    boost::context::continuation dispatch() noexcept;
-
-    boost::context::continuation terminate( detail::spinlock_lock &, context *) noexcept;
 
     void yield( context *) noexcept;
 
@@ -139,7 +129,7 @@ public:
 
     bool has_ready_fibers() const noexcept;
 
-    void set_algo( algo::algorithm::ptr_t) noexcept;
+    void set_algo( std::unique_ptr< algo::algorithm >) noexcept;
 
     void attach_main_context( context *) noexcept;
 

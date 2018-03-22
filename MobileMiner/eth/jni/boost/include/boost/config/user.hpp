@@ -13,12 +13,6 @@
 //  configuration policy:
 //
 
-// Android defines
-// There is problem with std::atomic on android (and some other platforms).
-// See this link for more info:
-// https://code.google.com/p/android/issues/detail?id=42735#makechanges
-#define BOOST_ASIO_DISABLE_STD_ATOMIC 1
-
 // define this to locate a compiler config file:
 // #define BOOST_COMPILER_CONFIG <myheader>
 

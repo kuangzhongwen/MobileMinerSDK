@@ -5,10 +5,9 @@
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 // Copyright (c) 2014-2015 Samuel Debionne, Grenoble, France.
 
-// This file was modified by Oracle on 2015, 2016.
-// Modifications copyright (c) 2015-2016, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015.
+// Modifications copyright (c) 2015, Oracle and/or its affiliates.
 
-// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
@@ -50,8 +49,8 @@ template
 >
 struct indexed_loop
 {
-    template <typename Box, typename Geometry, typename Strategy>
-    static inline void apply(Box& box, Geometry const& source, Strategy const& strategy)
+    template <typename Box, typename Geometry>
+    static inline void apply(Box& box, Geometry const& source)
     {
         typedef typename strategy::compare::detail::select_strategy
             <
@@ -88,7 +87,7 @@ struct indexed_loop
             <
                 StrategyLess, StrategyGreater,
                 Index, Dimension + 1, DimensionCount
-            >::apply(box, source, strategy);
+            >::apply(box, source);
     }
 };
 
@@ -104,8 +103,8 @@ struct indexed_loop
         Index, DimensionCount, DimensionCount
     >
 {
-    template <typename Box, typename Geometry, typename Strategy>
-    static inline void apply(Box&, Geometry const&, Strategy const&) {}
+    template <typename Box, typename Geometry>
+    static inline void apply(Box&, Geometry const&) {}
 };
 
 
@@ -118,22 +117,20 @@ template
 >
 struct expand_indexed
 {
-    template <typename Box, typename Geometry, typename Strategy>
-    static inline void apply(Box& box,
-                             Geometry const& geometry,
-                             Strategy const& strategy)
+    template <typename Box, typename Geometry>
+    static inline void apply(Box& box, Geometry const& geometry)
     {
         indexed_loop
             <
                 StrategyLess, StrategyGreater,
                 0, Dimension, DimensionCount
-            >::apply(box, geometry, strategy);
+            >::apply(box, geometry);
 
         indexed_loop
             <
                 StrategyLess, StrategyGreater,
                 1, Dimension, DimensionCount
-            >::apply(box, geometry, strategy);
+            >::apply(box, geometry);
     }
 };
 

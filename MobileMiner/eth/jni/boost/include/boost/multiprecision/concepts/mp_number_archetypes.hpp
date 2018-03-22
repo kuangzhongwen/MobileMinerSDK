@@ -33,7 +33,6 @@ struct number_backend_float_architype
 
    number_backend_float_architype()
    {
-      m_value = 0;
       std::cout << "Default construct" << std::endl;
    }
    number_backend_float_architype(const number_backend_float_architype& o)

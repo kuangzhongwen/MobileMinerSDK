@@ -12,14 +12,6 @@
 #pragma warning(push,1)
 #endif
 
-#ifdef BOOST_EXCEPTION_MINI_BOOST
-#include  <memory>
-namespace boost { namespace exception_detail { using std::shared_ptr; } }
-#else
-namespace boost { template <class T> class shared_ptr; };
-namespace boost { namespace exception_detail { using boost::shared_ptr; } }
-#endif
-
 namespace
 boost
     {
@@ -151,6 +143,9 @@ boost
 #  pragma GCC visibility pop
 # endif
 #endif
+
+    template <class T>
+    class shared_ptr;
 
     namespace
     exception_detail

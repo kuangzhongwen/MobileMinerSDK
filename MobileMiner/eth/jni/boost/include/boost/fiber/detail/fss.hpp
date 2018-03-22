@@ -38,13 +38,12 @@ public:
 
     friend inline
     void intrusive_ptr_add_ref( fss_cleanup_function * p) noexcept {
-        p->use_count_.fetch_add( 1, std::memory_order_relaxed);
+        ++p->use_count_;
     }
 
     friend inline
     void intrusive_ptr_release( fss_cleanup_function * p) noexcept {
-        if ( 1 == p->use_count_.fetch_sub( 1, std::memory_order_release) ) {
-            std::atomic_thread_fence( std::memory_order_acquire);
+        if ( --p->use_count_ == 0) {
             delete p;
         }
     }

@@ -25,8 +25,6 @@ namespace compute {
 /// beginning at \p result while replacing each instance of \p old_value
 /// with \p new_value.
 ///
-/// Space complexity: \Omega(1)
-///
 /// \see replace()
 template<class InputIterator, class OutputIterator, class T>
 inline OutputIterator

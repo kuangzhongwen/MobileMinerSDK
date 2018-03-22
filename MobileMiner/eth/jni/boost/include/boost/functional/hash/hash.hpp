@@ -62,18 +62,6 @@ namespace boost
 {
     namespace hash_detail
     {
-#if defined(_HAS_AUTO_PTR_ETC) && !_HAS_AUTO_PTR_ETC
-        template <typename T>
-        struct hash_base
-        {
-            typedef T argument_type;
-            typedef std::size_t result_type;
-        };
-#else
-        template <typename T>
-        struct hash_base : std::unary_function<T, std::size_t> {};
-#endif
-
         struct enable_hash_value { typedef std::size_t type; };
 
         template <typename T> struct basic_numbers {};
@@ -104,16 +92,6 @@ namespace boost
 
 #if !defined(BOOST_NO_INTRINSIC_WCHAR_T)
         template <> struct basic_numbers<wchar_t> :
-            boost::hash_detail::enable_hash_value {};
-#endif
-
-#if !defined(BOOST_NO_CXX11_CHAR16_T)
-        template <> struct basic_numbers<char16_t> :
-            boost::hash_detail::enable_hash_value {};
-#endif
-
-#if !defined(BOOST_NO_CXX11_CHAR32_T)
-        template <> struct basic_numbers<char32_t> :
             boost::hash_detail::enable_hash_value {};
 #endif
 
@@ -190,10 +168,10 @@ namespace boost
         template <class T>
         inline std::size_t hash_value_signed(T val)
         {
-             const unsigned int size_t_bits = std::numeric_limits<std::size_t>::digits;
+             const int size_t_bits = std::numeric_limits<std::size_t>::digits;
              // ceiling(std::numeric_limits<T>::digits / size_t_bits) - 1
              const int length = (std::numeric_limits<T>::digits - 1)
-                 / static_cast<int>(size_t_bits);
+                 / size_t_bits;
 
              std::size_t seed = 0;
              T positive = val < 0 ? -1 - val : val;
@@ -211,10 +189,10 @@ namespace boost
         template <class T>
         inline std::size_t hash_value_unsigned(T val)
         {
-             const unsigned int size_t_bits = std::numeric_limits<std::size_t>::digits;
+             const int size_t_bits = std::numeric_limits<std::size_t>::digits;
              // ceiling(std::numeric_limits<T>::digits / size_t_bits) - 1
              const int length = (std::numeric_limits<T>::digits - 1)
-                 / static_cast<int>(size_t_bits);
+                 / size_t_bits;
 
              std::size_t seed = 0;
 
@@ -258,7 +236,7 @@ namespace boost
         inline void hash_combine_impl(boost::uint64_t& h,
                 boost::uint64_t k)
         {
-            const boost::uint64_t m = UINT64_C(0xc6a4a7935bd1e995);
+            const uint64_t m = UINT64_C(0xc6a4a7935bd1e995);
             const int r = 47;
 
             k *= m;
@@ -441,7 +419,7 @@ namespace boost
 
 #define BOOST_HASH_SPECIALIZE(type) \
     template <> struct hash<type> \
-         : public boost::hash_detail::hash_base<type> \
+         : public std::unary_function<type, std::size_t> \
     { \
         std::size_t operator()(type v) const \
         { \
@@ -451,7 +429,7 @@ namespace boost
 
 #define BOOST_HASH_SPECIALIZE_REF(type) \
     template <> struct hash<type> \
-         : public boost::hash_detail::hash_base<type> \
+         : public std::unary_function<type, std::size_t> \
     { \
         std::size_t operator()(type const& v) const \
         { \
@@ -466,12 +444,6 @@ namespace boost
 #if !defined(BOOST_NO_INTRINSIC_WCHAR_T)
     BOOST_HASH_SPECIALIZE(wchar_t)
 #endif
-#if !defined(BOOST_NO_CXX11_CHAR16_T)
-    BOOST_HASH_SPECIALIZE(char16_t)
-#endif
-#if !defined(BOOST_NO_CXX11_CHAR32_T)
-    BOOST_HASH_SPECIALIZE(char32_t)
-#endif
     BOOST_HASH_SPECIALIZE(short)
     BOOST_HASH_SPECIALIZE(unsigned short)
     BOOST_HASH_SPECIALIZE(int)
@@ -484,14 +456,8 @@ namespace boost
     BOOST_HASH_SPECIALIZE(long double)
 
     BOOST_HASH_SPECIALIZE_REF(std::string)
-#if !defined(BOOST_NO_STD_WSTRING) && !defined(BOOST_NO_INTRINSIC_WCHAR_T)
+#if !defined(BOOST_NO_STD_WSTRING)
     BOOST_HASH_SPECIALIZE_REF(std::wstring)
-#endif
-#if !defined(BOOST_NO_CXX11_CHAR16_T)
-    BOOST_HASH_SPECIALIZE_REF(std::basic_string<char16_t>)
-#endif
-#if !defined(BOOST_NO_CXX11_CHAR32_T)
-    BOOST_HASH_SPECIALIZE_REF(std::basic_string<char32_t>)
 #endif
 
 #if !defined(BOOST_NO_LONG_LONG)
@@ -517,7 +483,7 @@ namespace boost
 
     template <class T>
     struct hash<T*>
-        : public boost::hash_detail::hash_base<T*>
+        : public std::unary_function<T*, std::size_t>
     {
         std::size_t operator()(T* v) const
         {
@@ -550,7 +516,7 @@ namespace boost
         {
             template <class T>
             struct inner
-                : public boost::hash_detail::hash_base<T>
+                : public std::unary_function<T, std::size_t>
             {
                 std::size_t operator()(T val) const
                 {

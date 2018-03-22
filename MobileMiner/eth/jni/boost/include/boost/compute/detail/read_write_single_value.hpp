@@ -14,7 +14,6 @@
 #include <boost/throw_exception.hpp>
 
 #include <boost/compute/buffer.hpp>
-#include <boost/compute/event.hpp>
 #include <boost/compute/exception.hpp>
 #include <boost/compute/command_queue.hpp>
 
@@ -48,18 +47,18 @@ inline T read_single_value(const buffer &buffer, command_queue &queue)
 
 // writes a single value at index to the buffer
 template<class T>
-inline event write_single_value(const T &value,
-                                const buffer &buffer,
-                                size_t index,
-                                command_queue &queue)
+inline void write_single_value(const T &value,
+                               const buffer &buffer,
+                               size_t index,
+                               command_queue &queue)
 {
     BOOST_ASSERT(index < buffer.size() / sizeof(T));
     BOOST_ASSERT(buffer.get_context() == queue.get_context());
 
-    return queue.enqueue_write_buffer(buffer,
-                                      index * sizeof(T),
-                                      sizeof(T),
-                                      &value);
+    queue.enqueue_write_buffer(buffer,
+                               index * sizeof(T),
+                               sizeof(T),
+                               &value);
 }
 
 // writes value to the first location in buffer

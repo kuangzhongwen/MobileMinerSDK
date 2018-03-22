@@ -20,7 +20,7 @@
 #define BOOST_PHOENIX_IS_STD_SET_EN_16_12_2004
 
 #include <boost/mpl/bool.hpp>
-#include <set>
+#include <boost/detail/container_fwd.hpp>
 
 namespace boost
 {

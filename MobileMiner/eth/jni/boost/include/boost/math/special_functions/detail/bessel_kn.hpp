@@ -45,16 +45,16 @@ T bessel_kn(int n, T x, const Policy& pol)
     }
     if (n == 0)
     {
-        value = bessel_k0(x);
+        value = bessel_k0(x, pol);
     }
     else if (n == 1)
     {
-        value = bessel_k1(x);
+        value = bessel_k1(x, pol);
     }
     else
     {
-       prev = bessel_k0(x);
-       current = bessel_k1(x);
+       prev = bessel_k0(x, pol);
+       current = bessel_k1(x, pol);
        int k = 1;
        BOOST_ASSERT(k < n);
        T scale = 1;

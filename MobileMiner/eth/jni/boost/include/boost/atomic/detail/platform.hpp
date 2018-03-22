@@ -60,8 +60,7 @@
         defined(__ARM_ARCH_6ZK__) ||\
         defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7A__) ||\
         defined(__ARM_ARCH_7R__) || defined(__ARM_ARCH_7M__) ||\
-        defined(__ARM_ARCH_7EM__) || defined(__ARM_ARCH_7S__) ||\
-        defined(__ARM_ARCH_8A__)\
+        defined(__ARM_ARCH_7EM__) || defined(__ARM_ARCH_7S__)\
     )
 
 #define BOOST_ATOMIC_DETAIL_PLATFORM gcc_arm
@@ -89,7 +88,7 @@
 
 #define BOOST_ATOMIC_DETAIL_PLATFORM msvc_x86
 
-#elif defined(_MSC_VER) && _MSC_VER >= 1700 && (defined(_M_ARM) || defined(_M_ARM64))
+#elif defined(_MSC_VER) && _MSC_VER >= 1700 && defined(_M_ARM)
 
 #define BOOST_ATOMIC_DETAIL_PLATFORM msvc_arm
 

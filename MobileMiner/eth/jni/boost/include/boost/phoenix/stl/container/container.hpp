@@ -33,7 +33,7 @@ namespace boost { namespace phoenix
 //      Lazy functions are provided for all of the member functions of the
 //      following containers:
 //
-//      deque - list - map - multimap - vector - set - multiset.
+//      deque - list - map - multimap - vector.
 //
 //      Indeed, should *your* class have member functions with the same names
 //      and signatures as those listed below, then it will automatically be
@@ -286,25 +286,32 @@ namespace boost { namespace phoenix
             template <typename C, typename Arg1, typename Arg2 = mpl::void_>
             struct erase
             {
-                // MSVC and libc++ always returns iterator even in C++03 mode.
+                //  BOOST_MSVC #if branch here in map_erase_result non-
+                //  standard behavior. The return type should be void but
+                //  VC7.1 prefers to return iterator_of<C>. As a result,
+                //  VC7.1 complains of error C2562:
+                //  boost::phoenix::stl::erase::operator() 'void' function
+                //  returning a value. Oh well... :*
+
                 typedef
-                    boost::mpl::eval_if<
-                        is_key_type_of<C, Arg1>
-                      , size_type_of<C>
-#if defined(BOOST_MSVC) /*&& (BOOST_MSVC <= 1500)*/ \
- && (defined(BOOST_LIBSTDCXX11) && 40500 <= BOOST_LIBSTDCXX_VERSION) \
- && defined(_LIBCPP_VERSION)
+                    boost::mpl::eval_if_c<
+                        boost::is_same<
+                            typename remove_reference<Arg1>::type
+                          , typename iterator_of<C>::type
+                        >::value
+#if defined(BOOST_MSVC)// && (BOOST_MSVC <= 1500)
                       , iterator_of<C>
 #else
                       , boost::mpl::identity<void>
 #endif
+                      , size_type_of<C>
                     >
-                assoc_erase_result;
+                map_erase_result;
 
                 typedef typename
                     boost::mpl::eval_if_c<
-                        has_key_type<C>::value
-                      , assoc_erase_result
+                        has_mapped_type<C>::value
+                      , map_erase_result
                       , iterator_of<C>
                     >::type
                 type;
@@ -315,20 +322,18 @@ namespace boost { namespace phoenix
         {
             //  This mouthful can differentiate between the generic erase
             //  functions (Container == std::deque, std::list, std::vector) and
-            //  that specific to Associative Containers.
+            //  that specific to the two map-types, std::map and std::multimap.
             //
             //  where C is a std::deque, std::list, std::vector:
             //
             //      1) iterator C::erase(iterator where);
             //      2) iterator C::erase(iterator first, iterator last);
             //
-            //  where C is a std::map, std::multimap, std::set, or std::multiset:
+            //  where M is a std::map or std::multimap:
             //
             //      3) size_type M::erase(const Key& keyval);
-            //      4-a) void M::erase(iterator where);
-            //      4-b) iterator M::erase(iterator where);
-            //      5-a) void M::erase(iterator first, iterator last);
-            //      5-b) iterator M::erase(iterator first, iterator last);
+            //      4) void M::erase(iterator where);
+            //      5) void M::erase(iterator first, iterator last);
 
             template <typename Sig>
             struct result;
@@ -344,19 +349,39 @@ namespace boost { namespace phoenix
             {};
 
             template <typename C, typename Arg1>
-            typename result_of::erase<C, Arg1>::type
+            typename stl_impl::disable_if_is_void<
+                typename result_of::erase<C, Arg1>::type
+            >::type
             operator()(C& c, Arg1 arg1) const
             {
-                typedef typename result_of::erase<C, Arg1>::type result_type;
-                return static_cast<result_type>(c.erase(arg1));
+                return c.erase(arg1);
+            }
+
+            template <typename C, typename Arg1>
+            typename stl_impl::enable_if_is_void<
+                typename result_of::erase<C, Arg1>::type
+            >::type
+            operator()(C& c, Arg1 arg1) const
+            {
+                c.erase(arg1);
             }
 
             template <typename C, typename Arg1, typename Arg2>
-            typename result_of::erase<C, Arg1, Arg2>::type
+            typename stl_impl::disable_if_is_void<
+                typename result_of::erase<C, Arg1, Arg2>::type
+            >::type
             operator()(C& c, Arg1 arg1, Arg2 arg2) const
             {
-                typedef typename result_of::erase<C, Arg1, Arg2>::type result_type;
-                return static_cast<result_type>(c.erase(arg1, arg2));
+                return c.erase(arg1, arg2);
+            }
+
+            template <typename C, typename Arg1, typename Arg2>
+            typename stl_impl::enable_if_is_void<
+                typename result_of::erase<C, Arg1, Arg2>::type
+            >::type
+            operator()(C& c, Arg1 arg1, Arg2 arg2) const
+            {
+                c.erase(arg1, arg2);
             }
         };
 
@@ -509,19 +534,41 @@ namespace boost { namespace phoenix
             }
 
             template <typename C, typename Arg1, typename Arg2>
-            typename result<insert(C&, Arg1, Arg2)>::type
+            typename stl_impl::disable_if_is_void<
+                typename result<insert(C&, Arg1, Arg2)>::type
+            >::type
             operator()(C& c, Arg1 arg1, Arg2 arg2) const
             {
-                typedef typename result<insert(C&, Arg1, Arg2)>::type result_type;
-                return static_cast<result_type>(c.insert(arg1, arg2));
+                return c.insert(arg1, arg2);
+            }
+
+            template <typename C, typename Arg1, typename Arg2>
+            typename stl_impl::enable_if_is_void<
+                typename result<insert(C&, Arg1, Arg2)>::type
+            >::type
+            operator()(C& c, Arg1 arg1, Arg2 arg2) const
+            {
+                c.insert(arg1, arg2);
             }
 
             template <typename C, typename Arg1, typename Arg2, typename Arg3>
-            typename result<insert(C&, Arg1, Arg2, Arg3)>::type
-            operator()(C& c, Arg1 arg1, Arg2 arg2, Arg3 arg3) const
+            typename stl_impl::disable_if_is_void<
+                typename result<insert(C&, Arg1, Arg2, Arg3)>::type
+            >::type
+            operator()(
+                C& c, Arg1 arg1, Arg2 arg2, Arg3 arg3) const
             {
-                typedef typename result<insert(C&, Arg1, Arg2, Arg3)>::type result_type;
-                return static_cast<result_type>(c.insert(arg1, arg2, arg3));
+                return c.insert(arg1, arg2, arg3);
+            }
+
+            template <typename C, typename Arg1, typename Arg2, typename Arg3>
+            typename stl_impl::enable_if_is_void<
+                typename result<insert(C&, Arg1, Arg2, Arg3)>::type
+            >::type
+            operator()(
+                C& c, Arg1 arg1, Arg2 arg2, Arg3 arg3) const
+            {
+                c.insert(arg1, arg2, arg3);
             }
         };
 

@@ -5,10 +5,9 @@
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 // Copyright (c) 2014-2015 Samuel Debionne, Grenoble, France.
 
-// This file was modified by Oracle on 2015, 2016.
-// Modifications copyright (c) 2015-2016, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015.
+// Modifications copyright (c) 2015, Oracle and/or its affiliates.
 
-// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 
 // Distributed under the Boost Software License, Version 1.0.
@@ -40,29 +39,25 @@ namespace boost { namespace geometry
 namespace detail { namespace expand
 {
 
-struct segment
+
+struct segment_on_sphere
 {
-    template <typename Box, typename Segment, typename Strategy>
-    static inline void apply(Box& box,
-                             Segment const& segment,
-                             Strategy const& strategy)
+    template <typename Box, typename Segment>
+    static inline void apply(Box& box, Segment const& segment)
     {
         Box mbrs[2];
 
         // compute the envelope of the segment
-        typename point_type<Segment>::type p[2];
-        detail::assign_point_from_index<0>(segment, p[0]);
-        detail::assign_point_from_index<1>(segment, p[1]);
-        detail::envelope::envelope_segment
+        detail::envelope::envelope_segment_on_sphere
             <
                 dimension<Segment>::value
-            >::apply(p[0], p[1], mbrs[0], strategy);
+            >::apply(segment, mbrs[0]);
 
         // normalize the box
-        detail::envelope::envelope_box_on_spheroid::apply(box, mbrs[1], strategy);
+        detail::envelope::envelope_box_on_spheroid::apply(box, mbrs[1]);
 
         // compute the envelope of the two boxes
-        detail::envelope::envelope_range_of_boxes::apply(mbrs, box, strategy);
+        detail::envelope::envelope_range_of_boxes::apply(mbrs, box);
     }
 };
 
@@ -73,6 +68,7 @@ struct segment
 #ifndef DOXYGEN_NO_DISPATCH
 namespace dispatch
 {
+
 
 template
 <
@@ -107,27 +103,13 @@ struct expand
         StrategyLess, StrategyGreater,
         box_tag, segment_tag,
         spherical_equatorial_tag, spherical_equatorial_tag
-    > : detail::expand::segment
+    > : detail::expand::segment_on_sphere
 {};
 
-template
-<
-    typename Box, typename Segment,
-    typename StrategyLess, typename StrategyGreater
->
-struct expand
-    <
-        Box, Segment,
-        StrategyLess, StrategyGreater,
-        box_tag, segment_tag,
-        geographic_tag, geographic_tag
-    > : detail::expand::segment
-{};
 
 } // namespace dispatch
 #endif // DOXYGEN_NO_DISPATCH
 
 }} // namespace boost::geometry
-
 
 #endif // BOOST_GEOMETRY_ALGORITHMS_DETAIL_EXPAND_SEGMENT_HPP

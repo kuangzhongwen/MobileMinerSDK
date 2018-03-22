@@ -17,9 +17,7 @@
 #include <chrono>
 #endif
 
-#ifndef BOOST_COMPUTE_NO_BOOST_CHRONO
 #include <boost/chrono/duration.hpp>
-#endif
 
 namespace boost {
 namespace compute {
@@ -36,7 +34,6 @@ make_duration_from_nanoseconds(std::chrono::duration<Rep, Period>, size_t nanose
 }
 #endif // BOOST_COMPUTE_NO_HDR_CHRONO
 
-#ifndef BOOST_COMPUTE_NO_BOOST_CHRONO
 template<class Rep, class Period>
 inline boost::chrono::duration<Rep, Period>
 make_duration_from_nanoseconds(boost::chrono::duration<Rep, Period>, size_t nanoseconds)
@@ -45,7 +42,6 @@ make_duration_from_nanoseconds(boost::chrono::duration<Rep, Period>, size_t nano
         boost::chrono::nanoseconds(nanoseconds)
     );
 }
-#endif // BOOST_COMPUTE_NO_BOOST_CHRONO
 
 } // end detail namespace
 } // end compute namespace

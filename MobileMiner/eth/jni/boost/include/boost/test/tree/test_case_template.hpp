@@ -5,8 +5,11 @@
 
 //  See http://www.boost.org/libs/test for the library home page.
 //
-///@ file
-/// Defines template_test_case_gen
+//  File        : $RCSfile$
+//
+//  Version     : $Revision: -1 $
+//
+//  Description : defines template_test_case_gen
 // ***************************************************************************
 
 #ifndef BOOST_TEST_TREE_TEST_CASE_TEMPLATE_HPP_091911GER
@@ -31,10 +34,10 @@
 #include <boost/type_traits/is_const.hpp>
 #include <boost/function/function0.hpp>
 
-#if defined(BOOST_NO_TYPEID) || defined(BOOST_NO_RTTI)
-#  include <boost/current_function.hpp>
+#ifndef BOOST_NO_RTTI
+#include <typeinfo> // for typeid
 #else
-#  include <boost/core/demangle.hpp>
+#include <boost/current_function.hpp>
 #endif
 
 // STL
@@ -79,8 +82,8 @@ struct generate_test_case_4_type {
         std::string full_name;
         assign_op( full_name, m_test_case_name, 0 );
         full_name += '<';
-#if !defined(BOOST_NO_TYPEID) && !defined(BOOST_NO_RTTI)
-        full_name += boost::core::demangle(typeid(TestType).name()); // same as execution_monitor.ipp
+#ifndef BOOST_NO_RTTI
+         full_name += typeid(TestType).name();
 #else
         full_name += BOOST_CURRENT_FUNCTION;
 #endif

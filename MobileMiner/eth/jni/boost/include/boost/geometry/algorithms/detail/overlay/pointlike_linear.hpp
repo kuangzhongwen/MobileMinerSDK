@@ -1,14 +1,11 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
-
-// Copyright (c) 2015-2017, Oracle and/or its affiliates.
-
-// Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
-// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+// Copyright (c) 2015, Oracle and/or its affiliates.
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
+
+// Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 
 
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_POINTLIKE_LINEAR_HPP
@@ -72,12 +69,12 @@ struct point_linear_point
                                        Linear const& linear,
                                        RobustPolicy const&,
                                        OutputIterator oit,
-                                       Strategy const& strategy)
+                                       Strategy const&)
     {
         action_selector_pl_l
             <
                 PointOut, OverlayType
-            >::apply(point, Policy::apply(point, linear, strategy), oit);
+            >::apply(point, Policy::apply(point, linear), oit);
         return oit;
     }
 };
@@ -98,7 +95,7 @@ struct multipoint_segment_point
                                        Segment const& segment,
                                        RobustPolicy const&,
                                        OutputIterator oit,
-                                       Strategy const& strategy)
+                                       Strategy const&)
     {
         for (typename boost::range_iterator<MultiPoint const>::type
                  it = boost::begin(multipoint);
@@ -108,7 +105,7 @@ struct multipoint_segment_point
             action_selector_pl_l
                 <
                     PointOut, OverlayType
-                >::apply(*it, Policy::apply(*it, segment, strategy), oit);
+                >::apply(*it, Policy::apply(*it, segment), oit);
         }
 
         return oit;
@@ -129,80 +126,42 @@ class multipoint_linear_point
 {
 private:
     // structs for partition -- start
-    struct expand_box_point
+    struct expand_box
     {
-        template <typename Box, typename Point>
-        static inline void apply(Box& total, Point const& point)
+        template <typename Box, typename Geometry>
+        static inline void apply(Box& total, Geometry const& geometry)
         {
-            geometry::expand(total, point);
+            geometry::expand(total, geometry::return_envelope<Box>(geometry));
+        }
+
+    };
+
+    struct overlaps_box
+    {
+        template <typename Box, typename Geometry>
+        static inline bool apply(Box const& box, Geometry const& geometry)
+        {
+            return ! geometry::disjoint(geometry, box);
         }
     };
 
-    template <typename EnvelopeStrategy>
-    struct expand_box_segment
-    {
-        explicit expand_box_segment(EnvelopeStrategy const& strategy)
-            : m_strategy(strategy)
-        {}
-
-        template <typename Box, typename Segment>
-        inline void apply(Box& total, Segment const& segment) const
-        {
-            geometry::expand(total,
-                             geometry::return_envelope<Box>(segment, m_strategy));
-        }
-
-        EnvelopeStrategy const& m_strategy;
-    };
-
-    struct overlaps_box_point
-    {
-        template <typename Box, typename Point>
-        static inline bool apply(Box const& box, Point const& point)
-        {
-            return ! geometry::disjoint(point, box);
-        }
-    };
-
-    template <typename DisjointStrategy>
-    struct overlaps_box_segment
-    {
-        explicit overlaps_box_segment(DisjointStrategy const& strategy)
-            : m_strategy(strategy)
-        {}
-
-        template <typename Box, typename Segment>
-        inline bool apply(Box const& box, Segment const& segment) const
-        {
-            return ! geometry::disjoint(segment, box, m_strategy);
-        }
-
-        DisjointStrategy const& m_strategy;
-    };
-
-    template <typename OutputIterator, typename Strategy>
+    template <typename OutputIterator>
     class item_visitor_type
     {
     public:
-        item_visitor_type(OutputIterator& oit, Strategy const& strategy)
-            : m_oit(oit)
-            , m_strategy(strategy)
-        {}
+        item_visitor_type(OutputIterator& oit) : m_oit(oit) {}
 
         template <typename Item1, typename Item2>
-        inline bool apply(Item1 const& item1, Item2 const& item2)
+        inline void apply(Item1 const& item1, Item2 const& item2)
         {
             action_selector_pl_l
                 <
                     PointOut, overlay_intersection
-                >::apply(item1, Policy::apply(item1, item2, m_strategy), m_oit);
-
-            return true;
+                >::apply(item1, Policy::apply(item1, item2), m_oit);
         }
 
     private:
         OutputIterator& m_oit;
-        Strategy const& m_strategy;
     };
     // structs for partition -- end
 
@@ -230,33 +189,24 @@ private:
         Linear const& m_linear;
     };
 
-    template <typename OutputIterator, typename Strategy>
+    template <typename OutputIterator>
     static inline OutputIterator get_common_points(MultiPoint const& multipoint,
                                                    Linear const& linear,
-                                                   OutputIterator oit,
-                                                   Strategy const& strategy)
+                                                   OutputIterator oit)
     {
-        item_visitor_type<OutputIterator, Strategy> item_visitor(oit, strategy);
+        item_visitor_type<OutputIterator> item_visitor(oit);
 
-        typedef typename Strategy::envelope_strategy_type envelope_strategy_type;
-        typedef typename Strategy::disjoint_strategy_type disjoint_strategy_type;
+        segment_range rng(linear);
 
-        // TODO: disjoint Segment/Box may be called in partition multiple times
-        // possibly for non-cartesian segments which could be slow. We should consider
-        // passing a range of bounding boxes of segments after calculating them once.
-        // Alternatively instead of a range of segments a range of Segment/Envelope pairs
-        // should be passed, where envelope would be lazily calculated when needed the first time
         geometry::partition
             <
                 geometry::model::box
                     <
                         typename boost::range_value<MultiPoint>::type
-                    >
-            >::apply(multipoint, segment_range(linear), item_visitor,
-                     expand_box_point(),
-                     overlaps_box_point(),
-                     expand_box_segment<envelope_strategy_type>(strategy.get_envelope_strategy()),
-                     overlaps_box_segment<disjoint_strategy_type>(strategy.get_disjoint_strategy()));
+                    >,
+                expand_box,
+                overlaps_box
+            >::apply(multipoint, rng, item_visitor);
 
         return oit;
     }
@@ -278,8 +228,7 @@ public:
 
         // compute the common points
         get_common_points(multipoint, linear,
-                          std::back_inserter(common_points),
-                          strategy);
+                          std::back_inserter(common_points));
 
         return multipoint_multipoint_point
             <

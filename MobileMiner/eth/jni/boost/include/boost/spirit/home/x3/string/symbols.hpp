@@ -343,13 +343,11 @@ namespace boost { namespace spirit { namespace x3
 
     using standard::symbols;
 
-#ifndef BOOST_SPIRIT_NO_STANDARD_WIDE
     namespace standard_wide
     {
         template <typename T = unused_type>
         using symbols = symbols_parser<char_encoding::standard_wide, T>;
     }
-#endif
 
     namespace ascii
     {

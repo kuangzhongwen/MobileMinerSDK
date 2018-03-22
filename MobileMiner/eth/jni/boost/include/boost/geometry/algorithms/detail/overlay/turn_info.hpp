@@ -13,7 +13,6 @@
 #include <boost/array.hpp>
 
 #include <boost/geometry/core/coordinate_type.hpp>
-#include <boost/geometry/algorithms/detail/signed_size_type.hpp>
 #include <boost/geometry/algorithms/detail/overlay/segment_identifier.hpp>
 #include <boost/geometry/algorithms/detail/overlay/overlay_type.hpp>
 
@@ -89,24 +88,18 @@ struct turn_info
 
     Point point;
     method_type method;
-    bool touch_only; // True in case of method touch(interior) and lines do not cross
-    signed_size_type cluster_id; // For multiple turns on same location, >= 0. Else -1
+    int cluster_id;
     bool discarded;
-
-    // TODO: move this to enriched
-    bool colocated_ii; // Colocated with a ii turn (TODO: or a ix turn)
-    bool colocated_uu; // Colocated with a uu turn or a ux turn
+    bool colocated;
     bool switch_source; // For u/u turns which can either switch or not
 
     Container operations;
 
     inline turn_info()
         : method(method_none)
-        , touch_only(false)
         , cluster_id(-1)
         , discarded(false)
-        , colocated_ii(false)
-        , colocated_uu(false)
+        , colocated(false)
         , switch_source(false)
     {}
 
@@ -138,6 +131,7 @@ struct turn_info
     {
         return has(operation_blocked);
     }
+
 
 private :
     inline bool has12(operation_type type1, operation_type type2) const

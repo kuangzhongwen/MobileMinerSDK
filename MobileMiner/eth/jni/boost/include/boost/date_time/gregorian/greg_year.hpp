@@ -9,8 +9,7 @@
  * $Date$
  */
 
-#include <boost/date_time/compiler_config.hpp>
-#include <boost/date_time/constrained_value.hpp>
+#include "boost/date_time/constrained_value.hpp"
 #include <stdexcept>
 #include <string>
 
@@ -18,7 +17,7 @@ namespace boost {
 namespace gregorian {
 
   //! Exception type for gregorian year
-  struct BOOST_SYMBOL_VISIBLE bad_year : public std::out_of_range
+  struct bad_year : public std::out_of_range
   {
     bad_year() : 
       std::out_of_range(std::string("Year is out of valid range: 1400..10000")) 
@@ -37,10 +36,12 @@ namespace gregorian {
       at the moment, but they are the limits of current testing of the 
       library.  As such they may be increased in the future.
   */
-  class BOOST_SYMBOL_VISIBLE greg_year : public greg_year_rep {
+  class greg_year : public greg_year_rep {
   public:
     greg_year(unsigned short year) : greg_year_rep(year) {}
     operator unsigned short()  const {return value_;}
+  private:
+    
   };
 
 

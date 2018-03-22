@@ -15,12 +15,8 @@
 #ifndef BOOST_PHOENIX_IS_STD_HASH_SET_EN_16_12_2004
 #define BOOST_PHOENIX_IS_STD_HASH_SET_EN_16_12_2004
 
-#include <boost/phoenix/config.hpp>
 #include <boost/mpl/bool.hpp>
-
-#ifdef BOOST_PHOENIX_HAS_HASH
-#include BOOST_PHOENIX_HASH_SET_HEADER
-#endif
+#include "./std_hash_set_fwd.hpp"
 
 namespace boost
 {
@@ -34,15 +30,45 @@ namespace boost
         : boost::mpl::false_
     {};
 
-#ifdef BOOST_PHOENIX_HAS_HASH
+#if defined(BOOST_HAS_HASH)
 
-    template<class Kty,BOOST_PHOENIX_HASH_template_rest_param>
-    struct is_std_hash_set< ::BOOST_PHOENIX_HASH_NAMESPACE::hash_set<Kty,BOOST_PHOENIX_HASH_type_rest_param> >
+    template<
+        class Kty
+      , class Hash
+      , class Cmp
+      , class Alloc
+    >
+    struct is_std_hash_set< ::BOOST_STD_EXTENSION_NAMESPACE::hash_set<Kty,Hash,Cmp,Alloc> >
         : boost::mpl::true_
     {};
 
-    template<class Kty,BOOST_PHOENIX_HASH_template_rest_param>
-    struct is_std_hash_multiset< ::BOOST_PHOENIX_HASH_NAMESPACE::hash_multiset<Kty,BOOST_PHOENIX_HASH_type_rest_param> >
+    template<
+        class Kty
+      , class Hash
+      , class Cmp
+      , class Alloc
+    >
+    struct is_std_hash_multiset< ::BOOST_STD_EXTENSION_NAMESPACE::hash_multiset<Kty,Hash,Cmp,Alloc> >
+        : boost::mpl::true_
+    {};
+
+#elif defined(BOOST_DINKUMWARE_STDLIB)
+
+    template<
+        class Kty
+      , class Tr
+      , class Alloc
+    >
+    struct is_std_hash_set< ::BOOST_STD_EXTENSION_NAMESPACE::hash_set<Kty,Tr,Alloc> >
+        : boost::mpl::true_
+    {};
+
+    template<
+        class Kty
+      , class Tr
+      , class Alloc
+    >
+    struct is_std_hash_multiset< ::BOOST_STD_EXTENSION_NAMESPACE::hash_multiset<Kty,Tr,Alloc> >
         : boost::mpl::true_
     {};
 

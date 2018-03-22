@@ -51,8 +51,8 @@ public:
     void    log_entry_finish( std::ostream& );
 
     void    entry_context_start( std::ostream&, log_level );
-    void    log_entry_context( std::ostream&, log_level l, const_string );
-    void    entry_context_finish( std::ostream&, log_level l );
+    void    log_entry_context( std::ostream&, const_string );
+    void    entry_context_finish( std::ostream& );
 
 protected:
     virtual void    print_prefix( std::ostream&, const_string file, std::size_t line );

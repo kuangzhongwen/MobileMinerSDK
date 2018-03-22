@@ -18,10 +18,7 @@ namespace compute {
 namespace detail {
 
 template<class T>
-struct type_definition_trait
-{
-    static std::string value() { return std::string(); }
-};
+struct type_definition_trait;
 
 } // end detail namespace
 

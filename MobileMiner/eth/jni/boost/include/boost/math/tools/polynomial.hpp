@@ -15,6 +15,7 @@
 
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
+#include <boost/config/suffix.hpp>
 #include <boost/function.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/math/tools/rational.hpp>
@@ -336,7 +337,7 @@ public:
    }
    T evaluate(T z)const
    {
-      return m_data.size() > 0 ? boost::math::tools::evaluate_polynomial(&m_data[0], z, m_data.size()) : 0;
+      return boost::math::tools::evaluate_polynomial(&m_data[0], z, m_data.size());;
    }
    std::vector<T> chebyshev()const
    {
@@ -711,11 +712,6 @@ inline std::basic_ostream<charT, traits>& operator << (std::basic_ostream<charT,
 } // namespace tools
 } // namespace math
 } // namespace boost
-
-//
-// Polynomial specific overload of gcd algorithm:
-//
-#include <boost/math/tools/polynomial_gcd.hpp>
 
 #endif // BOOST_MATH_TOOLS_POLYNOMIAL_HPP
 

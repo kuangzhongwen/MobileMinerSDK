@@ -33,8 +33,6 @@ namespace compute {
 /// \param predicate Unary predicate to be applied on each element
 /// \param queue Queue on which to execute
 ///
-/// Space complexity: \Omega(3n)
-///
 /// \see is_partitioned() and partition()
 ///
 template<class Iterator, class UnaryPredicate>

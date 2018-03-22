@@ -13,7 +13,6 @@
 #include <stdexcept>
 #include <boost/tokenizer.hpp>
 #include <boost/throw_exception.hpp>
-#include <boost/date_time/compiler_config.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/time_zone_names.hpp>
 #include <boost/date_time/time_zone_base.hpp>
@@ -26,13 +25,13 @@ namespace boost{
 namespace local_time{
 
   //! simple exception for UTC and Daylight savings start/end offsets
-  struct BOOST_SYMBOL_VISIBLE bad_offset : public std::out_of_range
+  struct bad_offset : public std::out_of_range
   {
     bad_offset(std::string const& msg = std::string()) :
       std::out_of_range(std::string("Offset out of range: " + msg)) {}
   };
   //! simple exception for UTC daylight savings adjustment
-  struct BOOST_SYMBOL_VISIBLE bad_adjustment : public std::out_of_range
+  struct bad_adjustment : public std::out_of_range
   {
     bad_adjustment(std::string const& msg = std::string()) :
       std::out_of_range(std::string("Adjustment out of range: " + msg)) {}
@@ -68,7 +67,7 @@ namespace local_time{
    * http://www.worldtimezone.com/utc/utc+1200.html
    */
   template<class CharT>
-  class BOOST_SYMBOL_VISIBLE posix_time_zone_base : public date_time::time_zone_base<posix_time::ptime,CharT> {
+  class posix_time_zone_base : public date_time::time_zone_base<posix_time::ptime,CharT> {
   public:
     typedef boost::posix_time::time_duration time_duration_type;
     typedef date_time::time_zone_names_base<CharT> time_zone_names;

@@ -18,13 +18,38 @@
 #  pragma once
 #endif
 
-#include <boost/move/detail/iterator_to_raw_pointer.hpp>
+#include <boost/container/detail/iterator.hpp>
+#include <boost/container/detail/to_raw_pointer.hpp>
+#include <boost/intrusive/pointer_traits.hpp>
 
 namespace boost {
 namespace container {
 namespace container_detail {
 
-using ::boost::movelib::iterator_to_raw_pointer;
+template <class T>
+inline T* iterator_to_pointer(T* i)
+{  return i; }
+
+template <class Iterator>
+inline typename boost::container::iterator_traits<Iterator>::pointer
+   iterator_to_pointer(const Iterator &i)
+{  return i.operator->();  }
+
+template <class Iterator>
+struct iterator_to_element_ptr
+{
+   typedef typename boost::container::iterator_traits<Iterator>::pointer      pointer;
+   typedef typename boost::intrusive::pointer_traits<pointer>::element_type   element_type;
+   typedef element_type* type;
+};
+
+template <class Iterator>
+inline typename iterator_to_element_ptr<Iterator>::type
+   iterator_to_raw_pointer(const Iterator &i)
+{
+   return ::boost::intrusive::detail::to_raw_pointer
+      (  ::boost::container::container_detail::iterator_to_pointer(i)   );
+}
 
 }  //namespace container_detail {
 }  //namespace container {

@@ -24,9 +24,7 @@
 #include <boost/config.hpp>
 #include <boost/intrusive_ptr.hpp>
 
-#if defined(BOOST_NO_CXX17_STD_APPLY)
 #include <boost/context/detail/apply.hpp>
-#endif
 #include <boost/context/detail/disable_overload.hpp>
 #include <boost/context/detail/fcontext.hpp>
 #include <boost/context/fixedsize_stack.hpp>
@@ -60,7 +58,7 @@ struct data_t {
     void                *   data;
 };
 
-struct BOOST_CONTEXT_DECL activation_record {
+struct activation_record {
     typedef boost::intrusive_ptr< activation_record >    ptr_t;
 
     thread_local static ptr_t   current_rec;
@@ -72,7 +70,7 @@ struct BOOST_CONTEXT_DECL activation_record {
 
     // used for toplevel-context
     // (e.g. main context, thread-entry context)
-    activation_record() = default;
+    constexpr activation_record() = default;
 
     activation_record( fcontext_t fctx_, stack_context sctx_) noexcept :
         fctx{ fctx_ },
@@ -146,7 +144,7 @@ struct BOOST_CONTEXT_DECL activation_record {
     }
 };
 
-struct BOOST_CONTEXT_DECL activation_record_initializer {
+struct activation_record_initializer {
     activation_record_initializer() noexcept;
     ~activation_record_initializer();
 };
@@ -159,11 +157,7 @@ transfer_t context_ontop( transfer_t t) {
     BOOST_ASSERT( nullptr != tpl);
     auto data = std::get< 0 >( * tpl);
     typename std::decay< Fn >::type fn = std::forward< Fn >( std::get< 1 >( * tpl) );
-#if defined(BOOST_NO_CXX17_STD_APPLY)
     dp->data = apply( fn, std::tie( data) );
-#else
-    dp->data = std::apply( fn, std::tie( data) );
-#endif
     return { t.fctx, dp };
 }
 
@@ -202,11 +196,7 @@ public:
 
     void run() {
         auto data = caller_->resume( nullptr);
-#if defined(BOOST_NO_CXX17_STD_APPLY)
         apply( fn_, std::tuple_cat( args_, std::tie( data) ) );
-#else
-        std::apply( fn_, std::tuple_cat( args_, std::tie( data) ) );
-#endif
         BOOST_ASSERT_MSG( ! main_ctx, "main-context does not execute activation-record::run()");
     }
 };

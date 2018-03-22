@@ -14,6 +14,7 @@
 
 #include <boost/config.hpp>
 
+#include <boost/fiber/detail/convert.hpp>
 #include <boost/fiber/detail/disable_overload.hpp>
 #include <boost/fiber/exceptions.hpp>
 #include <boost/fiber/future/detail/task_base.hpp>
@@ -29,13 +30,13 @@ class packaged_task;
 template< typename R, typename ... Args >
 class packaged_task< R( Args ... ) > {
 private:
-    typedef typename detail::task_base< R, Args ... >::ptr_type   ptr_type;
+    typedef typename detail::task_base< R, Args ... >::ptr_t   ptr_t;
 
     bool            obtained_{ false };
-    ptr_type        task_{};
+    ptr_t           task_{};
 
 public:
-    packaged_task() = default;
+    constexpr packaged_task() noexcept = default;
 
     template< typename Fn,
               typename = detail::disable_overload< packaged_task, Fn >
@@ -52,22 +53,20 @@ public:
     explicit packaged_task( std::allocator_arg_t, Allocator const& alloc, Fn && fn) {
         typedef detail::task_object<
             typename std::decay< Fn >::type, Allocator, R, Args ...
-        >                                       object_type;
+        >                                       object_t;
         typedef std::allocator_traits<
-            typename object_type::allocator_type
-        >                                       traits_type;
-        typedef pointer_traits< typename traits_type::pointer > ptrait_type;
+            typename object_t::allocator_t
+        >                                       traits_t;
 
-        typename object_type::allocator_type a{ alloc };
-        typename traits_type::pointer ptr{ traits_type::allocate( a, 1) };
-        typename ptrait_type::element_type* p = ptrait_type::to_address(ptr);
+        typename object_t::allocator_t a{ alloc };
+        typename traits_t::pointer ptr{ traits_t::allocate( a, 1) };
         try {
-            traits_type::construct( a, p, a, std::forward< Fn >( fn) );
+            traits_t::construct( a, ptr, a, std::forward< Fn >( fn) );
         } catch (...) {
-            traits_type::deallocate( a, ptr, 1);
+            traits_t::deallocate( a, ptr, 1);
             throw;
         }
-        task_.reset(p);
+        task_.reset( convert( ptr) );
     }
 
     ~packaged_task() {
@@ -86,10 +85,9 @@ public:
     }
 
     packaged_task & operator=( packaged_task && other) noexcept {
-        if ( BOOST_LIKELY( this != & other) ) {
-            packaged_task tmp{ std::move( other) };
-            swap( tmp);
-        }
+        if ( this == & other) return * this;
+        packaged_task tmp{ std::move( other) };
+        swap( tmp);
         return * this;
     }
 
@@ -106,7 +104,7 @@ public:
         if ( obtained_) {
             throw future_already_retrieved{};
         }
-        if ( BOOST_UNLIKELY( ! valid() ) ) {
+        if ( ! valid() ) {
             throw packaged_task_uninitialized{};
         }
         obtained_ = true;
@@ -115,14 +113,14 @@ public:
     }
 
     void operator()( Args ... args) {
-        if ( BOOST_UNLIKELY( ! valid() ) ) {
+        if ( ! valid() ) {
             throw packaged_task_uninitialized{};
         }
         task_->run( std::forward< Args >( args) ... );
     }
 
     void reset() {
-        if ( BOOST_UNLIKELY( ! valid() ) ) {
+        if ( ! valid() ) {
             throw packaged_task_uninitialized{};
         }
         packaged_task tmp;

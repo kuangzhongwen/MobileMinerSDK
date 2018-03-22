@@ -26,7 +26,6 @@ class  master_test_suite_t;
 
 class  test_tree_visitor;
 class  test_observer;
-class  test_unit_fixture;
 
 // singletons
 class  unit_test_monitor_t;

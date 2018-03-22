@@ -11,8 +11,6 @@
 #ifndef BOOST_GEOMETRY_INDEX_DETAIL_RTREE_NODE_VARIANT_DYNAMIC_HPP
 #define BOOST_GEOMETRY_INDEX_DETAIL_RTREE_NODE_VARIANT_DYNAMIC_HPP
 
-#include <boost/core/pointer_traits.hpp>
-
 namespace boost { namespace geometry { namespace index {
 
 namespace detail { namespace rtree {
@@ -185,7 +183,7 @@ struct create_variant_node
 
         scoped_deallocator<AllocNode> deallocator(p, alloc_node);
 
-        Al::construct(alloc_node, boost::pointer_traits<P>::to_address(p), Node(alloc_node)); // implicit cast to Variant
+        Al::construct(alloc_node, boost::addressof(*p), Node(alloc_node)); // implicit cast to Variant
 
         deallocator.release();
         return p;

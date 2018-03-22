@@ -37,8 +37,8 @@ private:
             fn{ fn_ } {
         }
 
-        void operator()( void * data) {
-            if ( BOOST_LIKELY( nullptr != fn) ) {
+        void operator()( void* data) {
+            if ( fn) {
                 fn( static_cast< T * >( data) );
             }
         }
@@ -58,9 +58,9 @@ public:
     }
 
     ~fiber_specific_ptr() {
-        context * active_ctx = context::active();
-        if ( nullptr != active_ctx) {
-            active_ctx->set_fss_data(
+        context * f = context::active();
+        if ( nullptr != f) {
+            f->set_fss_data(
                 this, cleanup_fn_, nullptr, true);
         }
     }
@@ -91,7 +91,7 @@ public:
 
     void reset( T * t) {
         T * c = get();
-        if ( BOOST_LIKELY( c != t) ) {
+        if ( c != t) {
             context::active()->set_fss_data(
                 this, cleanup_fn_, t, true);
         }

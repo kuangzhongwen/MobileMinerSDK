@@ -212,27 +212,27 @@ public:
     {}
 
     template <typename Turn, typename Original>
-    inline bool apply(Turn const& turn, Original const& original, bool first = true)
+    inline void apply(Turn const& turn, Original const& original, bool first = true)
     {
         boost::ignore_unused_variable_warning(first);
 
         if (turn.location != location_ok || turn.within_original)
         {
             // Skip all points already processed
-            return true;
+            return;
         }
 
         if (geometry::disjoint(turn.robust_point, original.m_box))
         {
             // Skip all disjoint
-            return true;
+            return;
         }
 
         int const code = point_in_original(turn.robust_point, original);
 
         if (code == -1)
         {
-            return true;
+            return;
         }
 
         Turn& mutable_turn = m_mutable_turns[turn.turn_index];
@@ -259,8 +259,6 @@ public:
             mutable_turn.within_original = true;
             mutable_turn.count_in_original = 1;
         }
-
-        return true;
     }
 
 private :

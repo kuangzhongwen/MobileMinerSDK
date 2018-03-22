@@ -140,6 +140,7 @@ BOOST_SPIRIT_CLASSIC_NAMESPACE_BEGIN
         parse(ScannerT const& scan) const
         {
             typedef typename parser_result<ParserT, ScannerT>::type result_t;
+            typedef typename ScannerT::iterator_t iterator_t;
 
             result_t hit = this->subject().parse(scan);
             if (!hit)

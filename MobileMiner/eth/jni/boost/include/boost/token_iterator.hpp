@@ -39,11 +39,8 @@ namespace boost
         >
   {
 
-#ifdef __DCC__ 
-      friend class boost::iterator_core_access; 
-#else 
-      friend class iterator_core_access; 
-#endif  
+      friend class iterator_core_access;
+
       TokenizerFunc f_;
       Iterator begin_;
       Iterator end_;

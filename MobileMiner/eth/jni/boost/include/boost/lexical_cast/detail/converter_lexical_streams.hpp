@@ -1,6 +1,6 @@
 // Copyright Kevlin Henney, 2000-2005.
 // Copyright Alexander Nasonov, 2006-2010.
-// Copyright Antony Polukhin, 2011-2016.
+// Copyright Antony Polukhin, 2011-2014.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -13,7 +13,7 @@
 //        Beman Dawes, Dave Abrahams, Daryle Walker, Peter Dimov,
 //        Alexander Nasonov, Antony Polukhin, Justin Viiret, Michael Hofmann,
 //        Cheng Yang, Matthew Bradbury, David W. Birdsall, Pavel Korzh and other Boosters
-// when:  November 2000, March 2003, June 2005, June 2006, March 2011 - 2014, Nowember 2016
+// when:  November 2000, March 2003, June 2005, June 2006, March 2011 - 2014
 
 #ifndef BOOST_LEXICAL_CAST_DETAIL_CONVERTER_LEXICAL_STREAMS_HPP
 #define BOOST_LEXICAL_CAST_DETAIL_CONVERTER_LEXICAL_STREAMS_HPP
@@ -107,26 +107,23 @@ namespace boost {
 
     namespace detail
     {
-        struct do_not_construct_out_buffer_t{};
-        struct do_not_construct_out_stream_t{
-            do_not_construct_out_stream_t(do_not_construct_out_buffer_t*){}
-        };
-
+        struct do_not_construct_out_stream_t{};
+        
         template <class CharT, class Traits>
         struct out_stream_helper_trait {
 #if defined(BOOST_NO_STRINGSTREAM)
-            typedef std::ostream                                                    out_stream_t;
-            typedef basic_unlockedbuf<std::strstreambuf, char>                      stringbuffer_t;
+            typedef std::ostrstream                                 out_stream_t;
+            typedef void                                            buffer_t;
 #elif defined(BOOST_NO_STD_LOCALE)
-            typedef std::ostream                                                    out_stream_t;
-            typedef basic_unlockedbuf<std::stringbuf, char>                         stringbuffer_t;
-            typedef basic_unlockedbuf<std::streambuf, char>                         buffer_t;
+            typedef std::ostringstream                              out_stream_t;
+            typedef basic_unlockedbuf<std::streambuf, char>         buffer_t;
 #else
-            typedef std::basic_ostream<CharT, Traits>                               out_stream_t;
-            typedef basic_unlockedbuf<std::basic_stringbuf<CharT, Traits>, CharT>   stringbuffer_t;
-            typedef basic_unlockedbuf<std::basic_streambuf<CharT, Traits>, CharT>   buffer_t;
+            typedef std::basic_ostringstream<CharT, Traits> 
+                out_stream_t;
+            typedef basic_unlockedbuf<std::basic_streambuf<CharT, Traits>, CharT>  
+                buffer_t;
 #endif
-        };
+        };   
     }
 
     namespace detail // optimized stream wrappers
@@ -137,19 +134,19 @@ namespace boost {
                 , std::size_t CharacterBufferSize
                 >
         class lexical_istream_limited_src: boost::noncopyable {
+            typedef BOOST_DEDUCED_TYPENAME out_stream_helper_trait<CharT, Traits>::buffer_t
+                buffer_t;
+
+            typedef BOOST_DEDUCED_TYPENAME out_stream_helper_trait<CharT, Traits>::out_stream_t
+                out_stream_t;
+    
             typedef BOOST_DEDUCED_TYPENAME boost::mpl::if_c<
                 RequiresStringbuffer,
-                BOOST_DEDUCED_TYPENAME out_stream_helper_trait<CharT, Traits>::out_stream_t,
+                out_stream_t,
                 do_not_construct_out_stream_t
             >::type deduced_out_stream_t;
 
-            typedef BOOST_DEDUCED_TYPENAME boost::mpl::if_c<
-                RequiresStringbuffer,
-                BOOST_DEDUCED_TYPENAME out_stream_helper_trait<CharT, Traits>::stringbuffer_t,
-                do_not_construct_out_buffer_t
-            >::type deduced_out_buffer_t;
-
-            deduced_out_buffer_t out_buffer;
+            // A string representation of Source is written to `buffer`.
             deduced_out_stream_t out_stream;
             CharT   buffer[CharacterBufferSize];
 
@@ -160,9 +157,7 @@ namespace boost {
 
         public:
             lexical_istream_limited_src() BOOST_NOEXCEPT
-              : out_buffer()
-              , out_stream(&out_buffer)
-              , start(buffer)
+              : start(buffer)
               , finish(buffer + CharacterBufferSize)
             {}
     
@@ -175,6 +170,10 @@ namespace boost {
             }
 
         private:
+            // Undefined:
+            lexical_istream_limited_src(lexical_istream_limited_src const&);
+            void operator=(lexical_istream_limited_src const&);
+
 /************************************ HELPER FUNCTIONS FOR OPERATORS << ( ... ) ********************************/
             bool shl_char(CharT ch) BOOST_NOEXCEPT {
                 Traits::assign(buffer[0], ch);
@@ -213,7 +212,7 @@ namespace boost {
                     "Use boost::locale instead" );
                 return shl_input_streamable(str);
             }
-
+            
             bool shl_char_array_limited(CharT const* str, std::size_t max_size) BOOST_NOEXCEPT {
                 start = str;
                 finish = std::find(start, start + max_size, Traits::to_char_type(0));
@@ -233,8 +232,8 @@ namespace boost {
                 try {
 #endif
                 bool const result = !(out_stream << input).fail();
-                const deduced_out_buffer_t* const p = static_cast<deduced_out_buffer_t*>(
-                    out_stream.rdbuf()
+                const buffer_t* const p = static_cast<buffer_t*>(
+                    static_cast<std::basic_streambuf<CharT, Traits>*>(out_stream.rdbuf())
                 );
                 start = p->pbase();
                 finish = p->pptr();
@@ -574,15 +573,17 @@ namespace boost {
                     "support such conversions. Try updating it."
                 );
 #endif
+                typedef BOOST_DEDUCED_TYPENAME out_stream_helper_trait<CharT, Traits>::buffer_t
+                    buffer_t;
 
 #if defined(BOOST_NO_STRINGSTREAM)
-                std::istrstream stream(start, static_cast<std::istrstream::streamsize>(finish - start));
+                std::istrstream stream(start, finish - start);
 #else
-                typedef BOOST_DEDUCED_TYPENAME out_stream_helper_trait<CharT, Traits>::buffer_t buffer_t;
+
                 buffer_t buf;
                 // Usually `istream` and `basic_istream` do not modify 
                 // content of buffer; `buffer_t` assures that this is true
-                buf.setbuf(const_cast<CharT*>(start), static_cast<typename buffer_t::streamsize>(finish - start));
+                buf.setbuf(const_cast<CharT*>(start), finish - start);
 #if defined(BOOST_NO_STD_LOCALE)
                 std::istream stream(&buf);
 #else

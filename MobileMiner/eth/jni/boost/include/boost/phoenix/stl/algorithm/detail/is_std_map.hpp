@@ -16,7 +16,7 @@
 #define BOOST_PHOENIX_IS_STD_MAP_EN_16_12_2004
 
 #include <boost/mpl/bool.hpp>
-#include <map>
+#include <boost/detail/container_fwd.hpp>
 
 namespace boost
 {

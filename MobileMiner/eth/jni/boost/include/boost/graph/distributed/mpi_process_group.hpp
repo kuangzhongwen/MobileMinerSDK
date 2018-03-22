@@ -29,7 +29,6 @@
 #include <boost/function/function0.hpp>
 #include <boost/mpi.hpp>
 #include <boost/property_map/parallel/process_group.hpp>
-#include <boost/serialization/vector.hpp>
 #include <boost/utility/enable_if.hpp>
 
 namespace boost { namespace graph { namespace distributed {

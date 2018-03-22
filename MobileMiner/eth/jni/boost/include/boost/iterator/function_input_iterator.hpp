@@ -9,7 +9,6 @@
 #ifndef BOOST_FUNCTION_INPUT_ITERATOR
 #define BOOST_FUNCTION_INPUT_ITERATOR
 
-#include <boost/config.hpp>
 #include <boost/assert.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/function_types/is_function_pointer.hpp>
@@ -18,7 +17,6 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/none.hpp>
 #include <boost/optional/optional.hpp>
-#include <boost/utility/result_of.hpp>
 
 namespace boost {
 
@@ -30,9 +28,9 @@ namespace iterators {
         class function_input_iterator
             : public iterator_facade<
             function_input_iterator<Function, Input>,
-            BOOST_DEDUCED_TYPENAME result_of<Function ()>::type,
+            typename Function::result_type,
             single_pass_traversal_tag,
-            BOOST_DEDUCED_TYPENAME result_of<Function ()>::type const &
+            typename Function::result_type const &
             >
         {
         public:
@@ -48,7 +46,7 @@ namespace iterators {
                 ++state;
             }
 
-            BOOST_DEDUCED_TYPENAME result_of<Function ()>::type const &
+            typename Function::result_type const &
                 dereference() const {
                     return (value ? value : value = (*f)()).get();
             }
@@ -60,7 +58,7 @@ namespace iterators {
         private:
             Function * f;
             Input state;
-            mutable optional<BOOST_DEDUCED_TYPENAME result_of<Function ()>::type> value;
+            mutable optional<typename Function::result_type> value;
         };
 
         template <class Function, class Input>

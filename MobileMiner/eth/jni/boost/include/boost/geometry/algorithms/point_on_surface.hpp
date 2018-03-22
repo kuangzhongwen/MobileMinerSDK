@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2013 Mateusz Loskot, London, UK.
 // Copyright (c) 2013 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2014, 2017.
-// Modifications copyright (c) 2014-2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014.
+// Modifications copyright (c) 2014 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -33,7 +33,6 @@
 #include <boost/geometry/algorithms/detail/extreme_points.hpp>
 
 #include <boost/geometry/strategies/cartesian/centroid_bashein_detmer.hpp>
-#include <boost/geometry/strategies/side.hpp>
 
 
 namespace boost { namespace geometry
@@ -242,9 +241,8 @@ inline void replace_extremes_for_self_tangencies(Extremes& extremes, Intruders& 
     extremes = triangle;
 }
 
-template <int Dimension, typename Geometry, typename Point, typename SideStrategy>
-inline bool calculate_point_on_surface(Geometry const& geometry, Point& point,
-                                       SideStrategy const& strategy)
+template <int Dimension, typename Geometry, typename Point>
+inline bool calculate_point_on_surface(Geometry const& geometry, Point& point)
 {
     typedef typename geometry::point_type<Geometry>::type point_type;
     typedef typename geometry::coordinate_type<Geometry>::type coordinate_type;
@@ -252,7 +250,7 @@ inline bool calculate_point_on_surface(Geometry const& geometry, Point& point,
 
     typedef std::vector<std::vector<point_type> > intruders_type;
     intruders_type intruders;
-    geometry::extreme_points<Dimension>(geometry, extremes, intruders, strategy);
+    geometry::extreme_points<Dimension>(geometry, extremes, intruders);
 
     if (extremes.size() < 3)
     {
@@ -293,55 +291,19 @@ inline bool calculate_point_on_surface(Geometry const& geometry, Point& point,
 \tparam Geometry geometry type. This also defines the type of the output point
 \param geometry Geometry to take point from
 \param point Point to assign
-\param strategy side strategy
  */
-template <typename Geometry, typename Point, typename SideStrategy>
-inline void point_on_surface(Geometry const& geometry, Point & point,
-                             SideStrategy const& strategy)
+template <typename Geometry, typename Point>
+inline void point_on_surface(Geometry const& geometry, Point & point)
 {
     concepts::check<Point>();
     concepts::check<Geometry const>();
 
     // First try in Y-direction (which should always succeed for valid polygons)
-    if (! detail::point_on_surface::calculate_point_on_surface<1>(geometry, point, strategy))
+    if (! detail::point_on_surface::calculate_point_on_surface<1>(geometry, point))
     {
         // For invalid polygons, we might try X-direction
-        detail::point_on_surface::calculate_point_on_surface<0>(geometry, point, strategy);
+        detail::point_on_surface::calculate_point_on_surface<0>(geometry, point);
     }
-}
-
-/*!
-\brief Assigns a Point guaranteed to lie on the surface of the Geometry
-\tparam Geometry geometry type. This also defines the type of the output point
-\param geometry Geometry to take point from
-\param point Point to assign
- */
-template <typename Geometry, typename Point>
-inline void point_on_surface(Geometry const& geometry, Point & point)
-{
-    typedef typename strategy::side::services::default_strategy
-        <
-            typename cs_tag<Geometry>::type
-        >::type strategy_type;
-
-    point_on_surface(geometry, point, strategy_type());
-}
-
-
-/*!
-\brief Returns point guaranteed to lie on the surface of the Geometry
-\tparam Geometry geometry type. This also defines the type of the output point
-\param geometry Geometry to take point from
-\param strategy side strategy
-\return The Point guaranteed to lie on the surface of the Geometry
- */
-template<typename Geometry, typename SideStrategy>
-inline typename geometry::point_type<Geometry>::type
-return_point_on_surface(Geometry const& geometry, SideStrategy const& strategy)
-{
-    typename geometry::point_type<Geometry>::type result;
-    geometry::point_on_surface(geometry, result, strategy);
-    return result;
 }
 
 /*!

@@ -1032,7 +1032,8 @@ namespace boost { namespace spirit { namespace traits
     template <typename T>
     void swap_impl(T& a, T& b)
     {
-        boost::swap(a, b);
+        using namespace std;
+        swap(a, b);
     }
 
     template <typename A>

@@ -131,7 +131,6 @@ inline InputIterator np_ceiling(InputIterator first,
 /// \param last Iterator pointing to end of range
 /// \param queue Queue on which to execute
 ///
-/// Space complexity: \Omega(1)
 template<class InputIterator>
 inline bool next_permutation(InputIterator first,
                              InputIterator last,

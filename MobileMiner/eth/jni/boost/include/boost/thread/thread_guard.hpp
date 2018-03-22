@@ -21,14 +21,14 @@ namespace boost
   /**
    * Non-copyable RAII scoped thread guard joiner which join the thread if joinable when destroyed.
    */
-  template <class CallableThread = join_if_joinable, class Thread=::boost::thread>
+  template <class CallableThread = join_if_joinable>
   class thread_guard
   {
-    Thread& t_;
+    thread& t_;
   public:
     BOOST_THREAD_NO_COPYABLE( thread_guard)
 
-    explicit thread_guard(Thread& t) :
+    explicit thread_guard(thread& t) :
     t_(t)
     {
     }

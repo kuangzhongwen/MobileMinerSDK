@@ -114,7 +114,6 @@ namespace boost { namespace spirit { namespace x3
         false_type const false_ = { false };
     }
 
-#ifndef BOOST_SPIRIT_NO_STANDARD_WIDE
     namespace standard_wide
     {
         typedef bool_parser<bool, char_encoding::standard_wide> bool_type;
@@ -126,7 +125,6 @@ namespace boost { namespace spirit { namespace x3
         typedef literal_bool_parser<bool, char_encoding::standard_wide> false_type;
         false_type const false_ = { false };
     }
-#endif
 
     namespace ascii
     {

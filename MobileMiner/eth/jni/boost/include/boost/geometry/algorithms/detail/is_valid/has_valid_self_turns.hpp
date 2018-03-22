@@ -1,9 +1,8 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2017, Oracle and/or its affiliates.
+// Copyright (c) 2014-2015, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
-// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -70,11 +69,10 @@ public:
         > turn_type;
 
     // returns true if all turns are valid
-    template <typename Turns, typename VisitPolicy, typename Strategy>
+    template <typename Turns, typename VisitPolicy>
     static inline bool apply(Geometry const& geometry,
                              Turns& turns,
-                             VisitPolicy& visitor,
-                             Strategy const& strategy)
+                             VisitPolicy& visitor)
     {
         boost::ignore_unused(visitor);
 
@@ -86,8 +84,7 @@ public:
                 IsAcceptableTurn
             > interrupt_policy;
 
-        detail::self_get_turn_points::self_turns<false, turn_policy>(geometry,
-                                          strategy,
+        geometry::self_turns<turn_policy>(geometry,
                                           robust_policy,
                                           turns,
                                           interrupt_policy);
@@ -104,11 +101,11 @@ public:
     }
 
     // returns true if all turns are valid
-    template <typename VisitPolicy, typename Strategy>
-    static inline bool apply(Geometry const& geometry, VisitPolicy& visitor, Strategy const& strategy)
+    template <typename VisitPolicy>
+    static inline bool apply(Geometry const& geometry, VisitPolicy& visitor)
     {
         std::vector<turn_type> turns;
-        return apply(geometry, turns, visitor, strategy);
+        return apply(geometry, turns, visitor);
     }
 };
 

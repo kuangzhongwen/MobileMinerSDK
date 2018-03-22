@@ -2,7 +2,7 @@
 // detail/impl/epoll_reactor.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -164,18 +164,7 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
-  {
-    if (errno == EPERM)
-    {
-      // This file descriptor type is not supported by epoll. However, if it is
-      // a regular file then operations on it will not block. We will allow
-      // this descriptor to be used and fail later if an operation on it would
-      // otherwise require a trip through the reactor.
-      descriptor_data->registered_events_ = 0;
-      return 0;
-    }
     return errno;
-  }
 
   return 0;
 }
@@ -246,13 +235,6 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
         return;
       }
 
-      if (descriptor_data->registered_events_ == 0)
-      {
-        op->ec_ = boost::asio::error::operation_not_supported;
-        io_service_.post_immediate_completion(op, is_continuation);
-        return;
-      }
-
       if (op_type == write_op)
       {
         if ((descriptor_data->registered_events_ & EPOLLOUT) == 0)
@@ -273,12 +255,6 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
           }
         }
       }
-    }
-    else if (descriptor_data->registered_events_ == 0)
-    {
-      op->ec_ = boost::asio::error::operation_not_supported;
-      io_service_.post_immediate_completion(op, is_continuation);
-      return;
     }
     else
     {
@@ -337,7 +313,7 @@ void epoll_reactor::deregister_descriptor(socket_type descriptor,
       // The descriptor will be automatically removed from the epoll set when
       // it is closed.
     }
-    else if (descriptor_data->registered_events_ != 0)
+    else
     {
       epoll_event ev = { 0, { 0 } };
       epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
@@ -359,16 +335,10 @@ void epoll_reactor::deregister_descriptor(socket_type descriptor,
 
     descriptor_lock.unlock();
 
-    io_service_.post_deferred_completions(ops);
-
-    // Leave descriptor_data set so that it will be freed by the subsequent
-    // call to cleanup_descriptor_data.
-  }
-  else
-  {
-    // We are shutting down, so prevent cleanup_descriptor_data from freeing
-    // the descriptor_data object and let the destructor free it instead.
+    free_descriptor_state(descriptor_data);
     descriptor_data = 0;
+
+    io_service_.post_deferred_completions(ops);
   }
 }
 
@@ -394,22 +364,6 @@ void epoll_reactor::deregister_internal_descriptor(socket_type descriptor,
 
     descriptor_lock.unlock();
 
-    // Leave descriptor_data set so that it will be freed by the subsequent
-    // call to cleanup_descriptor_data.
-  }
-  else
-  {
-    // We are shutting down, so prevent cleanup_descriptor_data from freeing
-    // the descriptor_data object and let the destructor free it instead.
-    descriptor_data = 0;
-  }
-}
-
-void epoll_reactor::cleanup_descriptor_data(
-    per_descriptor_data& descriptor_data)
-{
-  if (descriptor_data)
-  {
     free_descriptor_state(descriptor_data);
     descriptor_data = 0;
   }
@@ -473,15 +427,8 @@ void epoll_reactor::run(bool block, op_queue<operation>& ops)
       // don't call work_started() here. This still allows the io_service to
       // stop if the only remaining operations are descriptor operations.
       descriptor_state* descriptor_data = static_cast<descriptor_state*>(ptr);
-      if (!ops.is_enqueued(descriptor_data))
-      {
-        descriptor_data->set_ready_events(events[i].events);
-        ops.push(descriptor_data);
-      }
-      else
-      {
-        descriptor_data->add_ready_events(events[i].events);
-      }
+      descriptor_data->set_ready_events(events[i].events);
+      ops.push(descriptor_data);
     }
   }
 

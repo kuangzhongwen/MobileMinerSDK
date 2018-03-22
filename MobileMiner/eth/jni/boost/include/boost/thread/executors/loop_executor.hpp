@@ -16,7 +16,6 @@
 #include <boost/thread/detail/move.hpp>
 #include <boost/thread/concurrent_queues/sync_queue.hpp>
 #include <boost/thread/executors/work.hpp>
-#include <boost/assert.hpp>
 
 #include <boost/config/abi_prefix.hpp>
 
@@ -42,32 +41,14 @@ namespace executors
      */
     bool try_executing_one()
     {
-      return execute_one(/*wait:*/false);
-    }
-
-  private:
-    /**
-     * Effects: Execute one task.
-     * Remark: If wait is true, waits until a task is available or the executor
-     *         is closed. If wait is false, returns false immediately if no
-     *         task is available.
-     * Returns: whether a task has been executed (if wait is true, only returns false if closed).
-     * Throws: whatever the current task constructor throws or the task() throws.
-     */
-    bool execute_one(bool wait)
-    {
       work task;
       try
       {
-        queue_op_status status = wait ?
-          work_queue.wait_pull(task) :
-          work_queue.try_pull(task);
-        if (status == queue_op_status::success)
+        if (work_queue.try_pull(task) == queue_op_status::success)
         {
           task();
           return true;
         }
-        BOOST_ASSERT(!wait || status == queue_op_status::closed);
         return false;
       }
       catch (...)
@@ -76,6 +57,21 @@ namespace executors
         //return false;
       }
     }
+  private:
+    /**
+     * Effects: schedule one task or yields
+     * Throws: whatever the current task constructor throws or the task() throws.
+     */
+    void schedule_one_or_yield()
+    {
+        if ( ! try_executing_one())
+        {
+          this_thread::yield();
+        }
+    }
+
+
+
 
   public:
     /// loop_executor is not copyable.
@@ -105,10 +101,10 @@ namespace executors
      */
     void loop()
     {
-      while (execute_one(/*wait:*/true))
+      while (!closed())
       {
+        schedule_one_or_yield();
       }
-      BOOST_ASSERT(closed());
       while (try_executing_one())
       {
       }

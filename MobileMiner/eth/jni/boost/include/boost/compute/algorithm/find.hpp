@@ -22,8 +22,6 @@ namespace compute {
 
 /// Returns an iterator pointing to the first element in the range
 /// [\p first, \p last) that equals \p value.
-///
-/// Space complexity: \Omega(1)
 template<class InputIterator, class T>
 inline InputIterator find(InputIterator first,
                           InputIterator last,

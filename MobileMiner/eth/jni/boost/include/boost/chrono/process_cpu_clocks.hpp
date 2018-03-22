@@ -20,7 +20,7 @@
 #include <boost/chrono/time_point.hpp>
 #include <boost/operators.hpp>
 #include <boost/chrono/detail/system.hpp>
-#include <iosfwd>
+#include <iostream>
 #include <boost/type_traits/common_type.hpp>
 #include <boost/chrono/clock_string.hpp>
 
@@ -476,7 +476,7 @@ namespace std {
                       (std::numeric_limits<Rep>::max)(),
                       (std::numeric_limits<Rep>::max)());
         }
-        static Res lowest() BOOST_NOEXCEPT_OR_NOTHROW
+        static Res lowest() throw()
         {
             return (min)();
         }

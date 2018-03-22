@@ -9,8 +9,7 @@
  * $Date$
  */
 
-#include <boost/date_time/compiler_config.hpp>
-#include <boost/date_time/posix_time/posix_time_config.hpp>
+#include "boost/date_time/posix_time/posix_time_config.hpp"
 
 namespace boost {
 namespace posix_time {
@@ -18,7 +17,7 @@ namespace posix_time {
   //! Allows expression of durations as an hour count
   /*! \ingroup time_basics
    */
-  class BOOST_SYMBOL_VISIBLE hours : public time_duration
+  class hours : public time_duration
   {
   public:
     explicit hours(long h) :
@@ -29,7 +28,7 @@ namespace posix_time {
   //! Allows expression of durations as a minute count
   /*! \ingroup time_basics
    */
-  class BOOST_SYMBOL_VISIBLE minutes : public time_duration
+  class minutes : public time_duration
   {
   public:
     explicit minutes(long m) :
@@ -40,7 +39,7 @@ namespace posix_time {
   //! Allows expression of durations as a seconds count
   /*! \ingroup time_basics
    */
-  class BOOST_SYMBOL_VISIBLE seconds : public time_duration
+  class seconds : public time_duration
   {
   public:
     explicit seconds(long s) :

@@ -30,10 +30,8 @@ namespace boost {
 
             // a tolower functor
             template<typename CharT>
-            struct to_lowerF
+            struct to_lowerF : public std::unary_function<CharT, CharT>
             {
-                typedef CharT argument_type;
-                typedef CharT result_type;
                 // Constructor
                 to_lowerF( const std::locale& Loc ) : m_Loc( &Loc ) {}
 
@@ -52,10 +50,8 @@ namespace boost {
 
             // a toupper functor
             template<typename CharT>
-            struct to_upperF
+            struct to_upperF : public std::unary_function<CharT, CharT>
             {
-                typedef CharT argument_type;
-                typedef CharT result_type;
                 // Constructor
                 to_upperF( const std::locale& Loc ) : m_Loc( &Loc ) {}
 

@@ -179,7 +179,7 @@ namespace boost
                 hash_float_combine(seed, part);
             }
 
-            hash_float_combine(seed, static_cast<std::size_t>(exp));
+            hash_float_combine(seed, exp);
 
             return seed;
         }

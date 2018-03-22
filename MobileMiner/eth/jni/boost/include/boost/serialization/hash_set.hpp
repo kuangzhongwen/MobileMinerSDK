@@ -23,7 +23,6 @@
 #include <boost/serialization/hash_collections_save_imp.hpp>
 #include <boost/serialization/hash_collections_load_imp.hpp>
 #include <boost/serialization/split_free.hpp>
-#include <boost/move/utility_core.hpp>
 
 namespace boost { 
 namespace serialization {
@@ -44,7 +43,7 @@ struct archive_input_hash_set
         // borland fails silently w/o full namespace
         ar >> boost::serialization::make_nvp("item", t.reference());
         std::pair<typename Container::const_iterator, bool> result = 
-            s.insert(boost::move(t.reference()));
+            s.insert(t.reference());
         if(result.second)
             ar.reset_object_address(& (* result.first), & t.reference());
     }
@@ -64,7 +63,7 @@ struct archive_input_hash_multiset
         // borland fails silently w/o full namespace
         ar >> boost::serialization::make_nvp("item", t.reference());
         typename Container::const_iterator result 
-            = s.insert(boost::move(t.reference()));
+            = s.insert(t.reference());
         ar.reset_object_address(& (* result), & t.reference());
     }
 };

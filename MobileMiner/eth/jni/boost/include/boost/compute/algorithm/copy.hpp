@@ -826,8 +826,6 @@ dispatch_copy(InputIterator first,
 /// );
 /// \endcode
 ///
-/// Space complexity: \Omega(1)
-///
 /// \see copy_n(), copy_if(), copy_async()
 template<class InputIterator, class OutputIterator>
 inline OutputIterator copy(InputIterator first,

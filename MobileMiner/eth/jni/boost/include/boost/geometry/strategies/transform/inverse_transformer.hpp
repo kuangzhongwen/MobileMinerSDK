@@ -14,8 +14,15 @@
 #ifndef BOOST_GEOMETRY_STRATEGIES_TRANSFORM_INVERSE_TRANSFORMER_HPP
 #define BOOST_GEOMETRY_STRATEGIES_TRANSFORM_INVERSE_TRANSFORMER_HPP
 
-#include <boost/qvm/mat.hpp>
-#include <boost/qvm/mat_operations.hpp>
+// Remove the ublas checking, otherwise the inverse might fail
+// (while nothing seems to be wrong)
+#ifdef BOOST_UBLAS_TYPE_CHECK
+#undef BOOST_UBLAS_TYPE_CHECK
+#endif
+#define BOOST_UBLAS_TYPE_CHECK 0
+
+#include <boost/numeric/ublas/lu.hpp>
+#include <boost/numeric/ublas/io.hpp>
 
 #include <boost/geometry/strategies/transform/matrix_transformers.hpp>
 
@@ -37,13 +44,31 @@ template
     std::size_t Dimension2
 >
 class inverse_transformer
-    : public matrix_transformer<CalculationType, Dimension1, Dimension2>
+    : public ublas_transformer<CalculationType, Dimension1, Dimension2>
 {
 public :
     template <typename Transformer>
     inline inverse_transformer(Transformer const& input)
     {
-        this->m_matrix = boost::qvm::inverse(input.matrix());
+        typedef boost::numeric::ublas::matrix<CalculationType> matrix_type;
+
+        // create a working copy of the input
+        matrix_type copy(input.matrix());
+
+        // create a permutation matrix for the LU-factorization
+        typedef boost::numeric::ublas::permutation_matrix<> permutation_matrix;
+        permutation_matrix pm(copy.size1());
+
+        // perform LU-factorization
+        int res = boost::numeric::ublas::lu_factorize<matrix_type>(copy, pm);
+        if( res == 0 )
+        {
+            // create identity matrix
+            this->m_matrix.assign(boost::numeric::ublas::identity_matrix<CalculationType>(copy.size1()));
+
+            // backsubstitute to get the inverse
+            boost::numeric::ublas::lu_substitute(copy, pm, this->m_matrix);
+        }
     }
 
 };

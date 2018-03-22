@@ -10,7 +10,6 @@
  */
 
 #include <boost/throw_exception.hpp>
-#include <boost/date_time/compiler_config.hpp>
 #include <boost/date_time/date.hpp>
 #include <boost/date_time/special_defs.hpp>
 #include <boost/date_time/gregorian/greg_calendar.hpp>
@@ -35,7 +34,7 @@ namespace gregorian {
       supported.
       \ingroup date_basics
   */
-  class BOOST_SYMBOL_VISIBLE date : public date_time::date<date, gregorian_calendar, date_duration>
+  class date : public date_time::date<date, gregorian_calendar, date_duration>
   {
    public:
     typedef gregorian_calendar::year_type year_type;

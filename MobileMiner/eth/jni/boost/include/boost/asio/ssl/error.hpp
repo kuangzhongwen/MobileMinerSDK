@@ -2,7 +2,7 @@
 // ssl/error.hpp
 // ~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,7 +17,6 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/system/error_code.hpp>
-#include <boost/asio/ssl/detail/openssl_types.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -33,8 +32,7 @@ enum ssl_errors
 extern BOOST_ASIO_DECL
 const boost::system::error_category& get_ssl_category();
 
-static const boost::system::error_category&
-  ssl_category BOOST_ASIO_UNUSED_VARIABLE
+static const boost::system::error_category& ssl_category
   = boost::asio::error::get_ssl_category();
 
 } // namespace error
@@ -56,8 +54,7 @@ enum stream_errors
 extern BOOST_ASIO_DECL
 const boost::system::error_category& get_stream_category();
 
-static const boost::system::error_category&
-  stream_category BOOST_ASIO_UNUSED_VARIABLE
+static const boost::system::error_category& stream_category
   = boost::asio::ssl::error::get_stream_category();
 
 } // namespace error
