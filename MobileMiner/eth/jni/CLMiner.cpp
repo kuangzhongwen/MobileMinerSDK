@@ -246,7 +246,7 @@ namespace
 void addDefinition(string& _source, char const* _id, unsigned _value)
 {
 	char buf[256];
-	sprintf(buf, "#define %s %uu\n", _id, _value);
+	fprintf(buf, "#define %s %uu\n", _id, _value);
 	_source.insert(_source.begin(), buf, buf + strlen(buf));
 }
 
@@ -330,7 +330,7 @@ void CLMiner::workLoop()
 				// New work received. Update GPU data.
 				if (!w)
 				{
-					cllog << "No work. Pause for 3 s.";
+					LOGD("%s", "No work. Pause for 3 s.");
 					std::this_thread::sleep_for(std::chrono::seconds(3));
 					continue;
 				}
@@ -346,7 +346,8 @@ void CLMiner::workLoop()
 						++s_dagLoadIndex;
 					}
 
-					cllog << "New seed" << w.seed;
+                    // printf("New seed %d", w.seed);
+                    LOGD("%s", "New seed");
 					init(w.seed);
 				}
 
@@ -370,9 +371,8 @@ void CLMiner::workLoop()
 				else
 					startNonce = get_start_nonce();
 
-				clswitchlog << "Switch time"
-					<< std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - workSwitchStart).count()
-					<< "ms.";
+                auto costSeconds = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - workSwitchStart).count();
+				LOGD("Switch time %lld ms.", costSeconds);
 			}
 
 			// Read results.
@@ -396,12 +396,14 @@ void CLMiner::workLoop()
 			// Report results while the kernel is running.
 			// It takes some time because ethash must be re-evaluated on CPU.
 			if (nonce != 0) {
+				LOGD("%s", "nonce != 0");
 				Result r = EthashAux::eval(current.seed, current.header, nonce);
-				if (r.value < current.boundary)
+				if (r.value < current.boundary) {
+					LOGD("%s", "find solution");
 					farm.submitProof(Solution{nonce, r.mixHash, current, current.header != w.header});
-				else {
+				} else {
 					farm.failedSolution();
-					cwarn << "FAILURE: GPU gave incorrect result!";
+					LOGD("%s", "FAILURE: failed solution !");
 				}
 			}
 
