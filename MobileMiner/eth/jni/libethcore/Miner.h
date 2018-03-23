@@ -30,6 +30,40 @@
 #include <libdevcore/Worker.h>
 #include "EthashAux.h"
 
+#ifndef LOG_INCLUDED
+#define LOG_INCLUDED
+
+#define ANDROID_V
+
+#ifdef ANDROID_V
+#include <android/log.h>
+#include <errno.h>
+
+#define  LOG_TAG "Waterhole-EthMiner"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+
+#ifdef perror
+#undef perror
+#endif
+#define perror(smg) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "opus error:%s :%s", smg, strerror(errno))
+
+#ifdef fprintf
+#undef fprintf
+#endif
+#define fprintf(strm, ...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+
+#else
+#include <stdio.h>
+#include <stdlib.h>
+#define LOGE(fmt, arg...) fprintf(stderr, fmt, ##arg)
+#define LOGD(fmt, arg...) fprintf(stderr, fmt, ##arg)
+#endif
+
+#endif
+
 #define MINER_WAIT_STATE_WORK	 1
 
 
@@ -121,7 +155,7 @@ inline std::ostream& operator<<(std::ostream& _out, WorkingProgress _p)
 	_out << "Speed "
 		 << EthTealBold << std::fixed << std::setw(6) << std::setprecision(2) << mh << EthReset
 		 << " Mh/s    ";
-
+    LOGD("Speed %.2f Mh/s", mh);
 	for (size_t i = 0; i < _p.minersHashes.size(); ++i)
 	{
 		mh = _p.minerRate(_p.minersHashes[i]) / 1000000.0f;
