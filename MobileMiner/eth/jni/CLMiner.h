@@ -14,6 +14,7 @@
 #define CL_HPP_CL_1_2_DEFAULT_BUILD true
 #define CL_HPP_TARGET_OPENCL_VERSION 120
 #define CL_HPP_MINIMUM_OPENCL_VERSION 120
+#include <CL/cl.h>
 #include "openCL_phone.h"
 
 // macOS OpenCL fix:
@@ -86,14 +87,14 @@ private:
 
 	bool init(const h256& seed);
 
-	cl::Context m_context;
-	cl::CommandQueue m_queue;
-	cl::Kernel m_searchKernel;
-	cl::Kernel m_dagKernel;
-	cl::Buffer m_dag;
-	cl::Buffer m_light;
-	cl::Buffer m_header;
-	cl::Buffer m_searchBuffer;
+	cl_context m_context;
+	cl_command_queue m_queue;
+	cl_kernel m_searchKernel;
+	cl_kernel m_dagKernel;
+	cl_mem m_dag;
+	cl_mem m_light;
+	cl_mem m_header;
+	cl_mem m_searchBuffer;
 	unsigned m_globalWorkSize = 0;
 	unsigned m_workgroupSize = 0;
 
@@ -108,6 +109,5 @@ private:
 	/// The initial global work size for the searches
 	static unsigned s_initialGlobalWorkSize;
 };
-
 }
 }

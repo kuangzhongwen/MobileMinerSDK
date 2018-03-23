@@ -54,6 +54,7 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE    := eth-miner
+LOCAL_CPPFLAGS := -std=c++11 -fexceptions -frtti
 
 LOCAL_STATIC_LIBRARIES := eth-core
 LOCAL_SRC_FILES := \
