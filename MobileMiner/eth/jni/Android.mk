@@ -44,10 +44,20 @@ LOCAL_MODULE    := eth-core
 LOCAL_C_INCLUDES += ./jni/libethcore/
 
 LOCAL_STATIC_LIBRARIES := eth-dev-core eth-hash
-
 LOCAL_SRC_FILES := \
         ./libethcore/BlockHeader.cpp \
         ./libethcore/EthashAux.cpp \
         ./libethcore/Miner.cpp
 
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := eth-miner
+
+LOCAL_STATIC_LIBRARIES := eth-core
+LOCAL_SRC_FILES := \
+        ./openCL_phone.cpp
+
 include $(BUILD_SHARED_LIBRARY)
+
