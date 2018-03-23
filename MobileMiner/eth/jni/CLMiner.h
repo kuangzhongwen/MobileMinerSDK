@@ -14,7 +14,7 @@
 #define CL_HPP_CL_1_2_DEFAULT_BUILD true
 #define CL_HPP_TARGET_OPENCL_VERSION 120
 #define CL_HPP_MINIMUM_OPENCL_VERSION 120
-#include "CL/cl2.hpp"
+#include "openCL_phone.h"
 
 // macOS OpenCL fix:
 #ifndef CL_DEVICE_COMPUTE_CAPABILITY_MAJOR_NV

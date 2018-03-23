@@ -57,7 +57,8 @@ LOCAL_MODULE    := eth-miner
 
 LOCAL_STATIC_LIBRARIES := eth-core
 LOCAL_SRC_FILES := \
-        ./openCL_phone.cpp
+        ./openCL_phone.cpp \
+        ./CLMiner.cpp
 
 include $(BUILD_SHARED_LIBRARY)
 
