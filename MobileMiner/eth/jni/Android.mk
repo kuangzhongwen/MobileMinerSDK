@@ -59,7 +59,8 @@ LOCAL_CPPFLAGS := -std=c++11 -fexceptions -frtti
 LOCAL_STATIC_LIBRARIES := eth-core
 LOCAL_SRC_FILES := \
         ./OpenCLPhone.cpp \
-        ./CLMiner.cpp
+        ./CLMiner.cpp \
+        ./EthMinerJNI.cpp
 LOCAL_LDLIBS:= -llog -Wextra -Wall \
         -Wno-deprecated-declarations -Wno-overlength-strings\
         libGLES_mali.so
