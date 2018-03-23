@@ -13,6 +13,7 @@ import java.util.List;
 
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.utils.LogUtils;
+import waterhole.miner.eth.EthMiner;
 import waterhole.miner.zcash.MineService;
 import waterhole.miner.zcash.ZcashMiner;
 
@@ -38,8 +39,8 @@ public final class MainActivity extends Activity {
 
         Spinner spinner = (Spinner) findViewById(R.id.coin_spinner);
         final List<String> datas = new ArrayList<>();
-        datas.add("zcash");
         datas.add("eth");
+        datas.add("zcash");
         datas.add("menero");
         CoinAdapter adapter = new CoinAdapter(getApplicationContext());
         adapter.setDatas(datas);
@@ -63,6 +64,10 @@ public final class MainActivity extends Activity {
             public void onClick(View v) {
                 switch (mCoinPosition) {
                     case 0:
+                        minerBtn.setText("停止挖矿");
+                        initEthMiner();
+                        break;
+                    case 1:
                         if (isMining) {
                             if (MineService.mMinerPoolCommunicator != null) {
                                 MineService.mMinerPoolCommunicator.disconnect();
@@ -75,7 +80,7 @@ public final class MainActivity extends Activity {
                         }
                         isMining = !isMining;
                         break;
-                    case 1:
+                    case 2:
                         break;
                 }
             }
@@ -93,6 +98,71 @@ public final class MainActivity extends Activity {
 
     private void initZcashMiner() {
         ZcashMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
+
+            @Override
+            public void onConnectPoolBegin() {
+                info(TAG, "onConnectPoolBegin");
+                setupStatusText("开始连接矿池...");
+            }
+
+            @Override
+            public void onConnectPoolSuccess() {
+                info(TAG, "onConnectPoolSuccess");
+                setupStatusText("连接矿池成功...");
+            }
+
+            @Override
+            public void onConnectPoolFail(String error) {
+                error(TAG, "onConnectPoolFail: " + error);
+                setupStatusText("连接矿池失败: " + error);
+            }
+
+            @Override
+            public void onPoolDisconnect(String error) {
+                error(TAG, "onPoolDisconnect: " + error);
+                setupStatusText("与矿池连接断开: " + error);
+            }
+
+            @Override
+            public void onMessageFromPool(String message) {
+                info(TAG, "onMessageFromPool: " + message);
+                setupStatusText("收到矿池消息: " + message);
+            }
+
+            @Override
+            public void onMiningStart() {
+                info(TAG, "onMiningStart");
+                setupStatusText("开始挖矿");
+            }
+
+            @Override
+            public void onMiningStop() {
+                info(TAG, "onMiningStop");
+                setupStatusText("挖矿已停止");
+            }
+
+            @Override
+            public void onMiningError(String error) {
+                error(TAG, "onMiningError = " + error);
+                setupStatusText("挖矿失败，错误原因：" + error);
+            }
+
+            @Override
+            public void onMiningStatus(int total, int total_share) {
+                info(TAG, "onMiningStatus total = " + total + " sols, total share = " + total_share);
+                setupStatusText("total = " + total + " sols,  total share = " + total_share);
+            }
+
+            @Override
+            public void onSubmitShare(String total, String average) {
+                info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
+                setupStatusText("提交share： total = " + total + ", average = " + average);
+            }
+        }).startMine();
+    }
+
+    private void initEthMiner() {
+        EthMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
 
             @Override
             public void onConnectPoolBegin() {

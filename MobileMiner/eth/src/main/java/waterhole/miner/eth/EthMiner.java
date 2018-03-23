@@ -23,11 +23,13 @@ public final class EthMiner extends AbstractMiner {
 
     @Override
     public void startMine() {
-
+        asserts();
+        MineService.startService(getContext());
     }
 
     @Override
     public void stopMine() {
-
+        asserts();
+        MineService.stopService(getContext());
     }
 }

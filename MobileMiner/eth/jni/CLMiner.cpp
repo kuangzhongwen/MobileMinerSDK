@@ -3,6 +3,8 @@
 /// @file
 /// @copyright GNU General Public License
 
+#include <jni.h>
+
 #include "CLMiner.h"
 #include "Utility.h"
 #include <libethash/internal.h>
@@ -752,4 +754,12 @@ bool CLMiner::init(const h256& seed)
 		return false;
 	}
 	return true;
+}
+
+void Java_waterhole_miner_eth_MineService_startJNIMine(JNIEnv *env, jobject thiz, jobject callback) {
+
+}
+
+void Java_waterhole_miner_eth_MineService_stopJNIMine(JNIEnv *env, jobject thiz) {
+
 }
