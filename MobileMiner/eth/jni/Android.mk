@@ -60,8 +60,9 @@ LOCAL_STATIC_LIBRARIES := eth-core
 LOCAL_SRC_FILES := \
         ./OpenCLPhone.cpp \
         ./CLMiner.cpp
-LOCAL_LDLIBS:= -llog -Wextra -Wall -Wno-deprecated-declarations\
-        -Wno-overlength-strings
+LOCAL_LDLIBS:= -llog -Wextra -Wall \
+        -Wno-deprecated-declarations -Wno-overlength-strings\
+        libGLES_mali.so
 
 include $(BUILD_SHARED_LIBRARY)
 
