@@ -8,6 +8,41 @@
 #include "CLMiner_kernel_stable.h"
 #include "CLMiner_kernel_experimental.h"
 
+
+#ifndef LOG_INCLUDED
+#define LOG_INCLUDED
+
+#define ANDROID_V
+
+#ifdef ANDROID_V
+#include <android/log.h>
+#include <errno.h>
+
+#define  LOG_TAG "Waterhole-EthMiner"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+
+#ifdef perror
+#undef perror
+#endif
+#define perror(smg) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "opus error:%s :%s", smg, strerror(errno))
+
+#ifdef fprintf
+#undef fprintf
+#endif
+#define fprintf(strm, ...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+
+#else
+#include <stdio.h>
+#include <stdlib.h>
+#define LOGE(fmt, arg...) fprintf(stderr, fmt, ##arg)
+#define LOGD(fmt, arg...) fprintf(stderr, fmt, ##arg)
+#endif
+
+#endif
+
 using namespace dev;
 using namespace eth;
 
@@ -38,6 +73,172 @@ struct CLSwitchChannel: public LogChannel
 #define cllog clog(CLChannel)
 #define clswitchlog clog(CLSwitchChannel)
 #define ETHCL_LOG(_contents) cllog << _contents
+
+/**
+ * Returns the name of a numerical cl_int error
+ * Takes constants from CL/cl.h and returns them in a readable format
+ */
+static const char *strClError(cl_int err) {
+
+	switch (err) {
+	case CL_SUCCESS:
+		return "CL_SUCCESS";
+	case CL_DEVICE_NOT_FOUND:
+		return "CL_DEVICE_NOT_FOUND";
+	case CL_DEVICE_NOT_AVAILABLE:
+		return "CL_DEVICE_NOT_AVAILABLE";
+	case CL_COMPILER_NOT_AVAILABLE:
+		return "CL_COMPILER_NOT_AVAILABLE";
+	case CL_MEM_OBJECT_ALLOCATION_FAILURE:
+		return "CL_MEM_OBJECT_ALLOCATION_FAILURE";
+	case CL_OUT_OF_RESOURCES:
+		return "CL_OUT_OF_RESOURCES";
+	case CL_OUT_OF_HOST_MEMORY:
+		return "CL_OUT_OF_HOST_MEMORY";
+	case CL_PROFILING_INFO_NOT_AVAILABLE:
+		return "CL_PROFILING_INFO_NOT_AVAILABLE";
+	case CL_MEM_COPY_OVERLAP:
+		return "CL_MEM_COPY_OVERLAP";
+	case CL_IMAGE_FORMAT_MISMATCH:
+		return "CL_IMAGE_FORMAT_MISMATCH";
+	case CL_IMAGE_FORMAT_NOT_SUPPORTED:
+		return "CL_IMAGE_FORMAT_NOT_SUPPORTED";
+	case CL_BUILD_PROGRAM_FAILURE:
+		return "CL_BUILD_PROGRAM_FAILURE";
+	case CL_MAP_FAILURE:
+		return "CL_MAP_FAILURE";
+	case CL_MISALIGNED_SUB_BUFFER_OFFSET:
+		return "CL_MISALIGNED_SUB_BUFFER_OFFSET";
+	case CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST:
+		return "CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST";
+
+#ifdef CL_VERSION_1_2
+	case CL_COMPILE_PROGRAM_FAILURE:
+		return "CL_COMPILE_PROGRAM_FAILURE";
+	case CL_LINKER_NOT_AVAILABLE:
+		return "CL_LINKER_NOT_AVAILABLE";
+	case CL_LINK_PROGRAM_FAILURE:
+		return "CL_LINK_PROGRAM_FAILURE";
+	case CL_DEVICE_PARTITION_FAILED:
+		return "CL_DEVICE_PARTITION_FAILED";
+	case CL_KERNEL_ARG_INFO_NOT_AVAILABLE:
+		return "CL_KERNEL_ARG_INFO_NOT_AVAILABLE";
+#endif // CL_VERSION_1_2
+
+	case CL_INVALID_VALUE:
+		return "CL_INVALID_VALUE";
+	case CL_INVALID_DEVICE_TYPE:
+		return "CL_INVALID_DEVICE_TYPE";
+	case CL_INVALID_PLATFORM:
+		return "CL_INVALID_PLATFORM";
+	case CL_INVALID_DEVICE:
+		return "CL_INVALID_DEVICE";
+	case CL_INVALID_CONTEXT:
+		return "CL_INVALID_CONTEXT";
+	case CL_INVALID_QUEUE_PROPERTIES:
+		return "CL_INVALID_QUEUE_PROPERTIES";
+	case CL_INVALID_COMMAND_QUEUE:
+		return "CL_INVALID_COMMAND_QUEUE";
+	case CL_INVALID_HOST_PTR:
+		return "CL_INVALID_HOST_PTR";
+	case CL_INVALID_MEM_OBJECT:
+		return "CL_INVALID_MEM_OBJECT";
+	case CL_INVALID_IMAGE_FORMAT_DESCRIPTOR:
+		return "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR";
+	case CL_INVALID_IMAGE_SIZE:
+		return "CL_INVALID_IMAGE_SIZE";
+	case CL_INVALID_SAMPLER:
+		return "CL_INVALID_SAMPLER";
+	case CL_INVALID_BINARY:
+		return "CL_INVALID_BINARY";
+	case CL_INVALID_BUILD_OPTIONS:
+		return "CL_INVALID_BUILD_OPTIONS";
+	case CL_INVALID_PROGRAM:
+		return "CL_INVALID_PROGRAM";
+	case CL_INVALID_PROGRAM_EXECUTABLE:
+		return "CL_INVALID_PROGRAM_EXECUTABLE";
+	case CL_INVALID_KERNEL_NAME:
+		return "CL_INVALID_KERNEL_NAME";
+	case CL_INVALID_KERNEL_DEFINITION:
+		return "CL_INVALID_KERNEL_DEFINITION";
+	case CL_INVALID_KERNEL:
+		return "CL_INVALID_KERNEL";
+	case CL_INVALID_ARG_INDEX:
+		return "CL_INVALID_ARG_INDEX";
+	case CL_INVALID_ARG_VALUE:
+		return "CL_INVALID_ARG_VALUE";
+	case CL_INVALID_ARG_SIZE:
+		return "CL_INVALID_ARG_SIZE";
+	case CL_INVALID_KERNEL_ARGS:
+		return "CL_INVALID_KERNEL_ARGS";
+	case CL_INVALID_WORK_DIMENSION:
+		return "CL_INVALID_WORK_DIMENSION";
+	case CL_INVALID_WORK_GROUP_SIZE:
+		return "CL_INVALID_WORK_GROUP_SIZE";
+	case CL_INVALID_WORK_ITEM_SIZE:
+		return "CL_INVALID_WORK_ITEM_SIZE";
+	case CL_INVALID_GLOBAL_OFFSET:
+		return "CL_INVALID_GLOBAL_OFFSET";
+	case CL_INVALID_EVENT_WAIT_LIST:
+		return "CL_INVALID_EVENT_WAIT_LIST";
+	case CL_INVALID_EVENT:
+		return "CL_INVALID_EVENT";
+	case CL_INVALID_OPERATION:
+		return "CL_INVALID_OPERATION";
+	case CL_INVALID_GL_OBJECT:
+		return "CL_INVALID_GL_OBJECT";
+	case CL_INVALID_BUFFER_SIZE:
+		return "CL_INVALID_BUFFER_SIZE";
+	case CL_INVALID_MIP_LEVEL:
+		return "CL_INVALID_MIP_LEVEL";
+	case CL_INVALID_GLOBAL_WORK_SIZE:
+		return "CL_INVALID_GLOBAL_WORK_SIZE";
+	case CL_INVALID_PROPERTY:
+		return "CL_INVALID_PROPERTY";
+
+#ifdef CL_VERSION_1_2
+	case CL_INVALID_IMAGE_DESCRIPTOR:
+		return "CL_INVALID_IMAGE_DESCRIPTOR";
+	case CL_INVALID_COMPILER_OPTIONS:
+		return "CL_INVALID_COMPILER_OPTIONS";
+	case CL_INVALID_LINKER_OPTIONS:
+		return "CL_INVALID_LINKER_OPTIONS";
+	case CL_INVALID_DEVICE_PARTITION_COUNT:
+		return "CL_INVALID_DEVICE_PARTITION_COUNT";
+#endif // CL_VERSION_1_2
+
+#ifdef CL_VERSION_2_0
+	case CL_INVALID_PIPE_SIZE:
+		return "CL_INVALID_PIPE_SIZE";
+	case CL_INVALID_DEVICE_QUEUE:
+		return "CL_INVALID_DEVICE_QUEUE";
+#endif // CL_VERSION_2_0
+
+#ifdef CL_VERSION_2_2
+	case CL_INVALID_SPEC_ID:
+		return "CL_INVALID_SPEC_ID";
+	case CL_MAX_SIZE_RESTRICTION_EXCEEDED:
+		return "CL_MAX_SIZE_RESTRICTION_EXCEEDED";
+#endif // CL_VERSION_2_2
+	}
+
+	return "Unknown CL error encountered";
+}
+
+/**
+ * Prints cl::Errors in a uniform way
+ * @param msg text prepending the error message
+ * @param clerr cl:Error object
+ *
+ * Prints errors in the format:
+ *      msg: what(), string err() (numeric err())
+ */
+static std::string ethCLErrorHelper(const char *msg, cl::Error const &clerr) {
+	std::ostringstream osstream;
+	osstream << msg << ": " << clerr.what() << ": " << strClError(clerr.err())
+	         << " (" << clerr.err() << ")";
+	return osstream.str();
+}
 
 namespace
 {
@@ -219,6 +420,7 @@ void CLMiner::workLoop()
 	}
 	catch (cl::Error const& _e)
 	{
+		cwarn << ethCLErrorHelper("OpenCL Error", _e);
 		if(s_exit)
 			exit(1);
 	}
@@ -503,6 +705,7 @@ bool CLMiner::init(const h256& seed)
 		}
 		catch (cl::Error const& err)
 		{
+			cwarn << ethCLErrorHelper("Creating DAG buffer failed", err);
 			return false;
 		}
 		// create buffer for header
@@ -541,6 +744,7 @@ bool CLMiner::init(const h256& seed)
 	}
 	catch (cl::Error const& err)
 	{
+		cwarn << ethCLErrorHelper("OpenCL init failed", err);
 		if(s_exit)
 			exit(1);
 		return false;

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <CL/cl.h>
-#include"openCL_phone.h"
+#include "OpenCLPhone.h"
 
 
  cl_int (*rclGetPlatformIDs)(
