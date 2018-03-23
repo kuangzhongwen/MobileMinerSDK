@@ -4,10 +4,10 @@
 /// @copyright GNU General Public License
 
 #include "CLMiner.h"
+#include "Utility.h"
 #include <libethash/internal.h>
 #include "CLMiner_kernel_stable.h"
 #include "CLMiner_kernel_experimental.h"
-
 
 #ifndef LOG_INCLUDED
 #define LOG_INCLUDED
