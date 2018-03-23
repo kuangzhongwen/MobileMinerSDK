@@ -58,7 +58,7 @@ LOCAL_CPPFLAGS := -std=c++11 -fexceptions -frtti
 
 LOCAL_STATIC_LIBRARIES := eth-core
 LOCAL_SRC_FILES := \
-        ./openCL_phone.cpp \
+        ./OpenCLPhone.cpp \
         ./CLMiner.cpp
 
 include $(BUILD_SHARED_LIBRARY)
