@@ -40,10 +40,23 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_CPPFLAGS := -std=c++11 -fexceptions -frtti
+LOCAL_MODULE    := hwmon
+LOCAL_C_INCLUDES += ./jni/libhwmon/
+LOCAL_SRC_FILES := \
+        ./libhwmon/wrapadl.cpp \
+        ./libhwmon/wrapamdsysfs.cpp \
+        ./libhwmon/wraphelper.cpp \
+        ./libhwmon/wrapnvml.cpp
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+LOCAL_CPPFLAGS := -std=c++11 -fexceptions -frtti
 LOCAL_MODULE    := eth-core
 LOCAL_C_INCLUDES += ./jni/libethcore/
 
-LOCAL_STATIC_LIBRARIES := eth-dev-core eth-hash
+LOCAL_STATIC_LIBRARIES := eth-dev-core eth-hash hwmon
 LOCAL_SRC_FILES := \
         ./libethcore/BlockHeader.cpp \
         ./libethcore/EthashAux.cpp \
