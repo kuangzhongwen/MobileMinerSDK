@@ -11,6 +11,15 @@
 #include "CLMiner_kernel_stable.h"
 #include "CLMiner_kernel_experimental.h"
 
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/trim_all.hpp>
+#include <boost/optional.hpp>
+
+#include <libethcore/Exceptions.h>
+#include <libdevcore/SHA3.h>
+#include <libethcore/EthashAux.h>
+#include <libethcore/Farm.h>
+
 #ifndef LOG_INCLUDED
 #define LOG_INCLUDED
 

@@ -80,12 +80,34 @@ include $(PREBUILT_STATIC_LIBRARY)
 
 
 include $(CLEAR_VARS)
+LOCAL_MODULE    := jsonrpc
+LOCAL_CPPFLAGS    := -std=c++11 -Wall -Wextra -pedantic -Wredundant-decls \
+                -Wshadow -O2 -Wno-long-long -Werror -ljsoncpp -lpthread
+
+LOCAL_SRC_FILES := \
+                ./jsonrpccpp/jsonrpc_client.cpp \
+                ./jsonrpccpp/jsonrpc_handler.cpp \
+                ./jsonrpccpp/jsonrpc_httpclient.cpp \
+                ./jsonrpccpp/jsonrpc_server.cpp \
+                ./jsonrpccpp/jsonrpc_tcpclient.cpp \
+                ./jsonrpccpp/jsonrpc_tcpserver.cpp \
+                ./jsonrpccpp/jsonrpc_udpclient.cpp \
+                ./jsonrpccpp/jsonrpc_udpserver.cpp \
+                ./jsonrpccpp/netstring.cpp \
+                ./jsonrpccpp/networking.cpp \
+                ./jsonrpccpp/system.cpp
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
 LOCAL_MODULE    := pool-protocols
 LOCAL_CPPFLAGS    := -Wall -std=c++11 -DANDROID -frtti -DHAVE_PTHREAD\
                   -finline-functions -ffast-math -O0
-LOCAL_C_INCLUDES  += ./jni/boringssl/include/
+LOCAL_C_INCLUDES  += ./jni/boringssl/include/ \
+                     ./jni/jsonrpccpp/
 LOCAL_ARM_MODE    := arm
-LOCAL_STATIC_LIBRARIES    := crypto eth-dev-core libboost_system
+LOCAL_STATIC_LIBRARIES    := crypto eth-dev-core libboost_system jsonrpc
 
 LOCAL_SRC_FILES := \
                 ./libpoolprotocols/getwork/EthGetworkClient.cpp \

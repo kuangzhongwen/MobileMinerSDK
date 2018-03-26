@@ -5,7 +5,7 @@
 #ifndef JSONRPC_CPP_STUB_GETWORK_H_
 #define JSONRPC_CPP_STUB_GETWORK_H_
 
-#include <jsonrpccpp/client.h>
+#include <jsonrpccpp/jsonrpc_client.h>
 
 class JsonrpcGetwork
 {

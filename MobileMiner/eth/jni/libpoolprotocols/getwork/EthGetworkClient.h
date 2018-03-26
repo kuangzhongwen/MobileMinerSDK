@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <jsonrpccpp/client/connectors/httpclient.h>
+#include <jsonrpccpp/jsonrpc_httpclient.h>
 #include <iostream>
 #include <libdevcore/Worker.h>
 #include "jsonrpc_getwork.h"
