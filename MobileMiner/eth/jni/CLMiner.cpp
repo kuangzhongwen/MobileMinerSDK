@@ -339,6 +339,7 @@ void CLMiner::workLoop()
 			if (current.header != w.header)
 			{
 				// New work received. Update GPU data.
+				/**
 				if (!w)
 				{
 					LOGD("%s", "No work. Pause for 3 s.");
@@ -347,27 +348,23 @@ void CLMiner::workLoop()
 				}
 
 				//cllog << "New work: header" << w.header << "target" << w.boundary.hex();
-
-				if (current.seed != w.seed)
-				{
-					if (s_dagLoadMode == DAG_LOAD_MODE_SEQUENTIAL)
-					{
-						while (s_dagLoadIndex < index)
-							this_thread::sleep_for(chrono::seconds(1));
-						++s_dagLoadIndex;
-					}
-
-                    // printf("New seed %d", w.seed);
-                    LOGD("%s", "New seed");
-					init(w.seed);
-				}
+                */
+				// printf("New seed %d", w.seed);
+				// todo test
+                LOGD("%s", "New seed");
+                h256 seed = FixedHash<32>("3c08da512cf85dc7dd15483f1ebf529b55eb2c4ebc2182a808eebe109eab0e5c");
+                h256 boundary = FixedHash<32>("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+                h256 header = FixedHash<32>("348e25a7f097b5cd24cdcfc8e1bb5a41b9098d5c8a31e12b381c753dfbd1758c");
+                LOGD("%s", "init before");
+                init(seed);
+                LOGD("%s", "init after");
 
 				// Upper 64 bits of the boundary.
-				const uint64_t target = (uint64_t)(u64)((u256)w.boundary >> 192);
+				const uint64_t target = (uint64_t)(u64)((u256)boundary >> 192);
 				assert(target > 0);
 
 				// Update header constant buffer.
-				m_queue.enqueueWriteBuffer(m_header, CL_FALSE, 0, w.header.size, w.header.data());
+				m_queue.enqueueWriteBuffer(m_header, CL_FALSE, 0, header.size, header.data());
 				m_queue.enqueueWriteBuffer(m_searchBuffer, CL_FALSE, 0, sizeof(c_zero), &c_zero);
 
 				m_searchKernel.setArg(0, m_searchBuffer);  // Supply output buffer to kernel.
@@ -549,20 +546,23 @@ bool CLMiner::configureGPU(
 
 bool CLMiner::init(const h256& seed)
 {
+    LOGD("%s", "EthashAux::light(seed) before");
 	EthashAux::LightType light = EthashAux::light(seed);
-
+    LOGD("%s", "EthashAux::light(seed) after");
 	// get all platforms
 	try
 	{
 		vector<cl::Platform> platforms = getPlatforms();
-		if (platforms.empty())
+		LOGD("%s", "getPlatforms");
+		if (platforms.empty()) {
+		    LOGD("%s", "getPlatforms empty");
 			return false;
-
+        }
 		// use selected platform
 		unsigned platformIdx = min<unsigned>(s_platformId, platforms.size() - 1);
 
 		string platformName = platforms[platformIdx].getInfo<CL_PLATFORM_NAME>();
-		ETHCL_LOG("Platform: " << platformName);
+		LOGD("Platform: %s", "platformName");
 
 		int platformId = OPENCL_PLATFORM_UNKNOWN;
 		{
@@ -572,18 +572,21 @@ bool CLMiner::init(const h256& seed)
 
 			if (platformName == "NVIDIA CUDA")
 			{
+			    LOGD("platformName: %s", "NVIDIA CUDA");
 				platformId = OPENCL_PLATFORM_NVIDIA;
 				m_hwmoninfo.deviceType = HwMonitorInfoType::NVIDIA;
 				m_hwmoninfo.indexSource = HwMonitorIndexSource::OPENCL;
 			}
 			else if (platformName == "AMD Accelerated Parallel Processing")
 			{
+			    LOGD("platformName: %s", "AMD Accelerated Parallel Processing");
 				platformId = OPENCL_PLATFORM_AMD;
 				m_hwmoninfo.deviceType = HwMonitorInfoType::AMD;
 				m_hwmoninfo.indexSource = HwMonitorIndexSource::OPENCL;
 			}
 			else if (platformName == "Clover")
 			{
+			    LOGD("platformName: %s", "Clover");
 				platformId = OPENCL_PLATFORM_CLOVER;
 			}
 		}
@@ -592,7 +595,7 @@ bool CLMiner::init(const h256& seed)
 		vector<cl::Device> devices = getDevices(platforms, platformIdx);
 		if (devices.empty())
 		{
-			ETHCL_LOG("No OpenCL devices found.");
+		    LOGD("%s", "No OpenCL devices found.");
 			return false;
 		}
 
@@ -602,18 +605,17 @@ bool CLMiner::init(const h256& seed)
 		m_hwmoninfo.deviceIndex = deviceId % devices.size();
 		cl::Device& device = devices[deviceId % devices.size()];
 		string device_version = device.getInfo<CL_DEVICE_VERSION>();
-		ETHCL_LOG("Device:   " << device.getInfo<CL_DEVICE_NAME>() << " / " << device_version);
-
+        LOGD("device_version %s", "device_version");
 		string clVer = device_version.substr(7, 3);
 		if (clVer == "1.0" || clVer == "1.1")
 		{
 			if (platformId == OPENCL_PLATFORM_CLOVER)
 			{
-				ETHCL_LOG("OpenCL " << clVer << " not supported, but platform Clover might work nevertheless. USE AT OWN RISK!");
+			    LOGD("%s", "not supported, but platform Clover might work nevertheless. USE AT OWN RISK!");
 			}
 			else
 			{
-				ETHCL_LOG("OpenCL " << clVer << " not supported - minimum required version is 1.2");
+			    LOGD("%s", "not supported - minimum required version is 1.2");
 				return false;
 			}
 		}
@@ -628,10 +630,10 @@ bool CLMiner::init(const h256& seed)
 
 			computeCapability = computeCapabilityMajor * 10 + computeCapabilityMinor;
 			int maxregs = computeCapability >= 35 ? 72 : 63;
-			sprintf(options, "-cl-nv-maxrregcount=%d", maxregs);
+			LOGD("-cl-nv-maxrregcount=%d", maxregs);
 		}
 		else {
-			sprintf(options, "%s", "");
+			LOGD("-cl-nv-maxrregcount=%s", "platformId != OPENCL_PLATFORM_NVIDIA");
 		}
 		// create context
 		m_context = cl::Context(vector<cl::Device>(&device, &device + 1));
@@ -655,15 +657,14 @@ bool CLMiner::init(const h256& seed)
 		string code;
 
 		if ( s_clKernelName == CLKernelName::Experimental ) {
-			cllog << "OpenCL kernel: Experimental kernel";
+			LOGD("%s", "OpenCL kernel: Experimental kernel");
 			code = string(CLMiner_kernel_experimental, CLMiner_kernel_experimental + sizeof(CLMiner_kernel_experimental));
 		}
 		else { //if(s_clKernelName == CLKernelName::Stable)
-			cllog << "OpenCL kernel: Stable kernel";
-
+            LOGD("%s", "OpenCL kernel: Stable kernel");
 			//CLMiner_kernel_stable.cl will do a #undef THREADS_PER_HASH
 			if(s_threadsPerHash != 8) {
-				cwarn << "The current stable OpenCL kernel only supports exactly 8 threads. Thread parameter will be ignored.";
+			    LOGD("%s", "The current stable OpenCL kernel only supports exactly 8 threads. Thread parameter will be ignored.");
 			}
 
 			code = string(CLMiner_kernel_stable, CLMiner_kernel_stable + sizeof(CLMiner_kernel_stable));
@@ -683,11 +684,11 @@ bool CLMiner::init(const h256& seed)
 		try
 		{
 			program.build({device}, options);
-			cllog << "Build info:" << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
+			LOGD("%s", "Build info");
 		}
 		catch (cl::Error const&)
 		{
-			cwarn << "Build info:" << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
+			LOGD("%s", "Build info error");
 			return false;
 		}
 
@@ -696,33 +697,30 @@ bool CLMiner::init(const h256& seed)
 		device.getInfo(CL_DEVICE_GLOBAL_MEM_SIZE, &result);
 		if (result < dagSize)
 		{
-			cnote <<
-			"OpenCL device " << device.getInfo<CL_DEVICE_NAME>()
-							 << " has insufficient GPU memory." << result <<
-							 " bytes of memory found < " << dagSize << " bytes of memory required";	
+			LOGD("%s", "OpenCL device has insufficient GPU memory. bytes of memory found bytes of memory required");
 			return false;
 		}
 
 		// create buffer for dag
 		try
 		{
-			cllog << "Creating light cache buffer, size" << light->data().size();
+		    LOGD("%s", "Creating light cache buffer, size");
 			m_light = cl::Buffer(m_context, CL_MEM_READ_ONLY, light->data().size());
-			cllog << "Creating DAG buffer, size" << dagSize;
+			LOGD("%s", "Creating DAG buffer, size");
 			m_dag = cl::Buffer(m_context, CL_MEM_READ_ONLY, dagSize);
-			cllog << "Loading kernels";
+			LOGD("%s", "Loading kernels");
 			m_searchKernel = cl::Kernel(program, "ethash_search");
 			m_dagKernel = cl::Kernel(program, "ethash_calculate_dag_item");
-			cllog << "Writing light cache buffer";
+			LOGD("%s", "Writing light cache buffer");
 			m_queue.enqueueWriteBuffer(m_light, CL_TRUE, 0, light->data().size(), light->data().data());
 		}
 		catch (cl::Error const& err)
 		{
-			cwarn << ethCLErrorHelper("Creating DAG buffer failed", err);
+		    LOGD("%s", "Creating DAG buffer failed");
 			return false;
 		}
 		// create buffer for header
-		ETHCL_LOG("Creating buffer for header.");
+		LOGD("%s", "Creating buffer for header.");
 		m_header = cl::Buffer(m_context, CL_MEM_READ_ONLY, 32);
 
 		m_searchKernel.setArg(1, m_header);
@@ -730,7 +728,7 @@ bool CLMiner::init(const h256& seed)
 		m_searchKernel.setArg(5, ~0u);  // Pass this to stop the compiler unrolling the loops.
 
 		// create mining buffers
-		ETHCL_LOG("Creating mining buffer");
+		LOGD("%s", "Creating mining buffer");
 		m_searchBuffer = cl::Buffer(m_context, CL_MEM_WRITE_ONLY, (c_maxSearchResults + 1) * sizeof(uint32_t));
 
 		uint32_t const work = (uint32_t)(dagSize / sizeof(node));
@@ -753,11 +751,11 @@ bool CLMiner::init(const h256& seed)
 
 		auto dagTime = std::chrono::duration_cast<std::chrono::milliseconds>(endDAG-startDAG);
 		float gb = (float)dagSize / (1024 * 1024 * 1024);
-		cnote << gb << " GB of DAG data generated in" << dagTime.count() << "ms.";
+		LOGD("%s", "GB of DAG data generated in ms.");
 	}
 	catch (cl::Error const& err)
 	{
-		cwarn << ethCLErrorHelper("OpenCL init failed", err);
+	    LOGD("%s", "OpenCL init failed");
 		if(s_exit)
 			exit(1);
 		return false;
