@@ -691,15 +691,16 @@ bool CLMiner::init(const h256& seed)
 		cl::Program program(m_context, sources);
 		try
 		{
-			program.build({device}, options);
+		    // todo origin is program.build({device}, options)
+			program.build({device});
 			LOGD("%s", "Build info");
 		}
 		catch (cl::Error const& error)
 		{
-			// cwarn << "Build info:" << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
 			LOGD("%s", "Build info error");
 			// CL_INVALID_BUILD_OPTIONS
 			LOGD("%d", error.err());
+			LOGD("%s", program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device).c_str());
 			return false;
 		}
 
