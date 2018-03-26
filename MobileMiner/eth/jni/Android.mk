@@ -108,8 +108,7 @@ LOCAL_C_INCLUDES  += ./jni/libpoolprotocols/ \
 LOCAL_STATIC_LIBRARIES    := eth-core pool-protocols
 LOCAL_SRC_FILES    := \
                ./OpenCLPhone.cpp \
-               ./CLMiner.cpp \
-               ./EthMinerJNI.cpp
+               ./CLMiner.cpp
 LOCAL_LDLIBS    := -llog -Wextra -Wall \
         -Wno-deprecated-declarations -Wno-overlength-strings \
         libGLES_mali.so
