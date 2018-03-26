@@ -664,6 +664,19 @@ bool CLMiner::init(const h256& seed)
 
 			code = string(CLMiner_kernel_stable, CLMiner_kernel_stable + sizeof(CLMiner_kernel_stable));
 		}
+
+		/**
+		 * linux config
+		 *
+		 * #define GROUP_SIZE 128
+         * #define DAG_SIZE 19988477
+         * #define LIGHT_SIZE 624607
+         * #define ACCESSES 64
+         * #define MAX_OUTPUTS 1
+         * #define PLATFORM 0
+         * #define COMPUTE 0
+         * #define THREADS_PER_HASH 8
+		 */
 		addDefinition(code, "GROUP_SIZE", m_workgroupSize);
 		addDefinition(code, "DAG_SIZE", dagSize128);
 		addDefinition(code, "LIGHT_SIZE", lightSize64);
