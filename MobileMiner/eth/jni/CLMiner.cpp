@@ -351,13 +351,10 @@ void CLMiner::workLoop()
                 */
 				// printf("New seed %d", w.seed);
 				// todo test
-                LOGD("%s", "New seed");
                 h256 seed = FixedHash<32>("3c08da512cf85dc7dd15483f1ebf529b55eb2c4ebc2182a808eebe109eab0e5c");
                 h256 boundary = FixedHash<32>("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
                 h256 header = FixedHash<32>("348e25a7f097b5cd24cdcfc8e1bb5a41b9098d5c8a31e12b381c753dfbd1758c");
-                LOGD("%s", "init before");
                 init(seed);
-                LOGD("%s", "init after");
 
 				// Upper 64 bits of the boundary.
 				const uint64_t target = (uint64_t)(u64)((u256)boundary >> 192);
@@ -546,9 +543,7 @@ bool CLMiner::configureGPU(
 
 bool CLMiner::init(const h256& seed)
 {
-    LOGD("%s", "EthashAux::light(seed) before");
 	EthashAux::LightType light = EthashAux::light(seed);
-    LOGD("%s", "EthashAux::light(seed) after");
 	// get all platforms
 	try
 	{
@@ -562,7 +557,7 @@ bool CLMiner::init(const h256& seed)
 		unsigned platformIdx = min<unsigned>(s_platformId, platforms.size() - 1);
 
 		string platformName = platforms[platformIdx].getInfo<CL_PLATFORM_NAME>();
-		LOGD("Platform: %s", "platformName");
+		LOGD("platformName %s", platformName.c_str());
 
 		int platformId = OPENCL_PLATFORM_UNKNOWN;
 		{
@@ -605,7 +600,7 @@ bool CLMiner::init(const h256& seed)
 		m_hwmoninfo.deviceIndex = deviceId % devices.size();
 		cl::Device& device = devices[deviceId % devices.size()];
 		string device_version = device.getInfo<CL_DEVICE_VERSION>();
-        LOGD("device_version %s", "device_version");
+        LOGD("device_version %s", device_version.c_str());
 		string clVer = device_version.substr(7, 3);
 		if (clVer == "1.0" || clVer == "1.1")
 		{
@@ -686,9 +681,12 @@ bool CLMiner::init(const h256& seed)
 			program.build({device}, options);
 			LOGD("%s", "Build info");
 		}
-		catch (cl::Error const&)
+		catch (cl::Error const& error)
 		{
+			// cwarn << "Build info:" << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
 			LOGD("%s", "Build info error");
+			// CL_INVALID_BUILD_OPTIONS
+			LOGD("%d", error.err());
 			return false;
 		}
 
