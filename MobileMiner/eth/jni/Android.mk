@@ -66,21 +66,37 @@ include $(BUILD_STATIC_LIBRARY)
 
 
 include $(CLEAR_VARS)
-LOCAL_MODULE    := crypto
+LOCAL_MODULE    := libz
+LOCAL_SRC_FILES    := $(LOCAL_PATH)/curl/libz.a
+LOCAL_EXPORT_C_INCLUDES    := ./jni/curl/include
+include $(PREBUILT_STATIC_LIBRARY)
 
-ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-    LOCAL_SRC_FILES    := ./boringssl/lib/libcrypto_armeabi-v7a.a
-else
-    ifeq ($(TARGET_ARCH_ABI),armeabi)
-	LOCAL_SRC_FILES    := ./boringssl/lib/libcrypto_armeabi.a
-	endif
-endif
 
+include $(CLEAR_VARS)
+LOCAL_MODULE    := libssl
+LOCAL_SRC_FILES    := $(LOCAL_PATH)/curl/libssl.a
+LOCAL_EXPORT_C_INCLUDES    := ./jni/curl/include
+include $(PREBUILT_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := libcrypto
+LOCAL_SRC_FILES    := $(LOCAL_PATH)/curl/libcrypto.a
+LOCAL_EXPORT_C_INCLUDES    := ./jni/curl/include
+include $(PREBUILT_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := libcurl
+LOCAL_SRC_FILES    := $(LOCAL_PATH)/curl/libcurl.a
+LOCAL_EXPORT_C_INCLUDES    := ./jni/curl/include
 include $(PREBUILT_STATIC_LIBRARY)
 
 
 include $(CLEAR_VARS)
 LOCAL_MODULE    := jsonrpc
+
+LOCAL_EXPORT_C_INCLUDES := ./jni/curl/include
 LOCAL_CPPFLAGS    := -std=c++11 -Wall -Wextra -pedantic -Wredundant-decls \
                 -Wshadow -O2 -Wno-long-long -Werror -ljsoncpp -lpthread
 
@@ -97,6 +113,9 @@ LOCAL_SRC_FILES := \
                 ./jsonrpccpp/networking.cpp \
                 ./jsonrpccpp/system.cpp
 
+LOCAL_STATIC_LIBRARIES := libcurl libssl libcrypto libz
+LOCAL_LDLIBS    := -llog
+
 include $(BUILD_STATIC_LIBRARY)
 
 
@@ -107,7 +126,7 @@ LOCAL_CPPFLAGS    := -Wall -std=c++11 -DANDROID -frtti -DHAVE_PTHREAD\
 LOCAL_C_INCLUDES  += ./jni/boringssl/include/ \
                      ./jni/jsonrpccpp/
 LOCAL_ARM_MODE    := arm
-LOCAL_STATIC_LIBRARIES    := crypto eth-dev-core libboost_system jsonrpc
+LOCAL_STATIC_LIBRARIES    := eth-dev-core libboost_system jsonrpc
 
 LOCAL_SRC_FILES := \
                 ./libpoolprotocols/getwork/EthGetworkClient.cpp \

@@ -26,7 +26,7 @@
 #define JSONRPC_HTTPCLIENT_H 
 
 #include <iostream>
-#include <curl/curl.h>
+#include <curl/include/curl/curl.h>
 
 #include "jsonrpc_client.h"
 #include "system.h" 
@@ -36,7 +36,7 @@ namespace Json
   namespace Rpc
   {
     /**
-     * \class HttpClient
+     *ï¿½\class HttpClient
      * \brief JSON-RPC Http client.
      */
     class HttpClient : public Client
