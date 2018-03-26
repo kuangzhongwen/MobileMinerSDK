@@ -332,7 +332,7 @@ void CLMiner::workLoop()
 	current.seed = h256{1u};
 
 	try {
-		while (!shouldStop())
+		while (true)
 		{
 			const WorkPackage w = work();
 
@@ -798,8 +798,12 @@ extern "C" {
                        return new CLMiner(_farm, _index);
                   }
             };
-        Farm f;
-        f.setSealers(sealers);
+        Farm m_farm;
+        m_farm.setSealers(sealers);
+        if (!m_farm.isMining()) {
+			LOGD("%s", "Spinning up miners...");
+			m_farm.start("opencl", false);
+		}
     }
 
     JNIEXPORT void JNICALL Java_waterhole_miner_eth_MineService_stopJNIMine(JNIEnv *env, jobject thiz) {

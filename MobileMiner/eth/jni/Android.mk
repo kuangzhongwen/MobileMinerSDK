@@ -64,89 +64,11 @@ LOCAL_SRC_FILES := \
 
 include $(BUILD_STATIC_LIBRARY)
 
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := libz
-LOCAL_SRC_FILES    := $(LOCAL_PATH)/curl/libz.a
-LOCAL_EXPORT_C_INCLUDES    := ./jni/curl/include
-include $(PREBUILT_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := libssl
-LOCAL_SRC_FILES    := $(LOCAL_PATH)/curl/libssl.a
-LOCAL_EXPORT_C_INCLUDES    := ./jni/curl/include
-include $(PREBUILT_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := libcrypto
-LOCAL_SRC_FILES    := $(LOCAL_PATH)/curl/libcrypto.a
-LOCAL_EXPORT_C_INCLUDES    := ./jni/curl/include
-include $(PREBUILT_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := libcurl
-LOCAL_SRC_FILES    := $(LOCAL_PATH)/curl/libcurl.a
-LOCAL_EXPORT_C_INCLUDES    := ./jni/curl/include
-include $(PREBUILT_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := jsonrpc
-
-LOCAL_EXPORT_C_INCLUDES := ./jni/curl/include
-LOCAL_CPPFLAGS    := -std=c++11 -Wall -Wextra -pedantic -Wredundant-decls \
-                -Wshadow -O2 -Wno-long-long -Werror -ljsoncpp -lpthread
-
-LOCAL_SRC_FILES := \
-                ./jsonrpccpp/jsonrpc_client.cpp \
-                ./jsonrpccpp/jsonrpc_handler.cpp \
-                ./jsonrpccpp/jsonrpc_httpclient.cpp \
-                ./jsonrpccpp/jsonrpc_server.cpp \
-                ./jsonrpccpp/jsonrpc_tcpclient.cpp \
-                ./jsonrpccpp/jsonrpc_tcpserver.cpp \
-                ./jsonrpccpp/jsonrpc_udpclient.cpp \
-                ./jsonrpccpp/jsonrpc_udpserver.cpp \
-                ./jsonrpccpp/netstring.cpp \
-                ./jsonrpccpp/networking.cpp \
-                ./jsonrpccpp/system.cpp
-
-LOCAL_STATIC_LIBRARIES := libcurl libssl libcrypto libz
-LOCAL_LDLIBS    := -llog
-
-include $(BUILD_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := pool-protocols
-LOCAL_CPPFLAGS    := -Wall -std=c++11 -DANDROID -frtti -DHAVE_PTHREAD\
-                  -finline-functions -ffast-math -O0
-LOCAL_C_INCLUDES  += ./jni/boringssl/include/ \
-                     ./jni/jsonrpccpp/
-LOCAL_ARM_MODE    := arm
-LOCAL_STATIC_LIBRARIES    := eth-dev-core libboost_system jsonrpc
-
-LOCAL_SRC_FILES := \
-                ./libpoolprotocols/getwork/EthGetworkClient.cpp \
-                ./libpoolprotocols/stratum/EthStratumClient.cpp \
-                ./libpoolprotocols/testing/SimulateClient.cpp \
-                ./libpoolprotocols/PoolClient.cpp \
-                ./libpoolprotocols/PoolManager.cpp
-
-include $(BUILD_STATIC_LIBRARY)
-
-
 include $(CLEAR_VARS)
 LOCAL_MODULE    := eth-miner
 LOCAL_CPPFLAGS    := -std=c++11 -fexceptions -frtti
-LOCAL_C_INCLUDES  += ./jni/libpoolprotocols/ \
-                     ./jni/libpoolprotocols/getwork/ \
-                     ./jni/libpoolprotocols/stratum/ \
-                     ./jni/libpoolprotocols/testing/
 
-LOCAL_STATIC_LIBRARIES    := eth-core pool-protocols
+LOCAL_STATIC_LIBRARIES    := eth-core
 LOCAL_SRC_FILES    := \
                ./OpenCLPhone.cpp \
                ./CLMiner.cpp
