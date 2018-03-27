@@ -607,7 +607,6 @@ bool CLMiner::init(const h256& seed)
 		if (m_globalWorkSize % m_workgroupSize != 0)
 			m_globalWorkSize = ((m_globalWorkSize / m_workgroupSize) + 1) * m_workgroupSize;
 		uint64_t dagSize = ethash_get_datasize(light->light->block_number);
-		//uint64_t dagSize = 2139092608U;
 		uint32_t dagSize128 = (unsigned)(dagSize / ETHASH_MIX_BYTES);
 		uint32_t lightSize64 = (unsigned)(light->data().size() / sizeof(node));
 
@@ -687,9 +686,9 @@ bool CLMiner::init(const h256& seed)
 		// create buffer for dag
 		try
 		{
-		    LOGD("%s", "Creating light cache buffer, size");
+		    LOGD("Creating light cache buffer = %d", light->data().size());
 			m_light = cl::Buffer(m_context, CL_MEM_READ_ONLY, light->data().size());
-			LOGD("%s", "Creating DAG buffer, size");
+			LOGD("Creating DAG buffer = %lld", dagSize);
 			m_dag = cl::Buffer(m_context, CL_MEM_READ_ONLY, dagSize);
 			LOGD("%s", "Loading kernels");
 			m_searchKernel = cl::Kernel(program, "ethash_search");
@@ -699,7 +698,8 @@ bool CLMiner::init(const h256& seed)
 		}
 		catch (cl::Error const& err)
 		{
-		    LOGD("%s", "Creating DAG buffer failed");
+		    LOGD("%s", "Creating buffer failed");
+		    LOGD("%d", err.err());
 			return false;
 		}
 		// create buffer for header
