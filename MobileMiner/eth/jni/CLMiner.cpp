@@ -686,6 +686,7 @@ bool CLMiner::init(const h256& seed)
 		addDefinition(code, "THREADS_PER_HASH", s_threadsPerHash);
 
 		// create miner OpenCL program
+		// replace '?#?'?#?'?#?'?#?'?#?'?#?'?#?'?#?#
 		code = code.substr(32, code.size() - 32);
 		// LOGD("data = %s", code.data());
 		cl::Program::Sources sources{{code.data(), code.size()}};
