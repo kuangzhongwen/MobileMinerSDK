@@ -615,7 +615,6 @@ bool CLMiner::init(const h256& seed)
 			}
 		}
 
-		char options[256];
 		int computeCapability = 0;
 		if (platformId == OPENCL_PLATFORM_NVIDIA) {
 			cl_uint computeCapabilityMajor;
@@ -685,14 +684,13 @@ bool CLMiner::init(const h256& seed)
 		addDefinition(code, "PLATFORM", platformId);
 		addDefinition(code, "COMPUTE", computeCapability);
 		addDefinition(code, "THREADS_PER_HASH", s_threadsPerHash);
-
 		// create miner OpenCL program
 		cl::Program::Sources sources{{code.data(), code.size()}};
 		cl::Program program(m_context, sources);
 		try
 		{
-		    // todo origin is program.build({device}, options)
-			program.build({device});
+		    // options
+			program.build({device}, "");
 			LOGD("%s", "Build info");
 		}
 		catch (cl::Error const& error)

@@ -19,9 +19,6 @@ import static waterhole.miner.core.utils.LogUtils.printStackTrace;
  */
 public final class MineService extends Service implements NoProGuard {
 
-    // kernel文件名
-    private static final String KERNEL_FILENAME = "eth.kernel";
-
     // EthMiner实例对象
     public final EthMiner mEthMiner = EthMiner.instance();
 
@@ -48,8 +45,6 @@ public final class MineService extends Service implements NoProGuard {
             @Override
             public void run() {
                 try {
-                    Context context = mEthMiner.getContext();
-                    KernelCopy.copy(context, KERNEL_FILENAME);
                     startJNIMine(mEthMiner.getMineCallback());
                 } catch (Exception e) {
                     MineCallback callback = mEthMiner.getMineCallback();
