@@ -30,9 +30,13 @@
 #include "data_sizes.h"
 #include "sha3.h"
 
+#include "android_log.h"
+
 uint64_t ethash_get_datasize(uint64_t const block_number)
 {
 	assert(block_number / ETHASH_EPOCH_LENGTH < 2048);
+	LOGD ("ethash_get_datasize block_number %lld, ETHASH_EPOCH_LENGTH %d", block_number, ETHASH_EPOCH_LENGTH);
+	LOGD ("ethash_get_datasize index %lld, result %lld", block_number / ETHASH_EPOCH_LENGTH, dag_sizes[block_number / ETHASH_EPOCH_LENGTH]);
 	return dag_sizes[block_number / ETHASH_EPOCH_LENGTH];
 }
 

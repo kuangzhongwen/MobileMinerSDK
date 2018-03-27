@@ -20,39 +20,7 @@
 #include <libethcore/EthashAux.h>
 #include <libethcore/Farm.h>
 
-#ifndef LOG_INCLUDED
-#define LOG_INCLUDED
-
-#define ANDROID_V
-
-#ifdef ANDROID_V
-#include <android/log.h>
-#include <errno.h>
-
-#define  LOG_TAG "Waterhole-EthMiner"
-#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
-#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
-#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
-
-#ifdef perror
-#undef perror
-#endif
-#define perror(smg) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "opus error:%s :%s", smg, strerror(errno))
-
-#ifdef fprintf
-#undef fprintf
-#endif
-#define fprintf(strm, ...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
-#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
-
-#else
-#include <stdio.h>
-#include <stdlib.h>
-#define LOGE(fmt, arg...) fprintf(stderr, fmt, ##arg)
-#define LOGD(fmt, arg...) fprintf(stderr, fmt, ##arg)
-#endif
-
-#endif
+#include "android_log.h"
 
 using namespace dev;
 using namespace eth;
@@ -638,8 +606,8 @@ bool CLMiner::init(const h256& seed)
 		m_globalWorkSize = s_initialGlobalWorkSize;
 		if (m_globalWorkSize % m_workgroupSize != 0)
 			m_globalWorkSize = ((m_globalWorkSize / m_workgroupSize) + 1) * m_workgroupSize;
-
 		uint64_t dagSize = ethash_get_datasize(light->light->block_number);
+		//uint64_t dagSize = 2139092608U;
 		uint32_t dagSize128 = (unsigned)(dagSize / ETHASH_MIX_BYTES);
 		uint32_t lightSize64 = (unsigned)(light->data().size() / sizeof(node));
 
@@ -709,7 +677,7 @@ bool CLMiner::init(const h256& seed)
 		//check whether the current dag fits in memory everytime we recreate the DAG
 		cl_ulong result = 0;
 		device.getInfo(CL_DEVICE_GLOBAL_MEM_SIZE, &result);
-		LOGD("GPU memory %lld", result);
+		LOGD("GPU memory %lld, dagSize %lld", result, dagSize);
 		if (result < dagSize)
 		{
 			LOGD("%s", "OpenCL device has insufficient GPU memory. bytes of memory found bytes of memory required");
