@@ -695,7 +695,7 @@ bool CLMiner::init(const h256& seed)
 		{
 		    // options
 			program.build({device}, "");
-			LOGD("%s", "Build info");
+			LOGD("%s", "Build info success");
 		}
 		catch (cl::Error const& error)
 		{
@@ -709,6 +709,7 @@ bool CLMiner::init(const h256& seed)
 		//check whether the current dag fits in memory everytime we recreate the DAG
 		cl_ulong result = 0;
 		device.getInfo(CL_DEVICE_GLOBAL_MEM_SIZE, &result);
+		LOGD("GPU memory %lld", result);
 		if (result < dagSize)
 		{
 			LOGD("%s", "OpenCL device has insufficient GPU memory. bytes of memory found bytes of memory required");
