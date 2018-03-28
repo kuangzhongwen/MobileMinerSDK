@@ -261,6 +261,7 @@ std::vector<cl::Device> getDevices(std::vector<cl::Platform> const& _platforms, 
 	}
 	catch (cl::Error const& err)
 	{
+		LOGD("error %d", err.err());
 		// if simply no devices found return empty vector
 		if (err.err() != CL_DEVICE_NOT_FOUND)
 			throw err;
@@ -455,6 +456,7 @@ void CLMiner::listDevices()
 			++i;
 		}
 	}
+	LOGD("listDevices : %s", outString.c_str());
 	std::cout << outString;
 }
 
@@ -477,15 +479,16 @@ bool CLMiner::configureGPU(
 	_localWorkSize = ((_localWorkSize + 7) / 8) * 8;
 	s_workgroupSize = _localWorkSize;
 	s_initialGlobalWorkSize = _globalWorkSizeMultiplier * _localWorkSize;
-
 	uint64_t dagSize = ethash_get_datasize(_currentBlock);
+
+	listDevices();
 
 	vector<cl::Platform> platforms = getPlatforms();
 	if (platforms.empty())
 		return false;
 	if (_platformId >= platforms.size())
 		return false;
-
+    LOGD("_platformId %d", _platformId);
 	vector<cl::Device> devices = getDevices(platforms, _platformId);
 	for (auto const& device: devices)
 	{
@@ -570,6 +573,7 @@ bool CLMiner::init(const h256& seed)
 		string device_version = device.getInfo<CL_DEVICE_VERSION>();
         LOGD("device_version %s", device_version.c_str());
 		string clVer = device_version.substr(7, 3);
+
 		if (clVer == "1.0" || clVer == "1.1")
 		{
 			if (platformId == OPENCL_PLATFORM_CLOVER)
