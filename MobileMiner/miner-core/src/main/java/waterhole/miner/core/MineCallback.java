@@ -53,12 +53,12 @@ public interface MineCallback extends NoProGuard {
      *
      * @param error 错误信息
      */
-    void onMiningError(String  error);
+    void onMiningError(String error);
 
     /**
      * 挖矿进度回调.
      *
-     * @param total 算出来的总数
+     * @param total       算出来的总数
      * @param total_share 提交的share总数
      */
     void onMiningStatus(int total, int total_share);
