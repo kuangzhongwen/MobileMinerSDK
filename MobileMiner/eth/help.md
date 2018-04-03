@@ -14,7 +14,7 @@
      
      1. OpenCL版本必须为1.2及其以上，kernel内部代码有要求。
      2. OpenCL的Global Mem Size必须>=2558525056，目前eth的dag size的需求。
-     3. CL device type:
+     3. CL device type: CL_DEVICE_TYPE_GPU  | CL_DEVICE_TYPE_ACCELERATOR
         指定要使用的装置类別。目前可以使用的类別包括：
         CL_DEVICE_TYPE_CPU：使用CPU装置
         CL_DEVICE_TYPE_GPU：使用显示晶片装置
