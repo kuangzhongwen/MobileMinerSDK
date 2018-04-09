@@ -40,4 +40,5 @@ dependencies {
     compile project(':zcash')
     compile project(':eth')
     compile project(':monero')
+    compile project(':cuckoo-cycle')
 }

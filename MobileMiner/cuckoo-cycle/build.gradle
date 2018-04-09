@@ -1,0 +1,70 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+    sourceSets {
+        main {
+            jni.srcDirs = ['src/main/jni', 'src/main/jni/']
+            java.srcDirs = ['src/main/java', 'src/main/java/main/res']
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile project(':miner-core')
+}
+
+def sdkAarName = 'WaterholeCuckooCycle_1.0'
+def sourceAar = 'WaterholeCuckooCycle-release'
+
+// 生成aar
+task makeAar(type: Copy, dependsOn: build) {
+    from(project.buildDir.toString() + '/outputs/aar', project.buildDir.toString() + '/outputs/mapping/release')
+    into(rootProject.rootDir.toString() + '/releaseaar')
+    include(sourceAar + '.aar', 'mapping.txt')
+    rename(sourceAar, sdkAarName)
+    rename('mapping', sdkAarName + "-mapping")
+}
+
+// FindBugs 是一个静态分析工具，它检查类或者 JAR 文件，将字节码与一组缺陷模式进行对比以发现可能的问题
+apply plugin: 'findbugs'
+task customFindbugs(type: FindBugs) {
+    ignoreFailures = true
+    effort = "max"
+    reportLevel = "low"
+    classes = files("$project.buildDir/intermediates/classes")
+    source = fileTree('src/main/java/waterhole/miner/cuckoocycle')
+    classpath = files()
+    reports {
+        xml.enabled = true
+        xml.withMessages = true
+        html.enabled = !xml.isEnabled()
+        xml.destination "$project.rootDir.absolutePath/reports/findbugs_WaterholeCuckooCycle.xml"
+        html.destination "$project.rootDir.absolutePath/reports/findbugs_WaterholeCuckooCycle.html"
+    }
+}
+
+artifacts {
+    archives file: file("${projectDir}/build/outputs/mapping/release/mapping.txt"), classifier: 'mapping', type: 'txt'
+}
