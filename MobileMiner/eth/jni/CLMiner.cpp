@@ -320,9 +320,9 @@ void CLMiner::workLoop()
                 */
 				// printf("New seed %d", w.seed);
 				// todo test
-                h256 seed = FixedHash<32>("3c08da512cf85dc7dd15483f1ebf529b55eb2c4ebc2182a808eebe109eab0e5c");
-                h256 boundary = FixedHash<32>("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-                h256 header = FixedHash<32>("348e25a7f097b5cd24cdcfc8e1bb5a41b9098d5c8a31e12b381c753dfbd1758c");
+                h256 seed = FixedHash<32>("7bb6f14a940828054edc1aa9ec9f31e274e036a730709926e1f2900225e2f745");
+                h256 boundary = FixedHash<32>("000000007fffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+                h256 header = FixedHash<32>("a0c4bf7550bd54b486106c897684c9556db6e131404c89ff5a1cef456162391c");
                 init(seed);
 
 				// Upper 64 bits of the boundary.
@@ -348,25 +348,28 @@ void CLMiner::workLoop()
                 auto costSeconds = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - workSwitchStart).count();
 				LOGD("Switch time %lld ms.", costSeconds);
 			}
-
+			LOGD("%s", "0000000");
 			// Read results.
 			// TODO: could use pinned host pointer instead.
 			uint32_t results[c_maxSearchResults + 1];
 			m_queue.enqueueReadBuffer(m_searchBuffer, CL_TRUE, 0, sizeof(results), &results);
-
+			LOGD("%s", "1111111");
 			uint64_t nonce = 0;
 			if (results[0] > 0)
 			{
+				LOGD("%s", "2222222");
 				// Ignore results except the first one.
 				nonce = current.startNonce + results[1];
 				// Reset search buffer if any solution found.
 				m_queue.enqueueWriteBuffer(m_searchBuffer, CL_FALSE, 0, sizeof(c_zero), &c_zero);
+			    LOGD("%s", "3333333");
 			}
-
+			LOGD("%s", "4444444");
 			// Run the kernel.
 			m_searchKernel.setArg(3, startNonce);
+		    LOGD("%s", "5555555");
 			m_queue.enqueueNDRangeKernel(m_searchKernel, cl::NullRange, m_globalWorkSize, m_workgroupSize);
-
+			LOGD("%s", "enqueueNDRangeKernel");
 			// Report results while the kernel is running.
 			// It takes some time because ethash must be re-evaluated on CPU.
 			if (nonce != 0) {
@@ -397,8 +400,7 @@ void CLMiner::workLoop()
 	catch (cl::Error const& _e)
 	{
 		cwarn << ethCLErrorHelper("OpenCL Error", _e);
-		if(s_exit)
-			exit(1);
+		LOGD("%d", _e.err());
 	}
 }
 
@@ -610,7 +612,8 @@ bool CLMiner::init(const h256& seed)
 		m_globalWorkSize = s_initialGlobalWorkSize;
 		if (m_globalWorkSize % m_workgroupSize != 0)
 			m_globalWorkSize = ((m_globalWorkSize / m_workgroupSize) + 1) * m_workgroupSize;
-		uint64_t dagSize = ethash_get_datasize(light->light->block_number);
+		// todo test dagSize
+		uint64_t dagSize = 73739904U;
 		uint32_t dagSize128 = (unsigned)(dagSize / ETHASH_MIX_BYTES);
 		uint32_t lightSize64 = (unsigned)(light->data().size() / sizeof(node));
 
@@ -691,9 +694,9 @@ bool CLMiner::init(const h256& seed)
 		try
 		{
 		    LOGD("Creating light cache buffer = %d", light->data().size());
-			m_light = cl::Buffer(m_context, CL_MEM_READ_ONLY, light->data().size());
+			m_light = cl::Buffer(m_context, CL_MEM_READ_ONLY | CL_MEM_ALLOC_HOST_PTR, light->data().size());
 			LOGD("Creating DAG buffer = %lld", dagSize);
-			m_dag = cl::Buffer(m_context, CL_MEM_READ_ONLY, dagSize);
+			m_dag = cl::Buffer(m_context, CL_MEM_READ_ONLY | CL_MEM_ALLOC_HOST_PTR, dagSize);
 			LOGD("%s", "Loading kernels");
 			m_searchKernel = cl::Kernel(program, "ethash_search");
 			m_dagKernel = cl::Kernel(program, "ethash_calculate_dag_item");
@@ -708,7 +711,7 @@ bool CLMiner::init(const h256& seed)
 		}
 		// create buffer for header
 		LOGD("%s", "Creating buffer for header.");
-		m_header = cl::Buffer(m_context, CL_MEM_READ_ONLY, 32);
+		m_header = cl::Buffer(m_context, CL_MEM_READ_ONLY | CL_MEM_ALLOC_HOST_PTR, 32);
 
 		m_searchKernel.setArg(1, m_header);
 		m_searchKernel.setArg(2, m_dag);
