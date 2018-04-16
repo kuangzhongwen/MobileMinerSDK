@@ -1,0 +1,22 @@
+{
+    "algo": "cryptonight",
+    "background": false,
+    "colors": true,
+    "retries": 5,
+    "retry-pause": 5,
+    "donate-level": 5,
+    "syslog": false,
+    "log-file": "hello",
+    "print-time": 60,
+    "av": 0,
+    "safe": false,
+    "max-cpu-usage": 75,
+    "cpu-priority": null,
+    "threads": null,
+    "pools": [],
+    "api": {
+        "port": 1008,
+        "access-token": null,
+        "worker-id": "001"
+    }
+}
