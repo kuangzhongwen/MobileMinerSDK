@@ -29,7 +29,7 @@
 #include <vector>
 
 
-#include "rapidjson/fwd.h"
+#include "3rdparty/rapidjson/fwd.h"
 
 
 class Url;
