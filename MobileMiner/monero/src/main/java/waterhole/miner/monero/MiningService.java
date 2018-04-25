@@ -19,6 +19,7 @@
 
 package waterhole.miner.monero;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -190,6 +191,7 @@ public class MiningService extends Service {
     /**
      * thread to collect the binary's output
      */
+    @TargetApi(19)
     private class OutputReaderThread extends Thread {
 
         private InputStream inputStream;
