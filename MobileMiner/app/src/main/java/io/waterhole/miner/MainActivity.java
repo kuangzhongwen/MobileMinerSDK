@@ -1,6 +1,7 @@
 package io.waterhole.miner;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +15,7 @@ import java.util.List;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.eth.EthMiner;
+import waterhole.miner.monero.OldXmrMinerActivity;
 import waterhole.miner.zcash.MineService;
 import waterhole.miner.zcash.ZcashMiner;
 
@@ -33,7 +35,7 @@ public final class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_old_xmr_miner);
 
         LogUtils.enableDebug(true);
 
@@ -41,7 +43,8 @@ public final class MainActivity extends Activity {
         final List<String> datas = new ArrayList<>();
         datas.add("eth");
         datas.add("zcash");
-        datas.add("menero");
+        datas.add("old menero");
+        datas.add("new menero");
         CoinAdapter adapter = new CoinAdapter(getApplicationContext());
         adapter.setDatas(datas);
         spinner.setAdapter(adapter);
@@ -81,6 +84,14 @@ public final class MainActivity extends Activity {
                         isMining = !isMining;
                         break;
                     case 2:
+                        break;
+                    case 3:
+                        Intent intent = new Intent(MainActivity.this, OldXmrMinerActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 4:
+                        break;
+                    default:
                         break;
                 }
             }

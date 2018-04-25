@@ -21,16 +21,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-
-
 #include "api/Api.h"
 #include "api/ApiState.h"
 
-
 ApiState *Api::m_state = nullptr;
 uv_mutex_t Api::m_mutex;
-
 
 bool Api::start()
 {
