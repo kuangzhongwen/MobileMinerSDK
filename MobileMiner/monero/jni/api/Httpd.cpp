@@ -28,8 +28,6 @@
 
 #include "api/Api.h"
 #include "api/Httpd.h"
-#include "log/Log.h"
-
 
 Httpd::Httpd(int port, const char *accessToken) :
     m_accessToken(accessToken),
@@ -59,7 +57,8 @@ bool Httpd::start()
 
     m_daemon = MHD_start_daemon(flags, m_port, nullptr, nullptr, &Httpd::handler, this, MHD_OPTION_END);
     if (!m_daemon) {
-        LOG_ERR("HTTP Daemon failed to start.");
+        // TODO LOG
+        //LOG_ERR("HTTP Daemon failed to start.");
         return false;
     }
 

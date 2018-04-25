@@ -30,7 +30,6 @@
 
 
 #include "interfaces/IClientListener.h"
-#include "log/Log.h"
 #include "net/Client.h"
 #include "net/Url.h"
 #include "rapidjson/document.h"
@@ -144,7 +143,8 @@ void Client::tick(uint64_t now)
     }
 
     if (m_state == ConnectedState) {
-        LOG_DEBUG_ERR("[%s:%u] timeout", m_url.host(), m_url.port());
+        // TODO LOG
+        //LOG_DEBUG_ERR("[%s:%u] timeout", m_url.host(), m_url.port());
         close();
     }
 
@@ -305,7 +305,8 @@ bool Client::parseJob(const rapidjson::Value &params, int *code)
     }
 
     if (!m_quiet) {
-        LOG_WARN("[%s:%u] duplicate job received, reconnect", m_url.host(), m_url.port());
+        // TODO LOG
+        //LOG_WARN("[%s:%u] duplicate job received, reconnect", m_url.host(), m_url.port());
     }
 
     close();
@@ -349,7 +350,8 @@ int Client::resolve(const char *host)
     const int r = uv_getaddrinfo(uv_default_loop(), &m_resolver, Client::onResolved, host, nullptr, &m_hints);
     if (r) {
         if (!m_quiet) {
-            LOG_ERR("[%s:%u] getaddrinfo error: \"%s\"", host, m_url.port(), uv_strerror(r));
+            // TODO LOG
+            //LOG_ERR("[%s:%u] getaddrinfo error: \"%s\"", host, m_url.port(), uv_strerror(r));
         }
         return 1;
     }
@@ -360,9 +362,11 @@ int Client::resolve(const char *host)
 
 int64_t Client::send(size_t size)
 {
-    LOG_DEBUG("[%s:%u] send (%d bytes): \"%s\"", m_url.host(), m_url.port(), size, m_sendBuf);
+    // TODO LOG
+    // LOG_DEBUG("[%s:%u] send (%d bytes): \"%s\"", m_url.host(), m_url.port(), size, m_sendBuf);
     if (state() != ConnectedState || !uv_is_writable(m_stream)) {
-        LOG_DEBUG_ERR("[%s:%u] send failed, invalid state: %d", m_url.host(), m_url.port(), m_state);
+        // TODO LOG
+        // LOG_DEBUG_ERR("[%s:%u] send failed, invalid state: %d", m_url.host(), m_url.port(), m_state);
         return -1;
     }
 
@@ -475,11 +479,13 @@ void Client::parse(char *line, size_t len)
 
     line[len - 1] = '\0';
 
-    LOG_DEBUG("[%s:%u] received (%d bytes): \"%s\"", m_url.host(), m_url.port(), len, line);
+    // TODO LOG
+    // LOG_DEBUG("[%s:%u] received (%d bytes): \"%s\"", m_url.host(), m_url.port(), len, line);
 
     if (len < 32 || line[0] != '{') {
         if (!m_quiet) {
-            LOG_ERR("[%s:%u] JSON decode failed", m_url.host(), m_url.port());
+            // TODO LOG
+            // LOG_ERR("[%s:%u] JSON decode failed", m_url.host(), m_url.port());
         }
 
         return;
@@ -488,7 +494,8 @@ void Client::parse(char *line, size_t len)
     rapidjson::Document doc;
     if (doc.ParseInsitu(line).HasParseError()) {
         if (!m_quiet) {
-            LOG_ERR("[%s:%u] JSON decode failed: \"%s\"", m_url.host(), m_url.port(), rapidjson::GetParseError_En(doc.GetParseError()));
+            // TODO LOG
+            // LOG_ERR("[%s:%u] JSON decode failed: \"%s\"", m_url.host(), m_url.port(), rapidjson::GetParseError_En(doc.GetParseError()));
         }
 
         return;
@@ -530,7 +537,8 @@ void Client::parseNotification(const char *method, const rapidjson::Value &param
 {
     if (error.IsObject()) {
         if (!m_quiet) {
-            LOG_ERR("[%s:%u] error: \"%s\", code: %d", m_url.host(), m_url.port(), error["message"].GetString(), error["code"].GetInt());
+            // TODO LOG
+            // LOG_ERR("[%s:%u] error: \"%s\", code: %d", m_url.host(), m_url.port(), error["message"].GetString(), error["code"].GetInt());
         }
         return;
     }
@@ -548,7 +556,8 @@ void Client::parseNotification(const char *method, const rapidjson::Value &param
         return;
     }
 
-    LOG_WARN("[%s:%u] unsupported method: \"%s\"", m_url.host(), m_url.port(), method);
+    // TODO LOG
+    // LOG_WARN("[%s:%u] unsupported method: \"%s\"", m_url.host(), m_url.port(), method);
 }
 
 
@@ -564,7 +573,8 @@ void Client::parseResponse(int64_t id, const rapidjson::Value &result, const rap
             m_results.erase(it);
         }
         else if (!m_quiet) {
-            LOG_ERR("[%s:%u] error: \"%s\", code: %d", m_url.host(), m_url.port(), message, error["code"].GetInt());
+            // TODO LOG
+            // LOG_ERR("[%s:%u] error: \"%s\", code: %d", m_url.host(), m_url.port(), message, error["code"].GetInt());
         }
 
         if (id == 1 || isCriticalError(message)) {
@@ -582,7 +592,8 @@ void Client::parseResponse(int64_t id, const rapidjson::Value &result, const rap
         int code = -1;
         if (!parseLogin(result, &code)) {
             if (!m_quiet) {
-                LOG_ERR("[%s:%u] login error code: %d", m_url.host(), m_url.port(), code);
+                // TODO LOG
+                // LOG_ERR("[%s:%u] login error code: %d", m_url.host(), m_url.port(), code);
             }
 
             close();
@@ -639,7 +650,8 @@ void Client::reconnect()
 
 void Client::setState(SocketState state)
 {
-    LOG_DEBUG("[%s:%u] state: %d", m_url.host(), m_url.port(), state);
+    // TODO LOG
+    // LOG_DEBUG("[%s:%u] state: %d", m_url.host(), m_url.port(), state);
 
     if (m_state == state) {
         return;
@@ -695,7 +707,8 @@ void Client::onConnect(uv_connect_t *req, int status)
 
     if (status < 0) {
         if (!client->m_quiet) {
-            LOG_ERR("[%s:%u] connect error: \"%s\"", client->m_url.host(), client->m_url.port(), uv_strerror(status));
+            // TODO LOG
+            // LOG_ERR("[%s:%u] connect error: \"%s\"", client->m_url.host(), client->m_url.port(), uv_strerror(status));
         }
 
         delete req;
@@ -723,7 +736,8 @@ void Client::onRead(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf)
 
     if (nread < 0) {
         if (nread != UV_EOF && !client->m_quiet) {
-            LOG_ERR("[%s:%u] read error: \"%s\"", client->m_url.host(), client->m_url.port(), uv_strerror((int) nread));
+            // TODO LOG
+            // LOG_ERR("[%s:%u] read error: \"%s\"", client->m_url.host(), client->m_url.port(), uv_strerror((int) nread));
         }
 
         client->close();
@@ -773,7 +787,8 @@ void Client::onResolved(uv_getaddrinfo_t *req, int status, struct addrinfo *res)
 
     if (status < 0) {
         if (!client->m_quiet) {
-            LOG_ERR("[%s:%u] DNS error: \"%s\"", client->m_url.host(), client->m_url.port(), uv_strerror(status));
+            // TODO LOG
+            // LOG_ERR("[%s:%u] DNS error: \"%s\"", client->m_url.host(), client->m_url.port(), uv_strerror(status));
         }
 
         return client->reconnect();
@@ -797,7 +812,8 @@ void Client::onResolved(uv_getaddrinfo_t *req, int status, struct addrinfo *res)
 
     if (ipv4.empty() && ipv6.empty()) {
         if (!client->m_quiet) {
-            LOG_ERR("[%s:%u] DNS error: \"No IPv4 (A) or IPv6 (AAAA) records found\"", client->m_url.host(), client->m_url.port());
+            // TODO LOG
+            // LOG_ERR("[%s:%u] DNS error: \"No IPv4 (A) or IPv6 (AAAA) records found\"", client->m_url.host(), client->m_url.port());
         }
 
         uv_freeaddrinfo(res);

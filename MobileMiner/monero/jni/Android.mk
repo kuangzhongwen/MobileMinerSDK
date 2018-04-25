@@ -22,7 +22,7 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE    := lib-api
-LOCAL_CPPFLAGS := -Wall -std=c++11
+LOCAL_CPPFLAGS    := -std=c++11 -fexceptions -frtti -lpthread
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/3rdparty/rapidjson \
                        $(LOCAL_PATH)/3rdparty/rapidjson/error \
                        $(LOCAL_PATH)/3rdparty/rapidjson/internal \

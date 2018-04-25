@@ -31,7 +31,6 @@
 
 
 #include "api/Api.h"
-#include "log/Log.h"
 #include "net/Client.h"
 #include "net/Network.h"
 #include "net/strategies/DonateStrategy.h"
@@ -95,13 +94,14 @@ void Network::stop()
 void Network::onActive(IStrategy *strategy, Client *client)
 {
     if (m_donate && m_donate == strategy) {
-        LOG_NOTICE("dev donate started");
+        // TODO LOG
+        //LOG_NOTICE("dev donate started");
         return;
     }
 
     m_state.setPool(client->host(), client->port(), client->ip());
-
-    LOG_INFO(m_options->colors() ? "\x1B[01;37muse pool \x1B[01;36m%s:%d \x1B[01;30m%s" : "use pool %s:%d %s", client->host(), client->port(), client->ip());
+    // TODO LOG
+    // LOG_INFO(m_options->colors() ? "\x1B[01;37muse pool \x1B[01;36m%s:%d \x1B[01;30m%s" : "use pool %s:%d %s", client->host(), client->port(), client->ip());
 }
 
 
@@ -129,12 +129,14 @@ void Network::onJobResult(const JobResult &result)
 void Network::onPause(IStrategy *strategy)
 {
     if (m_donate && m_donate == strategy) {
-        LOG_NOTICE("dev donate finished");
+        // TODO LOG
+        // LOG_NOTICE("dev donate finished");
         m_strategy->resume();
     }
 
     if (!m_strategy->isActive()) {
-        LOG_ERR("no active pools, stop mining");
+        // TODO LOG
+        // LOG_ERR("no active pools, stop mining");
         m_state.stop();
         return Workers::pause();
     }
@@ -146,14 +148,16 @@ void Network::onResultAccepted(IStrategy *strategy, Client *client, const Submit
     m_state.add(result, error);
 
     if (error) {
-        LOG_INFO(m_options->colors() ? "\x1B[01;31mrejected\x1B[0m (%" PRId64 "/%" PRId64 ") diff \x1B[01;37m%u\x1B[0m \x1B[31m\"%s\"\x1B[0m \x1B[01;30m(%" PRIu64 " ms)"
+        // TODO LOG
+        // LOG_INFO(m_options->colors() ? "\x1B[01;31mrejected\x1B[0m (%" PRId64 "/%" PRId64 ") diff \x1B[01;37m%u\x1B[0m \x1B[31m\"%s\"\x1B[0m \x1B[01;30m(%" PRIu64 " ms)"
                                      : "rejected (%" PRId64 "/%" PRId64 ") diff %u \"%s\" (%" PRIu64 " ms)",
                  m_state.accepted, m_state.rejected, result.diff, error, result.elapsed);
     }
     else {
-        LOG_INFO(m_options->colors() ? "\x1B[01;32maccepted\x1B[0m (%" PRId64 "/%" PRId64 ") diff \x1B[01;37m%u\x1B[0m \x1B[01;30m(%" PRIu64 " ms)"
+        // TODO LOG
+        /**LOG_INFO(m_options->colors() ? "\x1B[01;32maccepted\x1B[0m (%" PRId64 "/%" PRId64 ") diff \x1B[01;37m%u\x1B[0m \x1B[01;30m(%" PRIu64 " ms)"
                                      : "accepted (%" PRId64 "/%" PRId64 ") diff %u (%" PRIu64 " ms)",
-                 m_state.accepted, m_state.rejected, result.diff, result.elapsed);
+                 m_state.accepted, m_state.rejected, result.diff, result.elapsed);*/
     }
 }
 
@@ -161,10 +165,12 @@ void Network::onResultAccepted(IStrategy *strategy, Client *client, const Submit
 void Network::setJob(Client *client, const Job &job, bool donate)
 {
     if (m_options->colors()) {
-        LOG_INFO("\x1B[01;35mnew job\x1B[0m from \x1B[01;37m%s:%d\x1B[0m diff \x1B[01;37m%d", client->host(), client->port(), job.diff());
+        // TODO LOG
+        //LOG_INFO("\x1B[01;35mnew job\x1B[0m from \x1B[01;37m%s:%d\x1B[0m diff \x1B[01;37m%d", client->host(), client->port(), job.diff());
     }
     else {
-        LOG_INFO("new job from %s:%d diff %d", client->host(), client->port(), job.diff());
+        // TODO LOG
+        // LOG_INFO("new job from %s:%d diff %d", client->host(), client->port(), job.diff());
     }
 
     m_state.diff = job.diff();

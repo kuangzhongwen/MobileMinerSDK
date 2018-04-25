@@ -28,7 +28,6 @@
 
 
 #include "Cpu.h"
-#include "log/Log.h"
 #include "Mem.h"
 #include "net/Url.h"
 #include "Options.h"
@@ -50,20 +49,22 @@ static void print_versions()
     buf[0] = '\0';
 #   endif
 
-
-    Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mVERSIONS:     \x1B[01;36mXMRig/%s\x1B[01;37m libuv/%s%s" : " * VERSIONS:     XMRig/%s libuv/%s%s",
+    // TODO LOG
+    //Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mVERSIONS:     \x1B[01;36mXMRig/%s\x1B[01;37m libuv/%s%s" : " * VERSIONS:     XMRig/%s libuv/%s%s",
                    APP_VERSION, uv_version_string(), buf);
 }
 
 
 static void print_memory() {
     if (Options::i()->colors()) {
-        Log::i()->text("\x1B[01;32m * \x1B[01;37mHUGE PAGES:   %s, %s",
+        // TODO LOG
+        //Log::i()->text("\x1B[01;32m * \x1B[01;37mHUGE PAGES:   %s, %s",
                        Mem::isHugepagesAvailable() ? "\x1B[01;32mavailable" : "\x1B[01;31munavailable",
                        Mem::isHugepagesEnabled() ? "\x1B[01;32menabled" : "\x1B[01;31mdisabled");
     }
     else {
-        Log::i()->text(" * HUGE PAGES:   %s, %s", Mem::isHugepagesAvailable() ? "available" : "unavailable", Mem::isHugepagesEnabled() ? "enabled" : "disabled");
+        // TODO LOG
+        //Log::i()->text(" * HUGE PAGES:   %s, %s", Mem::isHugepagesAvailable() ? "available" : "unavailable", Mem::isHugepagesEnabled() ? "enabled" : "disabled");
     }
 }
 
@@ -71,19 +72,23 @@ static void print_memory() {
 static void print_cpu()
 {
     if (Options::i()->colors()) {
-        Log::i()->text("\x1B[01;32m * \x1B[01;37mCPU:          %s (%d) %sx64 %sAES-NI",
+        // TODO LOG
+        //Log::i()->text("\x1B[01;32m * \x1B[01;37mCPU:          %s (%d) %sx64 %sAES-NI",
                        Cpu::brand(),
                        Cpu::sockets(),
                        Cpu::isX64() ? "\x1B[01;32m" : "\x1B[01;31m-",
                        Cpu::hasAES() ? "\x1B[01;32m" : "\x1B[01;31m-");
 #       ifndef XMRIG_NO_LIBCPUID
-        Log::i()->text("\x1B[01;32m * \x1B[01;37mCPU L2/L3:    %.1f MB/%.1f MB", Cpu::l2() / 1024.0, Cpu::l3() / 1024.0);
+        // TODO LOG
+        //Log::i()->text("\x1B[01;32m * \x1B[01;37mCPU L2/L3:    %.1f MB/%.1f MB", Cpu::l2() / 1024.0, Cpu::l3() / 1024.0);
 #       endif
     }
     else {
-        Log::i()->text(" * CPU:          %s (%d) %sx64 %sAES-NI", Cpu::brand(), Cpu::sockets(), Cpu::isX64() ? "" : "-", Cpu::hasAES() ? "" : "-");
+        // TODO LOG
+        //Log::i()->text(" * CPU:          %s (%d) %sx64 %sAES-NI", Cpu::brand(), Cpu::sockets(), Cpu::isX64() ? "" : "-", Cpu::hasAES() ? "" : "-");
 #       ifndef XMRIG_NO_LIBCPUID
-        Log::i()->text(" * CPU L2/L3:    %.1f MB/%.1f MB", Cpu::l2() / 1024.0, Cpu::l3() / 1024.0);
+        // TODO LOG
+        //Log::i()->text(" * CPU L2/L3:    %.1f MB/%.1f MB", Cpu::l2() / 1024.0, Cpu::l3() / 1024.0);
 #       endif
     }
 }
@@ -99,13 +104,15 @@ static void print_threads()
         buf[0] = '\0';
     }
 
+    // TODO LOG
+    /**
     Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mTHREADS:      \x1B[01;36m%d\x1B[01;37m, %s, av=%d, %sdonate=%d%%%s" : " * THREADS:      %d, %s, av=%d, %sdonate=%d%%%s",
                    Options::i()->threads(),
                    Options::i()->algoName(),
                    Options::i()->algoVariant(),
                    Options::i()->colors() && Options::i()->donateLevel() == 0 ? "\x1B[01;31m" : "",
                    Options::i()->donateLevel(),
-                   buf);
+                   buf);*/
 }
 
 
@@ -114,15 +121,18 @@ static void print_pools()
     const std::vector<Url*> &pools = Options::i()->pools();
 
     for (size_t i = 0; i < pools.size(); ++i) {
+        // TODO LOG
+        /**
         Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mPOOL #%d:      \x1B[01;36m%s:%d" : " * POOL #%d:      %s:%d",
                        i + 1,
                        pools[i]->host(),
-                       pools[i]->port());
+                       pools[i]->port());*/
     }
 
 #   ifdef APP_DEBUG
     for (size_t i = 0; i < pools.size(); ++i) {
-        Log::i()->text("%s:%d, user: %s, pass: %s, ka: %d, nicehash: %d", pools[i]->host(), pools[i]->port(), pools[i]->user(), pools[i]->password(), pools[i]->isKeepAlive(), pools[i]->isNicehash());
+        // TODO LOG
+       // Log::i()->text("%s:%d, user: %s, pass: %s, ka: %d, nicehash: %d", pools[i]->host(), pools[i]->port(), pools[i]->user(), pools[i]->password(), pools[i]->isKeepAlive(), pools[i]->isNicehash());
     }
 #   endif
 }
@@ -135,7 +145,8 @@ static void print_api()
         return;
     }
 
-    Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mAPI PORT:     \x1B[01;36m%d" : " * API PORT:     %d", Options::i()->apiPort());
+    // TODO LOG
+    //Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mAPI PORT:     \x1B[01;36m%d" : " * API PORT:     %d", Options::i()->apiPort());
 }
 #endif
 
@@ -143,10 +154,12 @@ static void print_api()
 static void print_commands()
 {
     if (Options::i()->colors()) {
-        Log::i()->text("\x1B[01;32m * \x1B[01;37mCOMMANDS:     \x1B[01;35mh\x1B[01;37mashrate, \x1B[01;35mp\x1B[01;37mause, \x1B[01;35mr\x1B[01;37mesume");
+        // TODO LOG
+        //Log::i()->text("\x1B[01;32m * \x1B[01;37mCOMMANDS:     \x1B[01;35mh\x1B[01;37mashrate, \x1B[01;35mp\x1B[01;37mause, \x1B[01;35mr\x1B[01;37mesume");
     }
     else {
-        Log::i()->text(" * COMMANDS:     'h' hashrate, 'p' pause, 'r' resume");
+        // TODO LOG
+        //Log::i()->text(" * COMMANDS:     'h' hashrate, 'p' pause, 'r' resume");
     }
 }
 
