@@ -35,11 +35,11 @@ public final class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_old_xmr_miner);
+        setContentView(R.layout.activity_main);
 
         LogUtils.enableDebug(true);
 
-        Spinner spinner = (Spinner) findViewById(R.id.coin_spinner);
+        Spinner spinner = (Spinner) findViewById(R.id.coins_spinner);
         final List<String> datas = new ArrayList<>();
         datas.add("eth");
         datas.add("zcash");
@@ -84,12 +84,10 @@ public final class MainActivity extends Activity {
                         isMining = !isMining;
                         break;
                     case 2:
-                        break;
-                    case 3:
                         Intent intent = new Intent(MainActivity.this, OldXmrMinerActivity.class);
                         startActivity(intent);
                         break;
-                    case 4:
+                    case 3:
                         break;
                     default:
                         break;

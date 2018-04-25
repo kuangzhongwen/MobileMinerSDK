@@ -5,7 +5,7 @@
     android:background="@android:color/black">
 
     <Spinner
-        android:id="@+id/coin_spinner"
+        android:id="@+id/coins_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -17,7 +17,7 @@
         android:id="@+id/status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/coin_spinner"
+        android:layout_below="@id/coins_spinner"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:text="prepare"

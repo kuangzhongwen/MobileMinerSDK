@@ -37,6 +37,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import waterhole.miner.core.utils.LogUtils;
+
 public class OldXmrMinerActivity extends Activity {
 
     private final static String[] SUPPORTED_ARCHITECTURES = {"aarch64", "arm64-v8a"};
@@ -68,12 +70,13 @@ public class OldXmrMinerActivity extends Activity {
         edMaxCpu = (EditText) findViewById(R.id.maxcpu);
         cbUseWorkerId = (CheckBox) findViewById(R.id.use_worker_id);
 
+        // TODO kzw 子library校验可能会有问题 armeabi-v7a
         // check architecture
-        if (!Arrays.asList(SUPPORTED_ARCHITECTURES).contains(Build.CPU_ABI.toLowerCase())) {
-            Toast.makeText(this, "Sorry, this app currently only supports 64 bit architectures, but yours is " + Build.CPU_ABI, Toast.LENGTH_LONG).show();
-            // this flag will keep the start button disabled
-            validArchitecture = false;
-        }
+//        if (!Arrays.asList(SUPPORTED_ARCHITECTURES).contains(Build.CPU_ABI.toLowerCase())) {
+//            Toast.makeText(this, "Sorry, this app currently only supports 64 bit architectures, but yours is " + Build.CPU_ABI, Toast.LENGTH_LONG).show();
+//            // this flag will keep the start button disabled
+//            validArchitecture = false;
+//        }
 
         // run the service
         Intent intent = new Intent(this, MiningService.class);
