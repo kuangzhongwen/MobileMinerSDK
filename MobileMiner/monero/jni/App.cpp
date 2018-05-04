@@ -31,6 +31,9 @@
 #include "Console.h"
 #include "Cpu.h"
 #include "crypto/CryptoNight.h"
+#include "log/ConsoleLog.h"
+#include "log/FileLog.h"
+#include "log/Log.h"
 #include "Mem.h"
 #include "net/Network.h"
 #include "Options.h"
@@ -38,6 +41,11 @@
 #include "Summary.h"
 #include "version.h"
 #include "workers/Workers.h"
+
+
+#ifdef HAVE_SYSLOG_H
+#   include "log/SysLog.h"
+#endif
 
 #ifndef XMRIG_NO_HTTPD
 #   include "api/Httpd.h"
@@ -62,7 +70,7 @@ App::App(int argc, char **argv) :
         return;
     }
 
-    //Log::init();
+    Log::init();
 
     if (!m_options->background()) {
         Log::add(new ConsoleLog(m_options->colors()));
@@ -70,14 +78,12 @@ App::App(int argc, char **argv) :
     }
 
     if (m_options->logFile()) {
-        // TODO LOG
-        //Log::add(new FileLog(m_options->logFile()));
+        Log::add(new FileLog(m_options->logFile()));
     }
 
 #   ifdef HAVE_SYSLOG_H
     if (m_options->syslog()) {
-        // TODO LOG
-        //Log::add(new SysLog());
+        Log::add(new SysLog());
     }
 #   endif
 
@@ -117,8 +123,7 @@ int App::exec()
     background();
 
     if (!CryptoNight::init(m_options->algo(), m_options->algoVariant())) {
-        // TODO LOG
-        //LOG_ERR("\"%s\" hash self-test failed.", m_options->algoName());
+        LOG_ERR("\"%s\" hash self-test failed.", m_options->algoName());
         return 1;
     }
 
@@ -126,8 +131,7 @@ int App::exec()
     Summary::print();
 
     if (m_options->dryRun()) {
-        // TODO LOG
-        //LOG_NOTICE("OK");
+        LOG_NOTICE("OK");
         release();
 
         return 0;
@@ -165,8 +169,7 @@ void App::onConsoleCommand(char command)
     case 'p':
     case 'P':
         if (Workers::isEnabled()) {
-            // TODO LOG
-            //LOG_INFO(m_options->colors() ? "\x1B[01;33mpaused\x1B[0m, press \x1B[01;35mr\x1B[0m to resume" : "paused, press 'r' to resume");
+            LOG_INFO(m_options->colors() ? "\x1B[01;33mpaused\x1B[0m, press \x1B[01;35mr\x1B[0m to resume" : "paused, press 'r' to resume");
             Workers::setEnabled(false);
         }
         break;
@@ -174,15 +177,13 @@ void App::onConsoleCommand(char command)
     case 'r':
     case 'R':
         if (!Workers::isEnabled()) {
-            // TODO LOG
-            //LOG_INFO(m_options->colors() ? "\x1B[01;32mresumed" : "resumed");
+            LOG_INFO(m_options->colors() ? "\x1B[01;32mresumed" : "resumed");
             Workers::setEnabled(true);
         }
         break;
 
     case 3:
-        // TODO LOG
-        //LOG_WARN("Ctrl+C received, exiting");
+        LOG_WARN("Ctrl+C received, exiting");
         close();
         break;
 
@@ -218,18 +219,15 @@ void App::onSignal(uv_signal_t *handle, int signum)
     switch (signum)
     {
     case SIGHUP:
-        // TODO LOG
-        //LOG_WARN("SIGHUP received, exiting");
+        LOG_WARN("SIGHUP received, exiting");
         break;
 
     case SIGTERM:
-        // TODO LOG
-        //LOG_WARN("SIGTERM received, exiting");
+        LOG_WARN("SIGTERM received, exiting");
         break;
 
     case SIGINT:
-        // TODO LOG
-        //LOG_WARN("SIGINT received, exiting");
+        LOG_WARN("SIGINT received, exiting");
         break;
 
     default:

@@ -34,7 +34,7 @@
 #include "net/Job.h"
 #include "net/SubmitResult.h"
 #include "net/Url.h"
-#include "3rdparty/rapidjson/fwd.h"
+#include "rapidjson/fwd.h"
 
 
 class IClientListener;

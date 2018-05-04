@@ -38,9 +38,9 @@
 #include "net/Job.h"
 #include "Options.h"
 #include "Platform.h"
-#include "3rdparty/rapidjson/document.h"
-#include "3rdparty/rapidjson/stringbuffer.h"
-#include "3rdparty/rapidjson/prettywriter.h"
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
 #include "version.h"
 #include "workers/Hashrate.h"
 

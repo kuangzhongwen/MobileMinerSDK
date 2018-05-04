@@ -382,3 +382,8 @@ int cpu_identify(struct cpu_raw_data_t* raw, struct cpu_id_t* data)
 	struct internal_id_info_t throwaway;
 	return cpu_ident_internal(raw, data, &throwaway);
 }
+
+const char* cpuid_lib_version(void)
+{
+	return VERSION;
+}

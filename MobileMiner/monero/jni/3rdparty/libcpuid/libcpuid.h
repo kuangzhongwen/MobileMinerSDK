@@ -660,6 +660,13 @@ struct cpu_epc_t {
  */
 struct cpu_epc_t cpuid_get_epc(int index, const struct cpu_raw_data_t* raw);
 
+/**
+ * @brief Returns the libcpuid version
+ *
+ * @returns the string representation of the libcpuid version, like "0.1.1"
+ */
+const char* cpuid_lib_version(void);
+
 #ifdef __cplusplus
 }; /* extern "C" */
 #endif

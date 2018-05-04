@@ -34,6 +34,7 @@
 #   include <malloc.h>
 #endif
 
+#include "log/Log.h"
 #include "crypto/CryptoNight.h"
 #include "Mem.h"
 #include "Options.h"
@@ -124,8 +125,7 @@ static BOOL ObtainLockPagesPrivilege() {
         LSA_UNICODE_STRING str = StringToLsaUnicodeString(_T(SE_LOCK_MEMORY_NAME));
 
         if (LsaAddAccountRights(handle, user->User.Sid, &str, 1) == 0) {
-            // TODO LOG
-            // LOG_NOTICE("Huge pages support was successfully enabled, but reboot required to use it");
+            LOG_NOTICE("Huge pages support was successfully enabled, but reboot required to use it");
             result = TRUE;
         }
 
