@@ -11,7 +11,6 @@ LOCAL_SRC_FILES    := \
                     ./3rdparty/libcpuid/recog_intel.c \
                     ./3rdparty/libcpuid/libcpuid_util.c
 LOCAL_CFLAGS  += -std=gnu99 -Os
-
 include $(BUILD_STATIC_LIBRARY)
 
 

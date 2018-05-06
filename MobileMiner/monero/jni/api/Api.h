@@ -25,7 +25,7 @@
 #define __API_H__
 
 
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 class ApiState;

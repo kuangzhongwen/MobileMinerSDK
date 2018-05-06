@@ -23,7 +23,7 @@
 
 #include <math.h>
 #include <string.h>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 #if _WIN32
 #   include "winsock2.h"

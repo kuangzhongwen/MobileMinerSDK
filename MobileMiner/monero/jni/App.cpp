@@ -23,7 +23,7 @@
 
 
 #include <stdlib.h>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 #include "api/Api.h"

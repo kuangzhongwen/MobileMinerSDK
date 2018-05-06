@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/resource.h>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 #include "Platform.h"

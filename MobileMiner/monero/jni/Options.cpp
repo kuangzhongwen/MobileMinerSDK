@@ -23,7 +23,7 @@
 
 
 #include <string.h>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 #ifdef _MSC_VER

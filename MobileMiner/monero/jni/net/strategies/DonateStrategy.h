@@ -25,7 +25,7 @@
 #define __DONATESTRATEGY_H__
 
 
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 #include <vector>
 
 
