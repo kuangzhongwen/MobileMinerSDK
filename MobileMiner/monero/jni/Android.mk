@@ -20,3 +20,19 @@ LOCAL_EXPORT_C_INCLUDES    := $(LOCAL_PATH)/3rdparty/uv
 LOCAL_SRC_FILES    := $(LOCAL_PATH)/3rdparty/uv/libuv.a
 include $(BUILD_STATIC_LIBRARY)
 
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := lib-api
+LOCAL_CPPFLAGS    := -std=c++11 -fexceptions -frtti -lpthread
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/3rdparty/rapidjson \
+                       $(LOCAL_PATH)/3rdparty/rapidjson/error \
+                       $(LOCAL_PATH)/3rdparty/rapidjson/internal \
+                       $(LOCAL_PATH)/3rdparty/rapidjson/msinttypes
+LOCAL_SRC_FILES := \
+    ./api/Api.cpp \
+    ./api/ApiState.cpp \
+    ./api/NetworkState.cpp
+
+LOCAL_STATIC_LIBRARIES := lib-uv
+
+include $(BUILD_STATIC_LIBRARY)

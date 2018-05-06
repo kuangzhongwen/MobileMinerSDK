@@ -15,9 +15,7 @@
  /Users/kuangzhongwen/Desktop/project/mining/MobileMiner/monero/jni/3rdparty/rapidjson/fwd.h \
  /Users/kuangzhongwen/Desktop/project/mining/MobileMiner/monero/jni/3rdparty/rapidjson/rapidjson.h \
  /Users/kuangzhongwen/Documents/android-ndk-r16/sources/cxx-stl/gnu-libstdc++/4.9/include/cstdlib \
- /Users/kuangzhongwen/Documents/android-ndk-r16/sources/cxx-stl/gnu-libstdc++/4.9/include/cstring \
- /Users/kuangzhongwen/Desktop/project/mining/MobileMiner/monero/jni/3rdparty/rapidjson/msinttypes/inttypes.h \
- /Users/kuangzhongwen/Desktop/project/mining/MobileMiner/monero/jni/3rdparty/rapidjson/msinttypes/stdint.h
+ /Users/kuangzhongwen/Documents/android-ndk-r16/sources/cxx-stl/gnu-libstdc++/4.9/include/cstring
 
 /Users/kuangzhongwen/Desktop/project/mining/MobileMiner/monero/jni/api/Api.h:
 
@@ -50,7 +48,3 @@
 /Users/kuangzhongwen/Documents/android-ndk-r16/sources/cxx-stl/gnu-libstdc++/4.9/include/cstdlib:
 
 /Users/kuangzhongwen/Documents/android-ndk-r16/sources/cxx-stl/gnu-libstdc++/4.9/include/cstring:
-
-/Users/kuangzhongwen/Desktop/project/mining/MobileMiner/monero/jni/3rdparty/rapidjson/msinttypes/inttypes.h:
-
-/Users/kuangzhongwen/Desktop/project/mining/MobileMiner/monero/jni/3rdparty/rapidjson/msinttypes/stdint.h:
