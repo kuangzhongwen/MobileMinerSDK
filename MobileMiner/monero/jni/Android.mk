@@ -34,5 +34,18 @@ LOCAL_SRC_FILES := \
     ./api/NetworkState.cpp
 
 LOCAL_STATIC_LIBRARIES := lib-uv
+include $(BUILD_STATIC_LIBRARY)
 
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := lib-crypto
+LOCAL_C_INCLUDES  += ./jni/crypto/
+
+LOCAL_SRC_FILES    := \
+                    ./crypto/c_blake256.c \
+                    ./crypto/c_groestl.c \
+                    ./crypto/c_jh.c \
+                    ./crypto/c_keccak.c
+
+LOCAL_CFLAGS  += -std=gnu99
 include $(BUILD_STATIC_LIBRARY)
