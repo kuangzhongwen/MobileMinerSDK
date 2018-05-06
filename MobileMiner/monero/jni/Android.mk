@@ -18,6 +18,6 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_MODULE    := lib-uv
 LOCAL_EXPORT_C_INCLUDES    := $(LOCAL_PATH)/3rdparty/uv
-LOCAL_LDLIBS    :=  $(LOCAL_PATH)/3rdparty/uv/libuv.so
+LOCAL_SRC_FILES    := $(LOCAL_PATH)/3rdparty/uv/libuv.a
 include $(BUILD_STATIC_LIBRARY)
 
