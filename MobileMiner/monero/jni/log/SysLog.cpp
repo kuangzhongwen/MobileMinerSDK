@@ -31,17 +31,20 @@
 
 SysLog::SysLog()
 {
-    openlog(APP_ID, LOG_PID, LOG_USER);
+    // todo kzw replace to android log
+    //openlog(APP_ID, 1, LOG_USER);
 }
 
 
 void SysLog::message(int level, const char *fmt, va_list args)
 {
-    vsyslog(level, fmt, args);
+    // todo kzw replace to android log
+    //vsyslog(level, fmt, args);
 }
 
 
 void SysLog::text(const char *fmt, va_list args)
 {
-    message(LOG_INFO, fmt, args);
+    // todo kzw replace to android log
+    //message(LOG_INFO, fmt, args);
 }

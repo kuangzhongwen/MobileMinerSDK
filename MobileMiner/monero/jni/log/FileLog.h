@@ -27,7 +27,6 @@
 
 #include "3rdparty/uv/uv.h"
 
-
 #include "interfaces/ILogBackend.h"
 
 

@@ -18,7 +18,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := lib-uv
 LOCAL_EXPORT_C_INCLUDES    := $(LOCAL_PATH)/3rdparty/uv
 LOCAL_SRC_FILES    := $(LOCAL_PATH)/3rdparty/uv/libuv.a
-include $(BUILD_STATIC_LIBRARY)
+include $(PREBUILT_STATIC_LIBRARY)
 
 
 include $(CLEAR_VARS)
@@ -59,5 +59,19 @@ ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 endif
 
 LOCAL_STATIC_LIBRARIES := lib-crypto
+include $(BUILD_STATIC_LIBRARY)
 
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := lib-log
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/log/
+
+LOCAL_CPPFLAGS := -std=c++11 -llog -Wextra -Wall
+LOCAL_SRC_FILES    := \
+                    ./log/ConsoleLog.cpp \
+                    ./log/FileLog.cpp \
+                    ./log/Log.cpp \
+                    ./log/SysLog.cpp
+
+LOCAL_STATIC_LIBRARIES := lib-uv
 include $(BUILD_STATIC_LIBRARY)
