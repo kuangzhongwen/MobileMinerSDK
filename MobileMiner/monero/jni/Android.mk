@@ -39,13 +39,25 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE    := lib-crypto
-LOCAL_C_INCLUDES  += ./jni/crypto/
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/crypto/
 
 LOCAL_SRC_FILES    := \
                     ./crypto/c_blake256.c \
                     ./crypto/c_groestl.c \
                     ./crypto/c_jh.c \
                     ./crypto/c_keccak.c
+include $(BUILD_STATIC_LIBRARY)
 
-LOCAL_CFLAGS  += -std=gnu99
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := lib-cryptoNight
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/crypto/
+
+ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+    LOCAL_CPPFLAGS := -std=c++11 -DHAVE_NEON -mfloat-abi=softfp -mfpu=neon -march=armv7-a
+    LOCAL_SRC_FILES := ./crypto/CryptoNight.cpp
+endif
+
+LOCAL_STATIC_LIBRARIES := lib-crypto
+
 include $(BUILD_STATIC_LIBRARY)

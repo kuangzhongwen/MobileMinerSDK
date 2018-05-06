@@ -26,7 +26,8 @@
  */
 #pragma once
 
-
+// todo kzw
+/**
 #if defined(XMRIG_ARM)
 #   include "crypto/SSE2NEON.h"
 #elif defined(__GNUC__)
@@ -34,6 +35,8 @@
 #else
 #   include <intrin.h>
 #endif
+*/
+#include "crypto/SSE2NEON.h"
 
 #include <inttypes.h>
 

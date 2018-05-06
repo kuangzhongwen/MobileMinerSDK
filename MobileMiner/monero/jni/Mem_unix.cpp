@@ -26,13 +26,15 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
-
+// todo kzw
+/**
 #if defined(XMRIG_ARM) && !defined(__clang__)
 #   include "aligned_malloc.h"
 #else
 #   include <mm_malloc.h>
 #endif
-
+*/
+#include "3rdparty/aligned_malloc.h"
 
 #include "crypto/CryptoNight.h"
 #include "log/Log.h"
