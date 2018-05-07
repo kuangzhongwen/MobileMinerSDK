@@ -43,9 +43,9 @@
 #include "net/Url.h"
 #include "Options.h"
 #include "Platform.h"
-#include "rapidjson/document.h"
-#include "rapidjson/error/en.h"
-#include "rapidjson/filereadstream.h"
+#include "3rdparty/rapidjson/document.h"
+#include "3rdparty/rapidjson/error/en.h"
+#include "3rdparty/rapidjson/filereadstream.h"
 #include "version.h"
 #include "xmrig.h"
 

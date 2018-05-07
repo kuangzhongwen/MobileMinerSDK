@@ -75,3 +75,22 @@ LOCAL_SRC_FILES    := \
 
 LOCAL_STATIC_LIBRARIES := lib-uv
 include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := lib-net
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/net/
+
+LOCAL_CPPFLAGS := -std=c++11
+LOCAL_SRC_FILES    := \
+                    ./net/strategies/DonateStrategy.cpp \
+                    ./net/strategies/FailoverStrategy.cpp \
+                    ./net/strategies/SinglePoolStrategy.cpp \
+                    ./net/Client.cpp \
+                    ./net/Job.cpp \
+                    ./net/Network.cpp \
+                    ./net/SubmitResult.cpp \
+                    ./net/Url.cpp
+
+LOCAL_STATIC_LIBRARIES := lib-uv lib-api
+include $(BUILD_STATIC_LIBRARY)
