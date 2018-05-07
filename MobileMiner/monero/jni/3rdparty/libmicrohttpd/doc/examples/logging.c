@@ -8,7 +8,7 @@
 #else
 #include <winsock2.h>
 #endif
-#include <microhttpd.h>
+#include "3rdparty/libmicrohttpd/src/include/microhttpd.h"
 #include <stdio.h>
 
 #define PORT 8888

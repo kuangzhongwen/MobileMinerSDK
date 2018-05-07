@@ -25,10 +25,8 @@
 #ifndef __CRYPTONIGHT_H__
 #define __CRYPTONIGHT_H__
 
-
 #include <stddef.h>
 #include <stdint.h>
-
 
 #define AEON_MEMORY   1048576
 #define AEON_MASK     0xFFFF0

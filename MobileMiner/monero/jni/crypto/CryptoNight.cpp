@@ -25,6 +25,9 @@
 
 #include "crypto/CryptoNight.h"
 
+// todo kzw
+#define XMRIG_ARM
+#define XMRIG_ARMv7
 
 #if defined(XMRIG_ARM)
 #   include "crypto/CryptoNight_arm.h"

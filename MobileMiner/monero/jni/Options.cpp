@@ -25,6 +25,7 @@
 #include <string.h>
 #include <uv.h>
 
+#define XMRIG_NO_HTTPD
 
 #ifdef _MSC_VER
 #   include "getopt/getopt.h"
@@ -34,7 +35,7 @@
 
 
 #ifndef XMRIG_NO_HTTPD
-#   include <microhttpd.h>
+#   include "3rdparty/libmicrohttpd/src/include/microhttpd.h"
 #endif
 
 

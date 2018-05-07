@@ -122,6 +122,8 @@ LOCAL_LDLIBS:= -llog -pedantic -Wextra -Wall -Wno-deprecated-declarations -Wno-o
                -pthread -rt
 LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-microhttpd lib-crypto
 
-LOCAL_CPPFLAGS := -std=c++11 -Wall -fno-exceptions -fno-rtti -mfpu=neon -flax-vector-conversions
+LOCAL_CPPFLAGS := -std=c++11 -Wall -fno-exceptions -fno-rtti \
+                -DHAVE_NEON -mfloat-abi=softfp -mfpu=neon -march=armv7-a -flax-vector-conversions \
+                -Wno-strict-aliasing
 
 include $(BUILD_SHARED_LIBRARY)

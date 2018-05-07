@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <time.h>
-#include <microhttpd.h>
+#include "3rdparty/libmicrohttpd/src/include/microhttpd.h"
 
 #if defined _WIN32 && !defined(__MINGW64_VERSION_MAJOR)
 static int

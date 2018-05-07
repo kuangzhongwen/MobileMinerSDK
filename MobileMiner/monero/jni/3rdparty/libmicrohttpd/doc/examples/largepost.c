@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <microhttpd.h>
+#include "3rdparty/libmicrohttpd/src/include/microhttpd.h"
 
 #define PORT            8888
 #define POSTBUFFERSIZE  512
