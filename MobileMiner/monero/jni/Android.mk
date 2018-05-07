@@ -22,22 +22,6 @@ include $(PREBUILT_STATIC_LIBRARY)
 
 
 include $(CLEAR_VARS)
-LOCAL_MODULE    := lib-api
-LOCAL_CPPFLAGS    := -std=c++11 -fexceptions -frtti -lpthread
-LOCAL_C_INCLUDES    := $(LOCAL_PATH)/3rdparty/rapidjson \
-                       $(LOCAL_PATH)/3rdparty/rapidjson/error \
-                       $(LOCAL_PATH)/3rdparty/rapidjson/internal \
-                       $(LOCAL_PATH)/3rdparty/rapidjson/msinttypes
-LOCAL_SRC_FILES := \
-    ./api/Api.cpp \
-    ./api/ApiState.cpp \
-    ./api/NetworkState.cpp
-
-LOCAL_STATIC_LIBRARIES := lib-uv
-include $(BUILD_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
 LOCAL_MODULE    := lib-crypto
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/crypto/
 
@@ -46,6 +30,7 @@ LOCAL_SRC_FILES    := \
                     ./crypto/c_groestl.c \
                     ./crypto/c_jh.c \
                     ./crypto/c_keccak.c
+LOCAL_CFLAGS  += -std=gnu99 -Os
 include $(BUILD_STATIC_LIBRARY)
 
 
@@ -63,73 +48,52 @@ include $(BUILD_STATIC_LIBRARY)
 
 
 include $(CLEAR_VARS)
-LOCAL_MODULE    := lib-log
-LOCAL_C_INCLUDES    := $(LOCAL_PATH)/log/
-
-LOCAL_CPPFLAGS := -std=c++11 -llog -Wextra -Wall
-LOCAL_SRC_FILES    := \
-                    ./log/ConsoleLog.cpp \
-                    ./log/FileLog.cpp \
-                    ./log/Log.cpp \
-                    ./log/SysLog.cpp
-
-LOCAL_STATIC_LIBRARIES := lib-uv
-include $(BUILD_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := lib-net
-LOCAL_C_INCLUDES    := $(LOCAL_PATH)/net/
-
-LOCAL_CPPFLAGS := -std=c++11
-LOCAL_SRC_FILES    := \
-                    ./net/strategies/DonateStrategy.cpp \
-                    ./net/strategies/FailoverStrategy.cpp \
-                    ./net/strategies/SinglePoolStrategy.cpp \
-                    ./net/Client.cpp \
-                    ./net/Job.cpp \
-                    ./net/Network.cpp \
-                    ./net/SubmitResult.cpp \
-                    ./net/Url.cpp
-
-LOCAL_STATIC_LIBRARIES := lib-uv lib-api lib-log
-include $(BUILD_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := lib-workers
-LOCAL_C_INCLUDES    := $(LOCAL_PATH)/workers/
-
-LOCAL_CPPFLAGS := -std=c++11
-LOCAL_SRC_FILES    := \
-                    ./workers/DoubleWorker.cpp \
-                    ./workers/Handle.cpp \
-                    ./workers/Hashrate.cpp \
-                    ./workers/SingleWorker.cpp \
-                    ./workers/Worker.cpp \
-                    ./workers/Workers.cpp
-
-LOCAL_STATIC_LIBRARIES := lib-uv lib-api lib-log
-include $(BUILD_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
 LOCAL_MODULE    := monero-miner
 
 LOCAL_CPPFLAGS := -std=c++11 -Ofast -s -funroll-loops -fvariable-expansion-in-unroller \
             -ftree-loop-if-convert-stores -fmerge-all-constants -fbranch-target-load-optimize2 \
-            -Wall -fno-exceptions -fno-rtti
+            -Wall -fno-exceptions -fno-rtti -llog -Wextra
 
-LOCAL_SRC_FILES    := \
-                    ./App.cpp \
-                    ./Console.cpp \
-                    ./Cpu.cpp \
-                    ./Cpu_arm.cpp \
-                    ./Mem.cpp \
-                    ./Options.cpp \
-                    ./Platform.cpp \
-                    ./Summary.cpp \
-                    ./xmrig.cpp
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/3rdparty/rapidjson \
+                       $(LOCAL_PATH)/3rdparty/rapidjson/error \
+                       $(LOCAL_PATH)/3rdparty/rapidjson/internal \
+                       $(LOCAL_PATH)/3rdparty/rapidjson/msinttypes \
+                       $(LOCAL_PATH)/api/ \
+                       $(LOCAL_PATH)/interfaces/ \
+                       $(LOCAL_PATH)/log/ \
+                       $(LOCAL_PATH)/net/ \
+                       $(LOCAL_PATH)/workers/
 
-LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-api lib-log lib-crypto lib-cryptoNight lib-net lib-workers
+LOCAL_SRC_FILES    := ./api/Api.cpp \
+                      ./api/ApiState.cpp \
+                      ./api/NetworkState.cpp\
+                      ./log/ConsoleLog.cpp \
+                      ./log/FileLog.cpp \
+                      ./log/Log.cpp \
+                      ./log/SysLog.cpp \
+                      ./net/strategies/DonateStrategy.cpp \
+                      ./net/strategies/FailoverStrategy.cpp \
+                      ./net/strategies/SinglePoolStrategy.cpp \
+                      ./net/Client.cpp \
+                      ./net/Job.cpp \
+                      ./net/Network.cpp \
+                      ./net/SubmitResult.cpp \
+                      ./net/Url.cpp \
+                      ./workers/DoubleWorker.cpp \
+                      ./workers/Handle.cpp \
+                      ./workers/Hashrate.cpp \
+                      ./workers/SingleWorker.cpp \
+                      ./workers/Worker.cpp \
+                      ./workers/Workers.cpp \
+                      ./App.cpp \
+                      ./Console.cpp \
+                      ./Cpu.cpp \
+                      ./Cpu_arm.cpp \
+                      ./Mem.cpp \
+                      ./Options.cpp \
+                      ./Platform.cpp \
+                      ./Summary.cpp \
+                      ./xmrig.cpp
+
+LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-crypto lib-cryptoNight
 include $(BUILD_SHARED_LIBRARY)
