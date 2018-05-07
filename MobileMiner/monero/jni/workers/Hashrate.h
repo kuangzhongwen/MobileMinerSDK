@@ -26,7 +26,7 @@
 
 
 #include <stdint.h>
-#include "3rdparty/uv/uv.h"
+#include <uv.h>
 
 
 class Hashrate

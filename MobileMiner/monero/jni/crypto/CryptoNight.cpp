@@ -25,7 +25,12 @@
 
 #include "crypto/CryptoNight.h"
 
-#include "crypto/CryptoNight_arm.h"
+
+#if defined(XMRIG_ARM)
+#   include "crypto/CryptoNight_arm.h"
+#else
+#   include "crypto/CryptoNight_x86.h"
+#endif
 
 #include "crypto/CryptoNight_test.h"
 #include "net/Job.h"

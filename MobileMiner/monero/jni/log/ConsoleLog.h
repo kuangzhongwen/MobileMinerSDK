@@ -25,7 +25,8 @@
 #define __CONSOLELOG_H__
 
 
-#include "3rdparty/uv/uv.h"
+#include <uv.h>
+
 
 #include "interfaces/ILogBackend.h"
 

@@ -26,7 +26,7 @@
 
 
 #include "api/NetworkState.h"
-#include "3rdparty/rapidjson/fwd.h"
+#include "rapidjson/fwd.h"
 
 
 class Hashrate;

@@ -24,7 +24,7 @@
 
 #include <inttypes.h>
 #include <stdio.h>
-#include "3rdparty/uv/uv.h"
+#include <uv.h>
 
 
 #include "Cpu.h"

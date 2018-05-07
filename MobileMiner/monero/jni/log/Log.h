@@ -25,7 +25,7 @@
 #define __LOG_H__
 
 
-#include "3rdparty/uv/uv.h"
+#include <uv.h>
 #include <vector>
 
 

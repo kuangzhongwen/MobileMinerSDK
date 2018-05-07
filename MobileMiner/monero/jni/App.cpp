@@ -23,7 +23,7 @@
 
 
 #include <stdlib.h>
-#include "3rdparty/uv/uv.h"
+#include <uv.h>
 
 
 #include "api/Api.h"
@@ -47,12 +47,9 @@
 #   include "log/SysLog.h"
 #endif
 
-// todo kzw
-/**
 #ifndef XMRIG_NO_HTTPD
 #   include "api/Httpd.h"
 #endif
-*/
 
 
 App *App::m_self = nullptr;
@@ -61,8 +58,7 @@ App *App::m_self = nullptr;
 
 App::App(int argc, char **argv) :
     m_console(nullptr),
-    // todo kzw
-   // m_httpd(nullptr),
+    m_httpd(nullptr),
     m_network(nullptr),
     m_options(nullptr)
 {
@@ -105,12 +101,11 @@ App::App(int argc, char **argv) :
 App::~App()
 {
     uv_tty_reset_mode();
-// todo kzw
-/**
+
 #   ifndef XMRIG_NO_HTTPD
     delete m_httpd;
 #   endif
-*/
+
     delete m_console;
 }
 
@@ -146,13 +141,10 @@ int App::exec()
     Api::start();
 #   endif
 
-// todo kzw
-/**
 #   ifndef XMRIG_NO_HTTPD
     m_httpd = new Httpd(m_options->apiPort(), m_options->apiToken());
     m_httpd->start();
 #   endif
-*/
 
     Workers::start(m_options->affinity(), m_options->priority());
 
@@ -227,7 +219,8 @@ void App::onSignal(uv_signal_t *handle, int signum)
     switch (signum)
     {
     case SIGHUP:
-        LOG_WARN("SIGHUP received, exiting");
+        LOG_WARN("SIGHUP received"
+        ", exiting");
         break;
 
     case SIGTERM:

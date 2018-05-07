@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <string.h>
-#include "3rdparty/uv/uv.h"
+#include <uv.h>
 
 
 #include "api/NetworkState.h"

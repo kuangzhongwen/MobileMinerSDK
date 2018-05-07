@@ -25,15 +25,14 @@
 #define __APP_H__
 
 
-#include "3rdparty/uv/uv.h"
+#include <uv.h>
 
 
 #include "interfaces/IConsoleListener.h"
 
 
 class Console;
-// todo kzw
-//class Httpd;
+class Httpd;
 class Network;
 class Options;
 
@@ -59,8 +58,7 @@ private:
   static App *m_self;
 
   Console *m_console;
-  // todo kzw
-  //Httpd *m_httpd;
+  Httpd *m_httpd;
   Network *m_network;
   Options *m_options;
   uv_signal_t m_sigHUP;

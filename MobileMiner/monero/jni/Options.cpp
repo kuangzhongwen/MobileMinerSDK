@@ -23,7 +23,7 @@
 
 
 #include <string.h>
-#include "3rdparty/uv/uv.h"
+#include <uv.h>
 
 
 #ifdef _MSC_VER
@@ -32,21 +32,20 @@
 #   include <getopt.h>
 #endif
 
-// todo kzw
-/**
+
 #ifndef XMRIG_NO_HTTPD
 #   include <microhttpd.h>
 #endif
-*/
+
 
 #include "Cpu.h"
 #include "donate.h"
 #include "net/Url.h"
 #include "Options.h"
 #include "Platform.h"
-#include "3rdparty/rapidjson/document.h"
-#include "3rdparty/rapidjson/error/en.h"
-#include "3rdparty/rapidjson/filereadstream.h"
+#include "rapidjson/document.h"
+#include "rapidjson/error/en.h"
+#include "rapidjson/filereadstream.h"
 #include "version.h"
 #include "xmrig.h"
 
@@ -695,13 +694,11 @@ void Options::showVersion()
 
     printf("\nlibuv/%s\n", uv_version_string());
 
-// todo kzw
-/**
 #   ifndef XMRIG_NO_HTTPD
     printf("libmicrohttpd/%s\n", MHD_get_version());
 #   endif
-*/
 }
+
 
 bool Options::setAlgo(const char *algo)
 {
