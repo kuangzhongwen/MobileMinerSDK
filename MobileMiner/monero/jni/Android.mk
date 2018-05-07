@@ -69,5 +69,59 @@ LOCAL_SRC_FILES    := \
                     ./crypto/c_keccak.c \
                     ./crypto/c_skein.c
 
-LOCAL_CFLAGS  += -std=c11 -Wall -Wno-strict-aliasing
+LOCAL_CFLAGS  += -std=c11 -Wall -Wno-strict-aliasing -mfpu=neon
 include $(BUILD_STATIC_LIBRARY)
+
+
+# monero miner
+include $(CLEAR_VARS)
+LOCAL_MODULE := monero-miner
+
+HEADERS := $(LOCAL_PATH)/
+
+LOCAL_C_INCLUDES := $(HEADERS)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/3rdparty/libcpuid/
+
+LOCAL_SRC_FILES := $(LOCAL_PATH)/api/Api.cpp \
+                   $(LOCAL_PATH)/api/ApiState.cpp \
+                   $(LOCAL_PATH)/api/NetworkState.cpp \
+                   $(LOCAL_PATH)/crypto/CryptoNight.cpp \
+                   $(LOCAL_PATH)/App.cpp \
+                   $(LOCAL_PATH)/Console.cpp \
+                   $(LOCAL_PATH)/log/ConsoleLog.cpp \
+                   $(LOCAL_PATH)/log/FileLog.cpp \
+                   $(LOCAL_PATH)/log/Log.cpp \
+                   $(LOCAL_PATH)/log/SysLog.cpp \
+                   $(LOCAL_PATH)/Mem.cpp \
+                   $(LOCAL_PATH)/net/Client.cpp \
+                   $(LOCAL_PATH)/net/Job.cpp \
+                   $(LOCAL_PATH)/net/Network.cpp \
+                   $(LOCAL_PATH)/net/strategies/DonateStrategy.cpp \
+                   $(LOCAL_PATH)/net/strategies/FailoverStrategy.cpp \
+                   $(LOCAL_PATH)/net/strategies/SinglePoolStrategy.cpp \
+                   $(LOCAL_PATH)/net/SubmitResult.cpp \
+                   $(LOCAL_PATH)/net/Url.cpp \
+                   $(LOCAL_PATH)/api/Httpd.cpp \
+                   $(LOCAL_PATH)/Options.cpp \
+                   $(LOCAL_PATH)/Platform.cpp \
+                   $(LOCAL_PATH)/Summary.cpp \
+                   $(LOCAL_PATH)/workers/DoubleWorker.cpp \
+                   $(LOCAL_PATH)/workers/Handle.cpp \
+                   $(LOCAL_PATH)/workers/Hashrate.cpp \
+                   $(LOCAL_PATH)/workers/SingleWorker.cpp \
+                   $(LOCAL_PATH)/workers/Worker.cpp \
+                   $(LOCAL_PATH)/workers/Workers.cpp \
+                   $(LOCAL_PATH)/xmrig.cpp \
+                   $(LOCAL_PATH)/Cpu_arm.cpp \
+                   $(LOCAL_PATH)/App_unix.cpp \
+                   $(LOCAL_PATH)/Cpu_unix.cpp \
+                   $(LOCAL_PATH)/Mem_unix.cpp \
+                   $(LOCAL_PATH)/Platform_unix.cpp
+
+LOCAL_LDLIBS:= -llog -pedantic -Wextra -Wall -Wno-deprecated-declarations -Wno-overlength-strings \
+               -pthread -rt
+LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-microhttpd lib-crypto
+
+LOCAL_CPPFLAGS := -std=c++11 -Wall -fno-exceptions -fno-rtti -mfpu=neon -flax-vector-conversions
+
+include $(BUILD_SHARED_LIBRARY)
