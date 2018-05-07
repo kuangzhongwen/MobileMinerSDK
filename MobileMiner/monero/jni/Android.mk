@@ -2,6 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+######################################## third party library ########################################
 # cpuid
 LOCAL_MODULE    := lib-cpuid
 LOCAL_C_INCLUDES  += $(LOCAL_PATH)/3rdparty/libcpuid
@@ -53,3 +54,6 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_CFLAGS  += -std=gnu99
 include $(BUILD_STATIC_LIBRARY)
+
+
+######################################## monero logic ########################################
