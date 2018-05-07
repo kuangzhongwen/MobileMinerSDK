@@ -34,26 +34,40 @@ LOCAL_CFLAGS := -DHAVE_CONFIG_H
 LOCAL_MODULE := lib-microhttpd
 
 LOCAL_SRC_FILES := \
- $(LIB_ROOT_ABS)/src/microhttpd/base64.c \
- $(LIB_ROOT_ABS)/src/microhttpd/basicauth.c \
- $(LIB_ROOT_ABS)/src/microhttpd/connection.c \
- $(LIB_ROOT_ABS)/src/microhttpd/daemon.c \
- $(LIB_ROOT_ABS)/src/microhttpd/digestauth.c \
- $(LIB_ROOT_ABS)/src/microhttpd/internal.c \
- $(LIB_ROOT_ABS)/src/microhttpd/md5.c \
- $(LIB_ROOT_ABS)/src/microhttpd/memorypool.c \
- $(LIB_ROOT_ABS)/src/microhttpd/postprocessor.c \
- $(LIB_ROOT_ABS)/src/microhttpd/reason_phrase.c \
- $(LIB_ROOT_ABS)/src/microhttpd/response.c \
- $(LIB_ROOT_ABS)/src/microhttpd/tsearch.c
+        $(LIB_ROOT_ABS)/src/microhttpd/base64.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/basicauth.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/connection.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/daemon.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/digestauth.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/internal.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/md5.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/memorypool.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/postprocessor.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/reason_phrase.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/response.c \
+        $(LIB_ROOT_ABS)/src/microhttpd/tsearch.c
 
 LOCAL_C_INCLUDES += \
- $(LIB_ROOT_ABS) \
- $(LIB_ROOT_ABS)/src/include \
- $(LIB_ROOT_ABS)/src/microhttpd
+        $(LIB_ROOT_ABS) \
+        $(LIB_ROOT_ABS)/src/include \
+        $(LIB_ROOT_ABS)/src/microhttpd
 
 LOCAL_CFLAGS  += -std=gnu99
 include $(BUILD_STATIC_LIBRARY)
 
 
 ######################################## monero logic ########################################
+# c crypto
+include $(CLEAR_VARS)
+LOCAL_MODULE    := lib-crypto
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/crypto/
+
+LOCAL_SRC_FILES    := \
+                    ./crypto/c_blake256.c \
+                    ./crypto/c_groestl.c \
+                    ./crypto/c_jh.c \
+                    ./crypto/c_keccak.c \
+                    ./crypto/c_skein.c
+
+LOCAL_CFLAGS  += -std=c11 -Wall -Wno-strict-aliasing
+include $(BUILD_STATIC_LIBRARY)
