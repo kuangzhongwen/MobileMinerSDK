@@ -30,7 +30,7 @@ LOCAL_SRC_FILES    := \
                     ./crypto/c_groestl.c \
                     ./crypto/c_jh.c \
                     ./crypto/c_keccak.c
-LOCAL_CFLAGS  += -std=gnu99 -Os
+LOCAL_CFLAGS  += -std=gnu99 -Os -Wall
 include $(BUILD_STATIC_LIBRARY)
 
 
@@ -39,9 +39,11 @@ LOCAL_MODULE    := lib-cryptoNight
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/crypto/
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-    LOCAL_CPPFLAGS := -std=c++11 -DHAVE_NEON -mfloat-abi=softfp -mfpu=neon -march=armv7-a
-    LOCAL_SRC_FILES := ./crypto/CryptoNight.cpp
+    LOCAL_CPPFLAGS := -std=c++11 -DHAVE_NEON -mfloat-abi=softfp -mfpu=neon -march=armv7-a \
+        -Ofast -funroll-loops -fmerge-all-constants -flax-vector-conversions
 endif
+
+LOCAL_SRC_FILES := ./crypto/CryptoNight.cpp
 
 LOCAL_STATIC_LIBRARIES := lib-crypto
 include $(BUILD_STATIC_LIBRARY)
@@ -59,6 +61,7 @@ LOCAL_C_INCLUDES    := $(LOCAL_PATH)/3rdparty/rapidjson \
                        $(LOCAL_PATH)/3rdparty/rapidjson/internal \
                        $(LOCAL_PATH)/3rdparty/rapidjson/msinttypes \
                        $(LOCAL_PATH)/api/ \
+                       $(LOCAL_PATH)/crypto/ \
                        $(LOCAL_PATH)/interfaces/ \
                        $(LOCAL_PATH)/log/ \
                        $(LOCAL_PATH)/net/ \
@@ -87,7 +90,6 @@ LOCAL_SRC_FILES    := ./api/Api.cpp \
                       ./workers/Workers.cpp \
                       ./App.cpp \
                       ./Console.cpp \
-                      ./Cpu.cpp \
                       ./Cpu_arm.cpp \
                       ./Mem.cpp \
                       ./Options.cpp \
@@ -96,4 +98,5 @@ LOCAL_SRC_FILES    := ./api/Api.cpp \
                       ./xmrig.cpp
 
 LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-crypto lib-cryptoNight
+LOCAL_LDLIBS += -llog -ldl
 include $(BUILD_SHARED_LIBRARY)

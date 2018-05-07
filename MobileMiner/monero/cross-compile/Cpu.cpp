@@ -22,7 +22,7 @@
  */
 
 
-#include "3rdparty/libcpuid/libcpuid.h"
+#include <libcpuid.h>
 #include <math.h>
 #include <string.h>
 
