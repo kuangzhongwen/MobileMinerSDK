@@ -32,11 +32,12 @@
 #   include <getopt.h>
 #endif
 
-
+// todo kzw
+/**
 #ifndef XMRIG_NO_HTTPD
 #   include <microhttpd.h>
 #endif
-
+*/
 
 #include "Cpu.h"
 #include "donate.h"
@@ -694,11 +695,13 @@ void Options::showVersion()
 
     printf("\nlibuv/%s\n", uv_version_string());
 
+// todo kzw
+/**
 #   ifndef XMRIG_NO_HTTPD
     printf("libmicrohttpd/%s\n", MHD_get_version());
 #   endif
+*/
 }
-
 
 bool Options::setAlgo(const char *algo)
 {

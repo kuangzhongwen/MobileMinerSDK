@@ -112,3 +112,24 @@ LOCAL_SRC_FILES    := \
 LOCAL_STATIC_LIBRARIES := lib-uv lib-api lib-log
 include $(BUILD_STATIC_LIBRARY)
 
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := monero-miner
+
+LOCAL_CPPFLAGS := -std=c++11 -Ofast -s -funroll-loops -fvariable-expansion-in-unroller \
+            -ftree-loop-if-convert-stores -fmerge-all-constants -fbranch-target-load-optimize2 \
+            -Wall -fno-exceptions -fno-rtti
+
+LOCAL_SRC_FILES    := \
+                    ./App.cpp \
+                    ./Console.cpp \
+                    ./Cpu.cpp \
+                    ./Cpu_arm.cpp \
+                    ./Mem.cpp \
+                    ./Options.cpp \
+                    ./Platform.cpp \
+                    ./Summary.cpp \
+                    ./xmrig.cpp
+
+LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-api lib-log lib-crypto lib-cryptoNight lib-net lib-workers
+include $(BUILD_SHARED_LIBRARY)
