@@ -92,5 +92,23 @@ LOCAL_SRC_FILES    := \
                     ./net/SubmitResult.cpp \
                     ./net/Url.cpp
 
-LOCAL_STATIC_LIBRARIES := lib-uv lib-api
+LOCAL_STATIC_LIBRARIES := lib-uv lib-api lib-log
 include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := lib-workers
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/workers/
+
+LOCAL_CPPFLAGS := -std=c++11
+LOCAL_SRC_FILES    := \
+                    ./workers/DoubleWorker.cpp \
+                    ./workers/Handle.cpp \
+                    ./workers/Hashrate.cpp \
+                    ./workers/SingleWorker.cpp \
+                    ./workers/Worker.cpp \
+                    ./workers/Workers.cpp
+
+LOCAL_STATIC_LIBRARIES := lib-uv lib-api lib-log
+include $(BUILD_STATIC_LIBRARY)
+
