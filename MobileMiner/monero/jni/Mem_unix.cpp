@@ -26,9 +26,12 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
+// todo kzw
+#define XMRIG_ARM
+#define XMRIG_ARMv7
 
 #if defined(XMRIG_ARM) && !defined(__clang__)
-#   include "aligned_malloc.h"
+#   include "3rdparty/aligned_malloc.h"
 #else
 #   include <mm_malloc.h>
 #endif

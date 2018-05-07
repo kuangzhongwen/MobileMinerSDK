@@ -119,7 +119,7 @@ LOCAL_SRC_FILES := $(LOCAL_PATH)/api/Api.cpp \
                    $(LOCAL_PATH)/Platform_unix.cpp
 
 LOCAL_LDLIBS:= -llog -pedantic -Wextra -Wall -Wno-deprecated-declarations -Wno-overlength-strings \
-               -pthread -rt
+               -pthread
 LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-microhttpd lib-crypto
 
 LOCAL_CPPFLAGS := -std=c++11 -Wall -fno-exceptions -fno-rtti \
