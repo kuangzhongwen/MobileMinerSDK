@@ -21,25 +21,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <jni.h>
 #include "App.h"
-#include "log/AndroidLog.h"
 
-extern "C" {
-    JNIEXPORT void JNICALL Java_waterhole_miner_monero_NewXmrMinerActivity_startMine(JNIEnv *env, jobject thiz) {
-        /**
-         * test: ./xmrig --api-port 556 -o pool.monero.hashvault.pro:3333 -u 46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY -p worker1:651043704@qq.com -k
-         */
-         int argc = 10;
-         char *argv[] = {
-            (char*)"./xmrig",
-            (char*)"--api-port", (char*)"556",
-            (char*)"-o", (char*)"pool.monero.hashvault.pro:3333",
-            (char*)"-u", (char*)"46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY",
-            (char*)"-p", (char*)"worker1:651043704@qq.com",
-            (char*) "-k"};
-         App app(argc, argv);
-         app.exec();
-    }
+
+int main(int argc, char **argv) {
+    App app(argc, argv);
+
+    return app.exec();
 }
-
