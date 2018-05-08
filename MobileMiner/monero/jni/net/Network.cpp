@@ -95,7 +95,7 @@ void Network::stop()
 void Network::onActive(IStrategy *strategy, Client *client)
 {
     if (m_donate && m_donate == strategy) {
-        LOG_NOTICE("dev donate started");
+        LOGD("%s", "dev donate started");
         return;
     }
 

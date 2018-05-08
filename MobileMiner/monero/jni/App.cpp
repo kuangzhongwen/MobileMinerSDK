@@ -94,9 +94,7 @@ int App::exec()
     uv_signal_start(&m_sigHUP,  App::onSignal, SIGHUP);
     uv_signal_start(&m_sigINT,  App::onSignal, SIGINT);
     uv_signal_start(&m_sigTERM, App::onSignal, SIGTERM);
-    LOGD("%s", "App exec");
     background();
-    LOGD("%s", "Mem init");
     Mem::init(m_controller->config()->isHugePages());
 
     Summary::print(m_controller);
