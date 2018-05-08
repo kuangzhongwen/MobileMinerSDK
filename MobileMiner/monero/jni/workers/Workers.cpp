@@ -135,7 +135,7 @@ void Workers::start(xmrig::Controller *controller)
     m_status.algo    = controller->config()->algorithm().algo();
     m_status.colors  = controller->config()->isColors();
     m_status.threads = threads.size();
-
+    LOGD("Workers start threads %d", threads.size());
     for (const xmrig::IThread *thread : threads) {
        m_status.ways += thread->multiway();
     }

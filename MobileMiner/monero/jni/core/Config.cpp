@@ -35,7 +35,7 @@
 #include "3rdparty/rapidjson/filewritestream.h"
 #include "3rdparty/rapidjson/prettywriter.h"
 #include "workers/CpuThread.h"
-
+#include "common/log/AndroidLog.h"
 
 static char affinity_tmp[20] = { 0 };
 
@@ -221,7 +221,7 @@ bool xmrig::Config::parseString(int key, const char *arg)
     if (!CommonConfig::parseString(key, arg)) {
         return false;
     }
-
+    LOGD("%s", "config parseString");
     switch (key) {
     case xmrig::IConfig::AVKey:          /* --av */
     case xmrig::IConfig::MaxCPUUsageKey: /* --max-cpu-usage */
@@ -240,7 +240,6 @@ bool xmrig::Config::parseString(int key, const char *arg)
             m_threads.count = Cpu::threads();
             return true;
         }
-
         return parseUint64(key, strtol(arg, nullptr, 10));
 
     case xmrig::IConfig::CPUAffinityKey: /* --cpu-affinity */
