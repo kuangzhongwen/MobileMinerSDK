@@ -33,6 +33,7 @@
 #include "workers/Hashrate.h"
 #include "workers/SingleWorker.h"
 #include "workers/Workers.h"
+#include "log/AndroidLog.h"
 
 
 bool Workers::m_active = false;
@@ -106,6 +107,7 @@ void Workers::setJob(const Job &job, bool donate)
 void Workers::start(int64_t affinity, int priority)
 {
     const int threads = Mem::threads();
+    LOGD("workers start threads %d", threads);
     m_hashrate = new Hashrate(threads);
 
     uv_mutex_init(&m_mutex);

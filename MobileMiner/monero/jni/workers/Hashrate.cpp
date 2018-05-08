@@ -75,9 +75,9 @@ double Hashrate::calc(size_t ms) const
 {
     double result = 0.0;
     double data;
-
     for (int i = 0; i < m_threads; ++i) {
         data = calc(i, ms);
+        LOGD("%f", data);
         if (isnormal(data)) {
             result += data;
         }
@@ -152,9 +152,6 @@ void Hashrate::print()
     char num2[8];
     char num3[8];
     char num4[8];
-    LOGD("ShortInterval %f", calc(ShortInterval));
-    LOGD("MediumInterval %f", calc(MediumInterval));
-    LOGD("LargeInterval %f", calc(LargeInterval));
     LOGD("speed 2.5s/60s/15m %s %s %s H/s max: %s H/s", format(calc(ShortInterval),  num1, sizeof(num1)),
                                                         format(calc(MediumInterval), num2, sizeof(num2)),
                                                         format(calc(LargeInterval),  num3, sizeof(num3)),
