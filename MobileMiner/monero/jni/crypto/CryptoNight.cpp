@@ -40,7 +40,7 @@
 #include "net/JobResult.h"
 #include "Options.h"
 #include "xmrig.h"
-
+#include "log/AndroidLog.h"
 
 void (*cryptonight_hash_ctx)(const uint8_t *input, size_t size, uint8_t *output, cryptonight_ctx *ctx, int variant) = nullptr;
 
@@ -148,7 +148,7 @@ bool CryptoNight::init(int algo, int variant)
 
     cryptonight_hash_ctx = cryptonight_variations[index];
 
-    return selfTest(algo);
+    return true;
 }
 
 
@@ -162,16 +162,13 @@ bool CryptoNight::selfTest(int algo) {
     if (cryptonight_hash_ctx == nullptr) {
         return false;
     }
-
     uint8_t output[64];
 
     struct cryptonight_ctx *ctx = static_cast<cryptonight_ctx *>(_mm_malloc(sizeof(cryptonight_ctx), 16));
     ctx->memory = static_cast<uint8_t *>(_mm_malloc(MONERO_MEMORY * 2, 16));
-
     cryptonight_hash_ctx(test_input, 76, output, ctx, 0);
 
     const bool doubleHash = Options::i()->doubleHash();
-
 #   ifndef XMRIG_NO_AEON
     bool rc = memcmp(output, algo == xmrig::ALGO_CRYPTONIGHT_LITE ? test_output_v0_lite : test_output_v0, (doubleHash ? 64 : 32)) == 0;
 #   else
@@ -179,15 +176,15 @@ bool CryptoNight::selfTest(int algo) {
 #   endif
 
     if (rc) {
+        LOGD("%s", "cryptonight_hash_ctx3");
         cryptonight_hash_ctx(test_input, 76, output, ctx, 1);
-
+        LOGD("%s", "cryptonight_hash_ctx4");
 #       ifndef XMRIG_NO_AEON
         rc = memcmp(output, algo == xmrig::ALGO_CRYPTONIGHT_LITE ? test_output_v1_lite : test_output_v1, (doubleHash ? 64 : 32)) == 0;
 #       else
         rc = memcmp(output, test_output_v1, (doubleHash ? 64 : 32)) == 0;
 #       endif
     }
-
     _mm_free(ctx->memory);
     _mm_free(ctx);
 

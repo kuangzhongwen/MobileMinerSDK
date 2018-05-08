@@ -41,6 +41,7 @@
 #include "net/Url.h"
 #include "Options.h"
 #include "workers/Workers.h"
+#include "log/AndroidLog.h"
 
 
 Network::Network(const Options *options) :
@@ -100,8 +101,7 @@ void Network::onActive(IStrategy *strategy, Client *client)
     }
 
     m_state.setPool(client->host(), client->port(), client->ip());
-
-    LOG_INFO(m_options->colors() ? "\x1B[01;37muse pool \x1B[01;36m%s:%d \x1B[01;30m%s" : "use pool %s:%d %s", client->host(), client->port(), client->ip());
+    LOGD("use pool %s:%d %s", client->host(), client->port(), client->ip());
 }
 
 
@@ -160,12 +160,7 @@ void Network::onResultAccepted(IStrategy *strategy, Client *client, const Submit
 
 void Network::setJob(Client *client, const Job &job, bool donate)
 {
-    if (m_options->colors()) {
-        LOG_INFO("\x1B[01;35mnew job\x1B[0m from \x1B[01;37m%s:%d\x1B[0m diff \x1B[01;37m%d", client->host(), client->port(), job.diff());
-    }
-    else {
-        LOG_INFO("new job from %s:%d diff %d", client->host(), client->port(), job.diff());
-    }
+    LOGD("new job from %s:%d diff %d", client->host(), client->port(), job.diff());
 
     m_state.diff = job.diff();
     Workers::setJob(job, donate);

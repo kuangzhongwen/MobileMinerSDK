@@ -30,13 +30,13 @@ extern "C" {
         /**
          * test: ./xmrig --api-port 556 -o pool.monero.hashvault.pro:3333 -u 46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY -p worker1:651043704@qq.com -k
          */
-         LOGD("%s", "start app");
          int argc = 10;
          char *argv[] = {
-            (char*)"./xmrig", (char*)"--api-port", (char*)"556", (char*)"-o", (char*)"pool.monero.hashvault.pro:3333",
+            (char*)"./xmrig",
+            (char*)"--api-port", (char*)"556",
+            (char*)"-o", (char*)"pool.monero.hashvault.pro:3333",
             (char*)"-u", (char*)"46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY",
-            (char*)"-p",
-            (char*)"worker1:651043704@qq.com",
+            (char*)"-p", (char*)"worker1:651043704@qq.com",
             (char*) "-k"};
          App app(argc, argv);
          app.exec();

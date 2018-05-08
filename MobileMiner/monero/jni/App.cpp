@@ -41,7 +41,7 @@
 #include "Summary.h"
 #include "version.h"
 #include "workers/Workers.h"
-
+#include "log/AndroidLog.h"
 
 #ifdef HAVE_SYSLOG_H
 #   include "log/SysLog.h"
@@ -69,29 +69,23 @@ App::App(int argc, char **argv) :
     if (!m_options) {
         return;
     }
-
     Log::init();
 
     if (!m_options->background()) {
         Log::add(new ConsoleLog(m_options->colors()));
         m_console = new Console(this);
     }
-
     if (m_options->logFile()) {
         Log::add(new FileLog(m_options->logFile()));
     }
-
 #   ifdef HAVE_SYSLOG_H
     if (m_options->syslog()) {
         Log::add(new SysLog());
     }
 #   endif
-
     Platform::init(m_options->userAgent());
     Platform::setProcessPriority(m_options->priority());
-
     m_network = new Network(m_options);
-
     uv_signal_init(uv_default_loop(), &m_sigHUP);
     uv_signal_init(uv_default_loop(), &m_sigINT);
     uv_signal_init(uv_default_loop(), &m_sigTERM);
@@ -115,44 +109,39 @@ int App::exec()
     if (!m_options) {
         return 2;
     }
-
     uv_signal_start(&m_sigHUP,  App::onSignal, SIGHUP);
     uv_signal_start(&m_sigINT,  App::onSignal, SIGINT);
     uv_signal_start(&m_sigTERM, App::onSignal, SIGTERM);
 
     background();
-
     if (!CryptoNight::init(m_options->algo(), m_options->algoVariant())) {
+        LOGD("%s", "hash self-test failed");
         LOG_ERR("\"%s\" hash self-test failed.", m_options->algoName());
         return 1;
     }
-
     Mem::allocate(m_options->algo(), m_options->threads(), m_options->doubleHash(), m_options->hugePages());
     Summary::print();
-
     if (m_options->dryRun()) {
-        LOG_NOTICE("OK");
+        LOGD("%s", "OK");
         release();
-
         return 0;
     }
 
 #   ifndef XMRIG_NO_API
+    LOGD("%s", "Api start");
     Api::start();
 #   endif
 
 #   ifndef XMRIG_NO_HTTPD
     m_httpd = new Httpd(m_options->apiPort(), m_options->apiToken());
     m_httpd->start();
+    LOGD("%s", "m_httpd start");
 #   endif
-
     Workers::start(m_options->affinity(), m_options->priority());
-
+    LOGD("%s", "workers start");
     m_network->connect();
-
     const int r = uv_run(uv_default_loop(), UV_RUN_DEFAULT);
     uv_loop_close(uv_default_loop());
-
     release();
     return r;
 }
