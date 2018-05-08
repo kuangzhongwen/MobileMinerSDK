@@ -33,7 +33,7 @@
 #include "crypto/CryptoNight_constants.h"
 #include "crypto/CryptoNight_monero.h"
 #include "crypto/soft_aes.h"
-
+#include "common/log/AndroidLog.h"
 
 extern "C"
 {
@@ -399,28 +399,24 @@ static inline void cryptonight_monero_tweak(uint64_t* mem_out, __m128i tmp)
 template<xmrig::Algo ALGO, bool SOFT_AES, int VARIANT>
 inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t size, uint8_t *__restrict__ output, cryptonight_ctx **__restrict__ ctx)
 {
+    LOGD("%s", "cryptonight_single_hash start");
     constexpr size_t MASK       = xmrig::cn_select_mask<ALGO>();
     constexpr size_t ITERATIONS = xmrig::cn_select_iter<ALGO>();
     constexpr size_t MEM        = xmrig::cn_select_memory<ALGO>();
-
     if (VARIANT > 0 && size < 43) {
         memset(output, 0, 32);
         return;
     }
-
     xmrig::keccak(input, size, ctx[0]->state);
 
     VARIANT1_INIT(0);
-
     cn_explode_scratchpad<ALGO, MEM, SOFT_AES>((__m128i*) ctx[0]->state, (__m128i*) ctx[0]->memory);
-
     const uint8_t* l0 = ctx[0]->memory;
     uint64_t* h0 = reinterpret_cast<uint64_t*>(ctx[0]->state);
 
     uint64_t al0 = h0[0] ^ h0[4];
     uint64_t ah0 = h0[1] ^ h0[5];
     __m128i bx0 = _mm_set_epi64x(h0[3] ^ h0[7], h0[2] ^ h0[6]);
-
     uint64_t idx0 = h0[0] ^ h0[4];
 
     for (size_t i = 0; i < ITERATIONS; i++) {
@@ -478,17 +474,17 @@ inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t si
             idx0 = d ^ q;
         }
     }
-
     cn_implode_scratchpad<ALGO, MEM, SOFT_AES>((__m128i*) ctx[0]->memory, (__m128i*) ctx[0]->state);
-
     xmrig::keccakf(h0, 24);
     extra_hashes[ctx[0]->state[0] & 3](ctx[0]->state, 200, output);
+    LOGD("%s", "cryptonight_single_hash end");
 }
 
 
 template<xmrig::Algo ALGO, bool SOFT_AES, int VARIANT>
 inline void cryptonight_double_hash(const uint8_t *__restrict__ input, size_t size, uint8_t *__restrict__ output, struct cryptonight_ctx **__restrict__ ctx)
 {
+    LOGD("%s", "cryptonight_double_hash start");
     constexpr size_t MASK       = xmrig::cn_select_mask<ALGO>();
     constexpr size_t ITERATIONS = xmrig::cn_select_iter<ALGO>();
     constexpr size_t MEM        = xmrig::cn_select_memory<ALGO>();
@@ -629,6 +625,7 @@ inline void cryptonight_double_hash(const uint8_t *__restrict__ input, size_t si
 
     extra_hashes[ctx[0]->state[0] & 3](ctx[0]->state, 200, output);
     extra_hashes[ctx[1]->state[0] & 3](ctx[1]->state, 200, output + 32);
+    LOGD("%s", "cryptonight_double_hash begin");
 }
 
 

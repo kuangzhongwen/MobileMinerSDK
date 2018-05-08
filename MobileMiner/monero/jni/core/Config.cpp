@@ -221,7 +221,6 @@ bool xmrig::Config::parseString(int key, const char *arg)
     if (!CommonConfig::parseString(key, arg)) {
         return false;
     }
-    LOGD("%s", "config parseString");
     switch (key) {
     case xmrig::IConfig::AVKey:          /* --av */
     case xmrig::IConfig::MaxCPUUsageKey: /* --max-cpu-usage */
