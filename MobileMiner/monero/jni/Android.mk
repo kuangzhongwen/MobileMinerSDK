@@ -57,3 +57,16 @@ include $(BUILD_STATIC_LIBRARY)
 
 
 ######################################## monero logic ########################################
+# c crypto
+include $(CLEAR_VARS)
+LOCAL_MODULE    := lib-crypto
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/crypto/
+
+LOCAL_SRC_FILES    := \
+                    ./crypto/c_groestl.c \
+                    ./crypto/c_blake256.c \
+                    ./crypto/c_jh.c \
+                    ./crypto/c_skein.c
+
+LOCAL_CFLAGS  += -std=c11 -Wall -Wno-strict-aliasing -mfpu=neon
+include $(BUILD_STATIC_LIBRARY)
