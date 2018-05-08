@@ -24,6 +24,7 @@
 #ifndef __MM_MALLOC_PORTABLE_H__
 #define __MM_MALLOC_PORTABLE_H__
 
+#define XMRIG_ARM
 
 #ifdef _WIN32
 #   ifdef __GNUC__
@@ -33,7 +34,7 @@
 #   endif
 #else
 #   if defined(XMRIG_ARM) && !defined(__clang__)
-#       include "aligned_malloc.h"
+#       include "3rdparty/aligned_malloc.h"
 #   else
 #       include <mm_malloc.h>
 #   endif

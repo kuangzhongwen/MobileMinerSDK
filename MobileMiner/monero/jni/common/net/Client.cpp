@@ -33,10 +33,10 @@
 #include "common/net/Client.h"
 #include "interfaces/IClientListener.h"
 #include "net/JobResult.h"
-#include "rapidjson/document.h"
-#include "rapidjson/error/en.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/writer.h"
+#include "3rdparty/rapidjson/document.h"
+#include "3rdparty/rapidjson/error/en.h"
+#include "3rdparty/rapidjson/stringbuffer.h"
+#include "3rdparty/rapidjson/writer.h"
 
 
 #ifdef _MSC_VER

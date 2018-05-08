@@ -32,9 +32,9 @@
 #include "common/config/CommonConfig.h"
 #include "common/log/Log.h"
 #include "donate.h"
-#include "rapidjson/document.h"
-#include "rapidjson/filewritestream.h"
-#include "rapidjson/prettywriter.h"
+#include "3rdparty/rapidjson/document.h"
+#include "3rdparty/rapidjson/filewritestream.h"
+#include "3rdparty/rapidjson/prettywriter.h"
 
 
 xmrig::CommonConfig::CommonConfig() :

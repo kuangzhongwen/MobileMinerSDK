@@ -33,7 +33,7 @@
 #include "interfaces/IJobResultListener.h"
 #include "interfaces/IThread.h"
 #include "Mem.h"
-#include "rapidjson/document.h"
+#include "3rdparty/rapidjson/document.h"
 #include "workers/Handle.h"
 #include "workers/Hashrate.h"
 #include "workers/MultiWorker.h"

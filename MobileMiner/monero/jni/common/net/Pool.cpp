@@ -29,7 +29,7 @@
 
 
 #include "common/net/Pool.h"
-#include "rapidjson/document.h"
+#include "3rdparty/rapidjson/document.h"
 
 
 #ifdef APP_DEBUG

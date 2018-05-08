@@ -30,7 +30,7 @@
 
 
 #include "common/utils/c_str.h"
-#include "rapidjson/fwd.h"
+#include "3rdparty/rapidjson/fwd.h"
 
 
 struct option;

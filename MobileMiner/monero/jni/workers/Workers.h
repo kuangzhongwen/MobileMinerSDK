@@ -32,7 +32,7 @@
 
 #include "common/net/Job.h"
 #include "net/JobResult.h"
-#include "rapidjson/fwd.h"
+#include "3rdparty/rapidjson/fwd.h"
 
 
 class Handle;

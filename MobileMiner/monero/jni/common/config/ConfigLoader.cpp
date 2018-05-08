@@ -28,7 +28,7 @@
 
 
 #ifndef XMRIG_NO_HTTPD
-#   include <microhttpd.h>
+#include "3rdparty/libmicrohttpd/src/include/microhttpd.h"
 #endif
 
 
@@ -40,9 +40,9 @@
 #include "core/ConfigLoader_platform.h"
 #include "interfaces/IConfig.h"
 #include "interfaces/IWatcherListener.h"
-#include "rapidjson/document.h"
-#include "rapidjson/error/en.h"
-#include "rapidjson/filereadstream.h"
+#include "3rdparty/rapidjson/document.h"
+#include "3rdparty/rapidjson/error/en.h"
+#include "3rdparty/rapidjson/filereadstream.h"
 
 
 xmrig::ConfigWatcher *xmrig::ConfigLoader::m_watcher     = nullptr;

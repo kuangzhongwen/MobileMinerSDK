@@ -25,6 +25,7 @@
 #ifndef __CRYPTONIGHT_MONERO_H__
 #define __CRYPTONIGHT_MONERO_H__
 
+#define XMRIG_ARM
 
 // VARIANT ALTERATIONS
 #ifndef XMRIG_ARM

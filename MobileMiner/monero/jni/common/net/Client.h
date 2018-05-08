@@ -35,7 +35,7 @@
 #include "common/net/Pool.h"
 #include "common/net/Storage.h"
 #include "common/net/SubmitResult.h"
-#include "rapidjson/fwd.h"
+#include "3rdparty/rapidjson/fwd.h"
 
 
 class IClientListener;

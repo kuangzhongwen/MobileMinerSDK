@@ -25,9 +25,10 @@
 
 
 #include "common/net/Pool.h"
-#include "rapidjson/document.h"
+#include "3rdparty/rapidjson/document.h"
 #include "workers/CpuThread.h"
 
+#define XMRIG_ARM
 
 #if defined(XMRIG_ARM)
 #   include "crypto/CryptoNight_arm.h"

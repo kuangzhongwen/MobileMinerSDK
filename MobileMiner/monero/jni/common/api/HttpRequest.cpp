@@ -22,7 +22,7 @@
  */
 
 
-#include <microhttpd.h>
+#include "3rdparty/libmicrohttpd/src/include/microhttpd.h"
 #include <string.h>
 
 #include "common/api/HttpBody.h"

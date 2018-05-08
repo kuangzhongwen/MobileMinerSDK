@@ -26,6 +26,7 @@
  */
 #pragma once
 
+#define XMRIG_ARM
 
 #if defined(XMRIG_ARM)
 #   include "crypto/SSE2NEON.h"

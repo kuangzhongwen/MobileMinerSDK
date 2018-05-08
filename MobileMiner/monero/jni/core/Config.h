@@ -31,7 +31,7 @@
 
 #include "common/config/CommonConfig.h"
 #include "common/xmrig.h"
-#include "rapidjson/fwd.h"
+#include "3rdparty/rapidjson/fwd.h"
 #include "workers/CpuThread.h"
 
 

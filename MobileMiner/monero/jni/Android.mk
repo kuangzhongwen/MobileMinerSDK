@@ -70,3 +70,66 @@ LOCAL_SRC_FILES    := \
 
 LOCAL_CFLAGS  += -std=c11 -Wall -Wno-strict-aliasing -mfpu=neon
 include $(BUILD_STATIC_LIBRARY)
+
+
+# monero miner
+include $(CLEAR_VARS)
+LOCAL_MODULE := monero-miner
+
+HEADERS := $(LOCAL_PATH)/
+
+LOCAL_C_INCLUDES := $(HEADERS)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/3rdparty/libcpuid/
+
+LOCAL_SRC_FILES := $(LOCAL_PATH)/api/NetworkState.cpp \
+                   $(LOCAL_PATH)/App.cpp \
+                   $(LOCAL_PATH)/common/config/CommonConfig.cpp \
+                   $(LOCAL_PATH)/common/config/ConfigLoader.cpp \
+                   $(LOCAL_PATH)/common/config/ConfigWatcher.cpp \
+                   $(LOCAL_PATH)/common/Console.cpp \
+                   $(LOCAL_PATH)/common/crypto/Algorithm.cpp \
+                   $(LOCAL_PATH)/common/crypto/keccak.cpp \
+                   $(LOCAL_PATH)/common/log/ConsoleLog.cpp \
+                   $(LOCAL_PATH)/common/log/FileLog.cpp \
+                   $(LOCAL_PATH)/common/log/Log.cpp \
+                   $(LOCAL_PATH)/common/net/Client.cpp \
+                   $(LOCAL_PATH)/common/net/Job.cpp \
+                   $(LOCAL_PATH)/common/net/Pool.cpp \
+                   $(LOCAL_PATH)/common/net/strategies/FailoverStrategy.cpp \
+                   $(LOCAL_PATH)/common/net/strategies/SinglePoolStrategy.cpp \
+                   $(LOCAL_PATH)/common/net/SubmitResult.cpp \
+                   $(LOCAL_PATH)/common/Platform.cpp \
+                   $(LOCAL_PATH)/core/Config.cpp \
+                   $(LOCAL_PATH)/core/Controller.cpp \
+                   $(LOCAL_PATH)/Mem.cpp \
+                   $(LOCAL_PATH)/net/Network.cpp \
+                   $(LOCAL_PATH)/net/strategies/DonateStrategy.cpp \
+                   $(LOCAL_PATH)/Summary.cpp \
+                   $(LOCAL_PATH)/workers/CpuThread.cpp \
+                   $(LOCAL_PATH)/workers/Handle.cpp \
+                   $(LOCAL_PATH)/workers/Hashrate.cpp \
+                   $(LOCAL_PATH)/workers/MultiWorker.cpp \
+                   $(LOCAL_PATH)/workers/Worker.cpp \
+                   $(LOCAL_PATH)/workers/Workers.cpp \
+                   $(LOCAL_PATH)/xmrig.cpp \
+                   $(LOCAL_PATH)/App_unix.cpp \
+                   $(LOCAL_PATH)/common/Platform_unix.cpp \
+                   $(LOCAL_PATH)/Cpu_unix.cpp \
+                   $(LOCAL_PATH)/Mem_unix.cpp \
+                   $(LOCAL_PATH)/Cpu_arm.cpp \
+                   $(LOCAL_PATH)/common/log/SysLog.cpp \
+                   $(LOCAL_PATH)/api/Api.cpp \
+                   $(LOCAL_PATH)/api/ApiRouter.cpp \
+                   $(LOCAL_PATH)/common/api/Httpd.cpp \
+                   $(LOCAL_PATH)/common/api/HttpRequest.cpp
+
+LOCAL_LDLIBS:= -llog -pedantic -Wextra -Wall -Wno-deprecated-declarations -Wno-overlength-strings \
+               -pthread
+LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-microhttpd lib-crypto
+
+LOCAL_CPPFLAGS := -std=c++11 -Wall -fno-exceptions -fno-rtti \
+                -DHAVE_NEON -mfloat-abi=softfp -mfpu=neon -march=armv7-a -flax-vector-conversions \
+                -Wno-strict-aliasing
+
+include $(BUILD_SHARED_LIBRARY)
+
