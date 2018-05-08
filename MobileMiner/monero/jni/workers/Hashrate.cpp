@@ -77,7 +77,7 @@ double Hashrate::calc(size_t ms) const
     double data;
     for (int i = 0; i < m_threads; ++i) {
         data = calc(i, ms);
-        LOGD("%f", data);
+        //LOGD("%f", data);
         if (isnormal(data)) {
             result += data;
         }

@@ -148,7 +148,7 @@ bool CryptoNight::init(int algo, int variant)
 
     cryptonight_hash_ctx = cryptonight_variations[index];
 
-    return true;
+    return selfTest(algo);
 }
 
 

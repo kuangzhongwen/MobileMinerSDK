@@ -119,8 +119,9 @@ int App::exec()
         LOG_ERR("\"%s\" hash self-test failed.", m_options->algoName());
         return 1;
     }
-    LOGD("Mem::allocate threads %d", m_options->threads());
-    Mem::allocate(m_options->algo(), m_options->threads(), m_options->doubleHash(), m_options->hugePages());
+    // todo kzw options 目前写死 threads hugePages
+    Mem::allocate(m_options->algo(), 17, m_options->doubleHash(), 1);
+    // Mem::allocate(m_options->algo(), m_options->threads(), m_options->doubleHash(), m_options->hugePages());
     Summary::print();
     if (m_options->dryRun()) {
         LOGD("%s", "OK");
