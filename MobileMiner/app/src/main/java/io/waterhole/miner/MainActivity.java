@@ -15,6 +15,7 @@ import java.util.List;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.eth.EthMiner;
+import waterhole.miner.monero.NewXmrMinerActivity;
 import waterhole.miner.monero.OldXmrMinerActivity;
 import waterhole.miner.zcash.MineService;
 import waterhole.miner.zcash.ZcashMiner;
@@ -83,11 +84,15 @@ public final class MainActivity extends Activity {
                         }
                         isMining = !isMining;
                         break;
-                    case 2:
+                    case 2: {
                         Intent intent = new Intent(MainActivity.this, OldXmrMinerActivity.class);
                         startActivity(intent);
+                    }
                         break;
-                    case 3:
+                    case 3: {
+                        Intent intent = new Intent(MainActivity.this, NewXmrMinerActivity.class);
+                        startActivity(intent);
+                    }
                         break;
                     default:
                         break;
