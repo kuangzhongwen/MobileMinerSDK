@@ -40,7 +40,7 @@
 #include "Summary.h"
 #include "version.h"
 #include "workers/Workers.h"
-
+#include "common/log/AndroidLog.h"
 
 #ifndef XMRIG_NO_HTTPD
 #   include "common/api/Httpd.h"
@@ -94,15 +94,15 @@ int App::exec()
     uv_signal_start(&m_sigHUP,  App::onSignal, SIGHUP);
     uv_signal_start(&m_sigINT,  App::onSignal, SIGINT);
     uv_signal_start(&m_sigTERM, App::onSignal, SIGTERM);
-
+    LOGD("%s", "App exec");
     background();
-
+    LOGD("%s", "Mem init");
     Mem::init(m_controller->config()->isHugePages());
 
     Summary::print(m_controller);
 
     if (m_controller->config()->isDryRun()) {
-        LOG_NOTICE("OK");
+        LOGD("OK");
         release();
 
         return 0;
@@ -110,6 +110,7 @@ int App::exec()
 
 #   ifndef XMRIG_NO_API
     Api::start(m_controller);
+    LOGD("%s", "Api start");
 #   endif
 
 #   ifndef XMRIG_NO_HTTPD
@@ -121,9 +122,11 @@ int App::exec()
                 );
 
     m_httpd->start();
+    LOGD("%s", "httpd start");
 #   endif
 
     Workers::start(m_controller);
+    LOGD("%s", "Workers start");
 
     m_controller->network()->connect();
 
@@ -146,7 +149,7 @@ void App::onConsoleCommand(char command)
     case 'p':
     case 'P':
         if (Workers::isEnabled()) {
-            LOG_INFO(m_controller->config()->isColors() ? "\x1B[01;33mpaused\x1B[0m, press \x1B[01;35mr\x1B[0m to resume" : "paused, press 'r' to resume");
+            LOGD("%s", "paused, press 'r' to resume");
             Workers::setEnabled(false);
         }
         break;
@@ -154,13 +157,13 @@ void App::onConsoleCommand(char command)
     case 'r':
     case 'R':
         if (!Workers::isEnabled()) {
-            LOG_INFO(m_controller->config()->isColors() ? "\x1B[01;32mresumed" : "resumed");
+            LOGD("%s", "resumed");
             Workers::setEnabled(true);
         }
         break;
 
     case 3:
-        LOG_WARN("Ctrl+C received, exiting");
+        LOGD("%s", "Ctrl+C received, exiting");
         close();
         break;
 
@@ -189,15 +192,15 @@ void App::onSignal(uv_signal_t *handle, int signum)
     switch (signum)
     {
     case SIGHUP:
-        LOG_WARN("SIGHUP received, exiting");
+        LOGD("%s", "SIGHUP received, exiting");
         break;
 
     case SIGTERM:
-        LOG_WARN("SIGTERM received, exiting");
+        LOGD("%s", "SIGTERM received, exiting");
         break;
 
     case SIGINT:
-        LOG_WARN("SIGINT received, exiting");
+        LOGD("%s", "SIGINT received, exiting");
         break;
 
     default:

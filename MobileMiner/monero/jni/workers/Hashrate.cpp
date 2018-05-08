@@ -33,7 +33,7 @@
 #include "core/Config.h"
 #include "core/Controller.h"
 #include "workers/Hashrate.h"
-
+#include "common/log/AndroidLog.h"
 
 inline const char *format(double h, char* buf, size_t size)
 {
@@ -156,12 +156,11 @@ void Hashrate::print()
     char num3[8] = { 0 };
     char num4[8] = { 0 };
 
-    LOG_INFO(m_controller->config()->isColors() ? "\x1B[01;37mspeed\x1B[0m 2.5s/60s/15m \x1B[01;36m%s \x1B[22;36m%s %s \x1B[01;36mH/s\x1B[0m max: \x1B[01;36m%s H/s" : "speed 2.5s/60s/15m %s %s %s H/s max: %s H/s",
-             format(calc(ShortInterval),  num1, sizeof(num1)),
-             format(calc(MediumInterval), num2, sizeof(num2)),
-             format(calc(LargeInterval),  num3, sizeof(num3)),
-             format(m_highest,            num4, sizeof(num4))
-             );
+    LOGD("speed 2.5s/60s/15m %s %s %s H/s max: %s H/s",
+                      format(calc(ShortInterval),  num1, sizeof(num1)),
+                      format(calc(MediumInterval), num2, sizeof(num2)),
+                      format(calc(LargeInterval),  num3, sizeof(num3)),
+                      format(m_highest,            num4, sizeof(num4)));
 }
 
 
