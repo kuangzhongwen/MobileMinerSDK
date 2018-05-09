@@ -408,17 +408,15 @@ inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t si
         return;
     }
     xmrig::keccak(input, size, ctx[0]->state);
-
+    //todo kzw data alignment issue reinterpret_cast
     VARIANT1_INIT(0);
     cn_explode_scratchpad<ALGO, MEM, SOFT_AES>((__m128i*) ctx[0]->state, (__m128i*) ctx[0]->memory);
     const uint8_t* l0 = ctx[0]->memory;
     uint64_t* h0 = reinterpret_cast<uint64_t*>(ctx[0]->state);
-
     uint64_t al0 = h0[0] ^ h0[4];
     uint64_t ah0 = h0[1] ^ h0[5];
     __m128i bx0 = _mm_set_epi64x(h0[3] ^ h0[7], h0[2] ^ h0[6]);
     uint64_t idx0 = h0[0] ^ h0[4];
-
     for (size_t i = 0; i < ITERATIONS; i++) {
         __m128i cx;
 

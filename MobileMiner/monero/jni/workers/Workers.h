@@ -27,7 +27,7 @@
 
 #include <atomic>
 #include <list>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 #include <vector>
 
 #include "common/net/Job.h"

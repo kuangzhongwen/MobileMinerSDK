@@ -24,7 +24,7 @@
 
 #include <limits.h>
 #include <stdio.h>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 #ifndef XMRIG_NO_HTTPD

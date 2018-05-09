@@ -26,7 +26,7 @@
 
 
 #include <map>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 #include <vector>
 
 

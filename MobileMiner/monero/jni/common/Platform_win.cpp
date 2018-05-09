@@ -24,7 +24,7 @@
 
 #include <winsock2.h>
 #include <windows.h>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 #include "log/Log.h"

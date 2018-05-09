@@ -27,7 +27,7 @@
 
 #include <assert.h>
 #include <stdint.h>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 #include "interfaces/IThread.h"

@@ -25,7 +25,7 @@
 #define __HTTPD_H__
 
 
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 struct MHD_Connection;

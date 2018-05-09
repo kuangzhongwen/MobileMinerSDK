@@ -24,8 +24,7 @@
 
 #include <inttypes.h>
 #include <stdio.h>
-#include <uv.h>
-
+#include "3rdparty/uv/uv.h"
 
 #include "common/log/Log.h"
 #include "common/net/Pool.h"

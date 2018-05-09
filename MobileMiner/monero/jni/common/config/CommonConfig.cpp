@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 #include "common/config/CommonConfig.h"

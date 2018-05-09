@@ -25,18 +25,20 @@
 #ifndef __CRYPTONIGHT_MONERO_H__
 #define __CRYPTONIGHT_MONERO_H__
 
+#include "common/log/AndroidLog.h"
+
 #define XMRIG_ARM
 
 // VARIANT ALTERATIONS
 #ifndef XMRIG_ARM
-#   define VARIANT1_INIT(part) \
+#define VARIANT1_INIT(part) \
     uint64_t tweak1_2_##part = 0; \
     if (VARIANT > 0) { \
         tweak1_2_##part = (*reinterpret_cast<const uint64_t*>(input + 35 + part * size) ^ \
                           *(reinterpret_cast<const uint64_t*>(ctx[part]->state) + 24)); \
     }
 #else
-#   define VARIANT1_INIT(part) \
+#define VARIANT1_INIT(part) \
     uint64_t tweak1_2_##part = 0; \
     if (VARIANT > 0) { \
         volatile const uint64_t a = *reinterpret_cast<const uint64_t*>(input + 35 + part * size); \

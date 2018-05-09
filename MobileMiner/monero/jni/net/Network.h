@@ -26,7 +26,7 @@
 
 
 #include <vector>
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 #include "api/NetworkState.h"

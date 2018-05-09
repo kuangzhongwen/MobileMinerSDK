@@ -22,7 +22,7 @@
  */
 
 
-#include <uv.h>
+#include "3rdparty/uv/uv.h"
 
 
 #include "common/net/SubmitResult.h"
