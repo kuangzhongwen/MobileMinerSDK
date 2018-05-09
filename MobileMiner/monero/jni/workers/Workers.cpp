@@ -241,15 +241,12 @@ void Workers::onReady(void *arg)
     }
 
     handle->setWorker(worker);
-    // todo kzw 暂时注释掉 selfTest()
-    /**
-    LOGD("%s", "start selfTest()");
+
     if (!worker->selfTest()) {
-        LOGD("thread %zu error: \"hash self-test failed\".", handle->worker()->id());
-        return;
+       LOGD("thread %zu error: \"hash self-test failed\".", handle->worker()->id());
+       return;
     }
-    LOGD("%s", "end selfTest()");
-    */
+
     start(worker);
 }
 

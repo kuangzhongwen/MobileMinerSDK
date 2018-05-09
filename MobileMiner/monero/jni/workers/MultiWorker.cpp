@@ -102,12 +102,11 @@ void MultiWorker<N>::start()
             if ((m_count & 0x7) == 0) {
                 storeStats();
             }
-
             m_thread->fn(m_state.job.variant())(m_state.blob, m_state.job.size(), m_hash, m_ctx);
-
             for (size_t i = 0; i < N; ++i) {
                 if (*reinterpret_cast<uint64_t*>(m_hash + (i * 32) + 24) < m_state.job.target()) {
-                    Workers::submit(JobResult(m_state.job.poolId(), m_state.job.id(), *nonce(i), m_hash + (i * 32), m_state.job.diff(), m_state.job.algorithm()));
+                    // todo kzw 提交结果
+                    //Workers::submit(JobResult(m_state.job.poolId(), m_state.job.id(), *nonce(i), m_hash + (i * 32), m_state.job.diff(), m_state.job.algorithm()));
                 }
 
                 *nonce(i) += 1;

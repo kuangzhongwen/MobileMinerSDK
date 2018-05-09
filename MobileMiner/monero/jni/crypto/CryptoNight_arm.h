@@ -399,7 +399,6 @@ static inline void cryptonight_monero_tweak(uint64_t* mem_out, __m128i tmp)
 template<xmrig::Algo ALGO, bool SOFT_AES, int VARIANT>
 inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t size, uint8_t *__restrict__ output, cryptonight_ctx **__restrict__ ctx)
 {
-    LOGD("%s", "cryptonight_single_hash start");
     constexpr size_t MASK       = xmrig::cn_select_mask<ALGO>();
     constexpr size_t ITERATIONS = xmrig::cn_select_iter<ALGO>();
     constexpr size_t MEM        = xmrig::cn_select_memory<ALGO>();
@@ -408,7 +407,6 @@ inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t si
         return;
     }
     xmrig::keccak(input, size, ctx[0]->state);
-    //todo kzw data alignment issue reinterpret_cast
     VARIANT1_INIT(0);
     cn_explode_scratchpad<ALGO, MEM, SOFT_AES>((__m128i*) ctx[0]->state, (__m128i*) ctx[0]->memory);
     const uint8_t* l0 = ctx[0]->memory;
@@ -475,14 +473,12 @@ inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t si
     cn_implode_scratchpad<ALGO, MEM, SOFT_AES>((__m128i*) ctx[0]->memory, (__m128i*) ctx[0]->state);
     xmrig::keccakf(h0, 24);
     extra_hashes[ctx[0]->state[0] & 3](ctx[0]->state, 200, output);
-    LOGD("%s", "cryptonight_single_hash end");
 }
 
 
 template<xmrig::Algo ALGO, bool SOFT_AES, int VARIANT>
 inline void cryptonight_double_hash(const uint8_t *__restrict__ input, size_t size, uint8_t *__restrict__ output, struct cryptonight_ctx **__restrict__ ctx)
 {
-    LOGD("%s", "cryptonight_double_hash start");
     constexpr size_t MASK       = xmrig::cn_select_mask<ALGO>();
     constexpr size_t ITERATIONS = xmrig::cn_select_iter<ALGO>();
     constexpr size_t MEM        = xmrig::cn_select_memory<ALGO>();
@@ -623,7 +619,6 @@ inline void cryptonight_double_hash(const uint8_t *__restrict__ input, size_t si
 
     extra_hashes[ctx[0]->state[0] & 3](ctx[0]->state, 200, output);
     extra_hashes[ctx[1]->state[0] & 3](ctx[1]->state, 200, output + 32);
-    LOGD("%s", "cryptonight_double_hash begin");
 }
 
 
