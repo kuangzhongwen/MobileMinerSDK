@@ -68,7 +68,7 @@ LOCAL_SRC_FILES    := \
                     ./crypto/c_jh.c \
                     ./crypto/c_skein.c
 
-LOCAL_CFLAGS  += -std=c11 -Wall -Wno-strict-aliasing -mfpu=neon -mneon-for-64bits
+LOCAL_CFLAGS  += -std=c11 -Wall -Wno-strict-aliasing
 include $(BUILD_STATIC_LIBRARY)
 
 
@@ -128,8 +128,7 @@ LOCAL_LDLIBS:= -llog -pedantic -Wextra -Wall -Wno-deprecated-declarations -Wno-o
 LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-microhttpd lib-crypto
 
 LOCAL_CPPFLAGS := -std=c++11 -Wall -fno-exceptions -fno-rtti \
-                -DHAVE_NEON -mfloat-abi=softfp -mfpu=neon -march=armv7-a -flax-vector-conversions \
-                -Wno-strict-aliasing -mneon-for-64bits
+                -DHAVE_NEON  -flax-vector-conversions -Wno-strict-aliasing -march=armv8-a+crypto
 
 include $(BUILD_SHARED_LIBRARY)
 

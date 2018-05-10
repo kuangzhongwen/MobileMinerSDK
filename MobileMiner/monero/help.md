@@ -6,3 +6,6 @@
 
 #### 32位：armeabi、armeabi-v7a、x86、mips；
 #### 64位：arm64-v8a,x86_64, mips64；
+
+
+#### 尝试对arm支持比较好的：https://github.com/Bendr0id/xmrigCC.git
