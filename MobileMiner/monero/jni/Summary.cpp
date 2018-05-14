@@ -4,8 +4,8 @@
  * Copyright 2014      Lucas Jones <https://github.com/lucasjones>
  * Copyright 2014-2016 Wolf9466    <https://github.com/OhGodAPet>
  * Copyright 2016      Jay D Dee   <jayddee246@gmail.com>
- * Copyright 2017-2018 XMR-Stak    <https://github.com/fireice-uk>, <https://github.com/psychocrypt>
- * Copyright 2016-2018 XMRig       <https://github.com/xmrig>, <support@xmrig.com>
+ * Copyright 2016-2017 XMRig       <support@xmrig.com>
+ *
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,17 +26,16 @@
 #include <stdio.h>
 #include "3rdparty/uv/uv.h"
 
-#include "common/log/Log.h"
-#include "common/net/Pool.h"
-#include "core/Config.h"
-#include "core/Controller.h"
 #include "Cpu.h"
+#include "log/Log.h"
 #include "Mem.h"
+#include "net/Url.h"
+#include "Options.h"
 #include "Summary.h"
 #include "version.h"
 
 
-static void print_versions(xmrig::Config *config)
+static void print_versions()
 {
     char buf[16];
 
@@ -51,27 +50,26 @@ static void print_versions(xmrig::Config *config)
 #   endif
 
 
-    Log::i()->text(config->isColors() ? "\x1B[01;32m * \x1B[01;37mVERSIONS:     \x1B[01;36mXMRig/%s\x1B[01;37m libuv/%s%s" : " * VERSIONS:     XMRig/%s libuv/%s%s",
+    Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mVERSIONS:     \x1B[01;36mXMRig/%s\x1B[01;37m libuv/%s%s" : " * VERSIONS:     XMRig/%s libuv/%s%s",
                    APP_VERSION, uv_version_string(), buf);
 }
 
 
-static void print_memory(xmrig::Config *config) {
-#   ifdef _WIN32
-    if (config->isColors()) {
-        Log::i()->text("\x1B[01;32m * \x1B[01;37mHUGE PAGES:   %s",
-                       Mem::isHugepagesAvailable() ? "\x1B[01;32mavailable" : "\x1B[01;31munavailable");
+static void print_memory() {
+    if (Options::i()->colors()) {
+        Log::i()->text("\x1B[01;32m * \x1B[01;37mHUGE PAGES:   %s, %s",
+                       Mem::isHugepagesAvailable() ? "\x1B[01;32mavailable" : "\x1B[01;31munavailable",
+                       Mem::isHugepagesEnabled() ? "\x1B[01;32menabled" : "\x1B[01;31mdisabled");
     }
     else {
-        Log::i()->text(" * HUGE PAGES:   %s", Mem::isHugepagesAvailable() ? "available" : "unavailable");
+        Log::i()->text(" * HUGE PAGES:   %s, %s", Mem::isHugepagesAvailable() ? "available" : "unavailable", Mem::isHugepagesEnabled() ? "enabled" : "disabled");
     }
-#   endif
 }
 
 
-static void print_cpu(xmrig::Config *config)
+static void print_cpu()
 {
-    if (config->isColors()) {
+    if (Options::i()->colors()) {
         Log::i()->text("\x1B[01;32m * \x1B[01;37mCPU:          %s (%d) %sx64 %sAES-NI",
                        Cpu::brand(),
                        Cpu::sockets(),
@@ -90,71 +88,60 @@ static void print_cpu(xmrig::Config *config)
 }
 
 
-static void print_threads(xmrig::Config *config)
+static void print_threads()
 {
-    if (config->threadsMode() != xmrig::Config::Advanced) {
-        char buf[32];
-        if (config->affinity() != -1L) {
-            snprintf(buf, 32, ", affinity=0x%" PRIX64, config->affinity());
-        }
-        else {
-            buf[0] = '\0';
-        }
-
-        Log::i()->text(config->isColors() ? "\x1B[01;32m * \x1B[01;37mTHREADS:      \x1B[01;36m%d\x1B[01;37m, %s, av=%d, %sdonate=%d%%%s" : " * THREADS:      %d, %s, av=%d, %sdonate=%d%%%s",
-                       config->threadsCount(),
-                       config->algorithm().name(),
-                       config->algoVariant(),
-                       config->isColors() && config->donateLevel() == 0 ? "\x1B[01;31m" : "",
-                       config->donateLevel(),
-                       buf);
+    char buf[32];
+    if (Options::i()->affinity() != -1L) {
+        snprintf(buf, 32, ", affinity=0x%" PRIX64, Options::i()->affinity());
     }
     else {
-        Log::i()->text(config->isColors() ? "\x1B[01;32m * \x1B[01;37mTHREADS:      \x1B[01;36m%d\x1B[01;37m, %s, %sdonate=%d%%" : " * THREADS:      %d, %s, %sdonate=%d%%",
-                       config->threadsCount(),
-                       config->algorithm().name(),
-                       config->isColors() && config->donateLevel() == 0 ? "\x1B[01;31m" : "",
-                       config->donateLevel());
+        buf[0] = '\0';
     }
+
+    Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mTHREADS:      \x1B[01;36m%d\x1B[01;37m, %s, av=%d, %sdonate=%d%%%s" : " * THREADS:      %d, %s, av=%d, %sdonate=%d%%%s",
+                   Options::i()->threads(),
+                   Options::i()->algoName(),
+                   Options::i()->algoVariant(),
+                   Options::i()->colors() && Options::i()->donateLevel() == 0 ? "\x1B[01;31m" : "",
+                   Options::i()->donateLevel(),
+                   buf);
 }
 
 
-static void print_pools(xmrig::Config *config)
+static void print_pools()
 {
-    const std::vector<Pool> &pools = config->pools();
+    const std::vector<Url*> &pools = Options::i()->pools();
 
     for (size_t i = 0; i < pools.size(); ++i) {
-        Log::i()->text(config->isColors() ? "\x1B[01;32m * \x1B[01;37mPOOL #%d:      \x1B[01;36m%s" : " * POOL #%d:      %s",
+        Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mPOOL #%d:      \x1B[01;36m%s:%d" : " * POOL #%d:      %s:%d",
                        i + 1,
-                       pools[i].url()
-                       );
+                       pools[i]->host(),
+                       pools[i]->port());
     }
 
 #   ifdef APP_DEBUG
-    for (const Pool &pool : pools) {
-        pool.print();
+    for (size_t i = 0; i < pools.size(); ++i) {
+        Log::i()->text("%s:%d, user: %s, pass: %s, ka: %d, nicehash: %d", pools[i]->host(), pools[i]->port(), pools[i]->user(), pools[i]->password(), pools[i]->isKeepAlive(), pools[i]->isNicehash());
     }
 #   endif
 }
 
 
 #ifndef XMRIG_NO_API
-static void print_api(xmrig::Config *config)
+static void print_api()
 {
-    const int port = config->apiPort();
-    if (port == 0) {
+    if (Options::i()->apiPort() == 0) {
         return;
     }
 
-    Log::i()->text(config->isColors() ? "\x1B[01;32m * \x1B[01;37mAPI BIND:     \x1B[01;36m%s:%d" : " * API BIND:     %s:%d",
-                   config->isApiIPv6() ? "[::]" : "0.0.0.0", port);
+    Log::i()->text(Options::i()->colors() ? "\x1B[01;32m * \x1B[01;37mAPI PORT:     \x1B[01;36m%d" : " * API PORT:     %d", Options::i()->apiPort());
 }
 #endif
 
 
-static void print_commands(xmrig::Config *config)
+static void print_commands()
 {
-    if (config->isColors()) {
+    if (Options::i()->colors()) {
         Log::i()->text("\x1B[01;32m * \x1B[01;37mCOMMANDS:     \x1B[01;35mh\x1B[01;37mashrate, \x1B[01;35mp\x1B[01;37mause, \x1B[01;35mr\x1B[01;37mesume");
     }
     else {
@@ -163,19 +150,19 @@ static void print_commands(xmrig::Config *config)
 }
 
 
-void Summary::print(xmrig::Controller *controller)
+void Summary::print()
 {
-    print_versions(controller->config());
-    print_memory(controller->config());
-    print_cpu(controller->config());
-    print_threads(controller->config());
-    print_pools(controller->config());
+    print_versions();
+    print_memory();
+    print_cpu();
+    print_threads();
+    print_pools();
 
 #   ifndef XMRIG_NO_API
-    print_api(controller->config());
+    print_api();
 #   endif
 
-    print_commands(controller->config());
+    print_commands();
 }
 
 
