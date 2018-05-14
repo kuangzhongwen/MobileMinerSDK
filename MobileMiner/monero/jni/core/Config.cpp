@@ -47,7 +47,8 @@ xmrig::Config::Config() : xmrig::CommonConfig(),
     m_hugePages(true),
     m_safe(false),
     m_maxCpuUsage(75),
-    m_priority(-1)
+    // todo kzw线程优先级，默认-1
+    m_priority(2)
 {
 }
 

