@@ -31,38 +31,37 @@
 
 
 #include "api/Api.h"
-#include "log/Log.h"
-#include "net/Client.h"
+#include "common/log/Log.h"
+#include "common/net/Client.h"
+#include "common/net/strategies/FailoverStrategy.h"
+#include "common/net/strategies/SinglePoolStrategy.h"
+#include "common/net/SubmitResult.h"
+#include "core/Config.h"
+#include "core/Controller.h"
 #include "net/Network.h"
 #include "net/strategies/DonateStrategy.h"
-#include "net/strategies/FailoverStrategy.h"
-#include "net/strategies/SinglePoolStrategy.h"
-#include "net/SubmitResult.h"
-#include "net/Url.h"
-#include "Options.h"
 #include "workers/Workers.h"
-#include "log/AndroidLog.h"
+#include "common/log/AndroidLog.h"
 
-
-Network::Network(const Options *options) :
-    m_options(options),
-    m_donate(nullptr)
+Network::Network(xmrig::Controller *controller) :
+    m_donate(nullptr),
+    m_controller(controller)
 {
     srand(time(0) ^ (uintptr_t) this);
 
     Workers::setListener(this);
 
-    const std::vector<Url*> &pools = options->pools();
+    const std::vector<Pool> &pools = controller->config()->pools();
 
     if (pools.size() > 1) {
-        m_strategy = new FailoverStrategy(pools, options->retryPause(), options->retries(), this);
+        m_strategy = new FailoverStrategy(pools, controller->config()->retryPause(), controller->config()->retries(), this);
     }
     else {
-        m_strategy = new SinglePoolStrategy(pools.front(), options->retryPause(), this);
+        m_strategy = new SinglePoolStrategy(pools.front(), controller->config()->retryPause(), controller->config()->retries(), this);
     }
 
-    if (m_options->donateLevel() > 0) {
-        m_donate = new DonateStrategy(options->donateLevel(), options->pools().front()->user(), options->algo(), this);
+    if (controller->config()->donateLevel() > 0) {
+        m_donate = new DonateStrategy(controller->config()->donateLevel(), controller->config()->pools().front().user(), controller->config()->algorithm().algo(), this);
     }
 
     m_timer.data = this;
@@ -101,6 +100,7 @@ void Network::onActive(IStrategy *strategy, Client *client)
     }
 
     m_state.setPool(client->host(), client->port(), client->ip());
+
     LOGD("use pool %s:%d %s", client->host(), client->port(), client->ip());
 }
 
@@ -144,13 +144,28 @@ void Network::onPause(IStrategy *strategy)
 void Network::onResultAccepted(IStrategy *strategy, Client *client, const SubmitResult &result, const char *error)
 {
     m_state.add(result, error);
-    LOGD("accepted (%" PRId64 "/%" PRId64 ") diff %u (%" PRIu64 " ms)", m_state.accepted, m_state.rejected, result.diff, result.elapsed);
+
+    if (error) {
+        LOGD("rejected (%" PRId64 "/%" PRId64 ") diff %u \"%s\" (%" PRIu64 " ms)",
+                              m_state.accepted, m_state.rejected, result.diff, error, result.elapsed);
+    }
+    else {
+        LOGD("accepted (%" PRId64 "/%" PRId64 ") diff %u (%" PRIu64 " ms)",
+                              m_state.accepted, m_state.rejected, result.diff, result.elapsed);
+    }
+}
+
+
+bool Network::isColors() const
+{
+    return m_controller->config()->isColors();
 }
 
 
 void Network::setJob(Client *client, const Job &job, bool donate)
 {
-    LOGD("new job from %s:%d diff %d", client->host(), client->port(), job.diff());
+    LOGD("new job from %s:%d diff %d algo %s",
+                      client->host(), client->port(), job.diff(), job.algorithm().shortName());
     m_state.diff = job.diff();
     Workers::setJob(job, donate);
 }
