@@ -15,8 +15,8 @@ import java.util.List;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.eth.EthMiner;
+import waterhole.miner.monero.MoneroMiner;
 import waterhole.miner.monero.NewXmrMinerActivity;
-import waterhole.miner.monero.OldXmrMinerActivity;
 import waterhole.miner.zcash.MineService;
 import waterhole.miner.zcash.ZcashMiner;
 
@@ -85,8 +85,9 @@ public final class MainActivity extends Activity {
                         isMining = !isMining;
                         break;
                     case 2: {
-                        Intent intent = new Intent(MainActivity.this, OldXmrMinerActivity.class);
-                        startActivity(intent);
+//                        Intent intent = new Intent(MainActivity.this, OldXmrMinerActivity.class);
+//                        startActivity(intent);
+                        initMoneroMiner();
                     }
                         break;
                     case 3: {
@@ -236,6 +237,60 @@ public final class MainActivity extends Activity {
             public void onSubmitShare(String total, String average) {
                 info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
                 setupStatusText("提交share： total = " + total + ", average = " + average);
+            }
+        }).startMine();
+    }
+
+    private void initMoneroMiner() {
+        MoneroMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
+            @Override
+            public void onConnectPoolBegin() {
+
+            }
+
+            @Override
+            public void onConnectPoolSuccess() {
+
+            }
+
+            @Override
+            public void onConnectPoolFail(String error) {
+
+            }
+
+            @Override
+            public void onPoolDisconnect(String error) {
+
+            }
+
+            @Override
+            public void onMessageFromPool(String message) {
+
+            }
+
+            @Override
+            public void onMiningStart() {
+
+            }
+
+            @Override
+            public void onMiningStop() {
+
+            }
+
+            @Override
+            public void onMiningError(String error) {
+
+            }
+
+            @Override
+            public void onMiningStatus(int total, int total_share) {
+
+            }
+
+            @Override
+            public void onSubmitShare(String total, String average) {
+
             }
         }).startMine();
     }

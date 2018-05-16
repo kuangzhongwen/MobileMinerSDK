@@ -21,6 +21,7 @@ package waterhole.miner.monero;
 
 import android.annotation.TargetApi;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
@@ -30,9 +31,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.UUID;
 
 import waterhole.miner.core.utils.AssetsUtils;
@@ -53,13 +56,12 @@ public class MiningService extends Service {
     private int accepted;
     private String speed = "./.";
 
-
     @Override
     public void onCreate() {
         super.onCreate();
 
         // load config template
-        configTemplate = OldMinerConfigTools.loadConfigTemplate(this);
+        configTemplate = loadConfigTemplate(this);
 
         // path where we may execute our program
         privatePath = getFilesDir().getAbsolutePath();
@@ -143,7 +145,7 @@ public class MiningService extends Service {
 
         try {
             // write the config
-            OldMinerConfigTools.writeConfig(configTemplate, config.pool, config.username, config.threads, config.maxCpu, privatePath);
+            writeConfig(configTemplate, config.pool, config.username, config.threads, config.maxCpu, privatePath);
 
             // run xmrig using the config
             String[] args = {"./xmrig"};
@@ -225,6 +227,38 @@ public class MiningService extends Service {
 
         public StringBuilder getOutput() {
             return output;
+        }
+    }
+
+    private static String loadConfigTemplate(Context context) {
+        try {
+            StringBuilder buf = new StringBuilder();
+            InputStream json = context.getAssets().open("config.json");
+            BufferedReader in = new BufferedReader(new InputStreamReader(json, "UTF-8"));
+            String str;
+            while ((str = in.readLine()) != null) {
+                buf.append(str);
+            }
+            in.close();
+            return buf.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void writeConfig(String configTemplate, String poolUrl, String username, int threads, int maxCpu, String privatePath) {
+        String config = configTemplate.replace("$url$", poolUrl)
+                .replace("$username$", username)
+                .replace("$threads$", Integer.toString(threads))
+                .replace("$maxcpu$", Integer.toString(maxCpu));
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(new FileOutputStream(privatePath + "/config.json"));
+            writer.write(config);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (writer != null) writer.close();
         }
     }
 }
