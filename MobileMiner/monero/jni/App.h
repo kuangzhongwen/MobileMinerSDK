@@ -4,8 +4,8 @@
  * Copyright 2014      Lucas Jones <https://github.com/lucasjones>
  * Copyright 2014-2016 Wolf9466    <https://github.com/OhGodAPet>
  * Copyright 2016      Jay D Dee   <jayddee246@gmail.com>
- * Copyright 2017-2018 XMR-Stak    <https://github.com/fireice-uk>, <https://github.com/psychocrypt>
- * Copyright 2016-2018 XMRig       <https://github.com/xmrig>, <support@xmrig.com>
+ * Copyright 2016-2017 XMRig       <support@xmrig.com>
+ *
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 
 #include "3rdparty/uv/uv.h"
 
-
 #include "interfaces/IConsoleListener.h"
 
 
@@ -35,11 +34,6 @@ class Console;
 class Httpd;
 class Network;
 class Options;
-
-
-namespace xmrig {
-    class Controller;
-}
 
 
 class App : public IConsoleListener
@@ -64,10 +58,11 @@ private:
 
   Console *m_console;
   Httpd *m_httpd;
+  Network *m_network;
+  Options *m_options;
   uv_signal_t m_sigHUP;
   uv_signal_t m_sigINT;
   uv_signal_t m_sigTERM;
-  xmrig::Controller *m_controller;
 };
 
 

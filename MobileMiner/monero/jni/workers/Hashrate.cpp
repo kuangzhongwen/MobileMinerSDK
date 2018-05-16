@@ -4,8 +4,8 @@
  * Copyright 2014      Lucas Jones <https://github.com/lucasjones>
  * Copyright 2014-2016 Wolf9466    <https://github.com/OhGodAPet>
  * Copyright 2016      Jay D Dee   <jayddee246@gmail.com>
- * Copyright 2017-2018 XMR-Stak    <https://github.com/fireice-uk>, <https://github.com/psychocrypt>
- * Copyright 2016-2018 XMRig       <https://github.com/xmrig>, <support@xmrig.com>
+ * Copyright 2016-2017 XMRig       <support@xmrig.com>
+ *
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,18 +22,16 @@
  */
 
 
-#include <assert.h>
 #include <chrono>
 #include <math.h>
 #include <memory.h>
 #include <stdio.h>
 
-
-#include "common/log/Log.h"
-#include "core/Config.h"
-#include "core/Controller.h"
+#include "log/Log.h"
+#include "Options.h"
 #include "workers/Hashrate.h"
-#include "common/log/AndroidLog.h"
+#include "log/AndroidLog.h"
+
 
 inline const char *format(double h, char* buf, size_t size)
 {
@@ -46,22 +44,24 @@ inline const char *format(double h, char* buf, size_t size)
 }
 
 
-Hashrate::Hashrate(size_t threads, xmrig::Controller *controller) :
+Hashrate::Hashrate(int threads) :
     m_highest(0.0),
-    m_threads(threads),
-    m_controller(controller)
+    m_threads(threads)
 {
     m_counts     = new uint64_t*[threads];
     m_timestamps = new uint64_t*[threads];
     m_top        = new uint32_t[threads];
 
-    for (size_t i = 0; i < threads; i++) {
-        m_counts[i]     = new uint64_t[kBucketSize]();
-        m_timestamps[i] = new uint64_t[kBucketSize]();
-        m_top[i]        = 0;
+    for (int i = 0; i < threads; i++) {
+        m_counts[i] = new uint64_t[kBucketSize];
+        m_timestamps[i] = new uint64_t[kBucketSize];
+        m_top[i] = 0;
+
+        memset(m_counts[0], 0, sizeof(uint64_t) * kBucketSize);
+        memset(m_timestamps[0], 0, sizeof(uint64_t) * kBucketSize);
     }
 
-    const int printTime = controller->config()->printTime();
+    const int printTime = Options::i()->printTime();
 
     if (printTime > 0) {
         uv_timer_init(uv_default_loop(), &m_timer);
@@ -77,7 +77,7 @@ double Hashrate::calc(size_t ms) const
     double result = 0.0;
     double data;
 
-    for (size_t i = 0; i < m_threads; ++i) {
+    for (int i = 0; i < m_threads; ++i) {
         data = calc(i, ms);
         if (isnormal(data)) {
             result += data;
@@ -90,8 +90,6 @@ double Hashrate::calc(size_t ms) const
 
 double Hashrate::calc(size_t threadId, size_t ms) const
 {
-    assert(threadId < m_threads);
-
     using namespace std::chrono;
     const uint64_t now = time_point_cast<milliseconds>(high_resolution_clock::now()).time_since_epoch().count();
 
@@ -151,16 +149,17 @@ void Hashrate::add(size_t threadId, uint64_t count, uint64_t timestamp)
 
 void Hashrate::print()
 {
-    char num1[8] = { 0 };
-    char num2[8] = { 0 };
-    char num3[8] = { 0 };
-    char num4[8] = { 0 };
+    char num1[8];
+    char num2[8];
+    char num3[8];
+    char num4[8];
 
-    LOGD("speed 2.5s/60s/15m %s %s %s H/s max: %s H/s",
+    LOGD("speed 10s/60s/15m %s %s %s H/s max: %s H/s",
                       format(calc(ShortInterval),  num1, sizeof(num1)),
                       format(calc(MediumInterval), num2, sizeof(num2)),
                       format(calc(LargeInterval),  num3, sizeof(num3)),
-                      format(m_highest,            num4, sizeof(num4)));
+                      format(m_highest,            num4, sizeof(num4))
+                      );
 }
 
 
