@@ -528,8 +528,9 @@ public final class FileUtils {
             InputStream input = conn.getInputStream();
             output = new FileOutputStream(file);
             byte[] buffer = new byte[4 * 1024];
-            while (input.read(buffer) != -1) {
-                output.write(buffer);
+            int len;
+            while ((len = input.read(buffer)) != -1) {
+                output.write(buffer, 0, len);
             }
             output.flush();
             if (callback != null) {

