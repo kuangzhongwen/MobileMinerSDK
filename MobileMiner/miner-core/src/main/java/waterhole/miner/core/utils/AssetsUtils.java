@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -59,6 +61,26 @@ public final class AssetsUtils {
             return getImageFromAsset(context, file);
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    public static void copyAssetsFile(Context context, String assetFilePath, String localFilePath) {
+        try {
+            InputStream in = context.getAssets().open(assetFilePath);
+            FileOutputStream out = new FileOutputStream(localFilePath);
+            int read;
+            byte[] buffer = new byte[4096];
+            while ((read = in.read(buffer)) > 0) {
+                out.write(buffer, 0, read);
+            }
+            out.close();
+            in.close();
+
+            File bin = new File(localFilePath);
+            bin.setExecutable(true);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

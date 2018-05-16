@@ -32,30 +32,17 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by uwe on 19.01.18.
- */
+public class OldMinerConfigTools {
 
-public class Tools {
-
-    /**
-     * load the config.json template file
-     *
-     * @param context
-     * @return
-     * @throws IOException
-     */
     public static String loadConfigTemplate(Context context) {
         try {
             StringBuilder buf = new StringBuilder();
             InputStream json = context.getAssets().open("config.json");
             BufferedReader in = new BufferedReader(new InputStreamReader(json, "UTF-8"));
             String str;
-
             while ((str = in.readLine()) != null) {
                 buf.append(str);
             }
-
             in.close();
             return buf.toString();
         } catch (IOException e) {
@@ -63,43 +50,6 @@ public class Tools {
         }
     }
 
-
-    /**
-     * copy a file from the assets to a local path
-     *
-     * @param context
-     * @param assetFilePath
-     * @param localFilePath
-     */
-    public static void copyFile(Context context, String assetFilePath, String localFilePath) {
-        try {
-            InputStream in = context.getAssets().open(assetFilePath);
-            FileOutputStream out = new FileOutputStream(localFilePath);
-            int read;
-            byte[] buffer = new byte[4096];
-            while ((read = in.read(buffer)) > 0) {
-                out.write(buffer, 0, read);
-            }
-            out.close();
-            in.close();
-
-            File bin = new File(localFilePath);
-            bin.setExecutable(true);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * write a config.json using the template and the given values
-     *
-     * @param configTemplate
-     * @param poolUrl
-     * @param username
-     * @param privatePath
-     * @throws IOException
-     */
     public static void writeConfig(String configTemplate, String poolUrl, String username, int threads, int maxCpu, String privatePath) {
         String config = configTemplate.replace("$url$", poolUrl)
                 .replace("$username$", username)
@@ -114,32 +64,5 @@ public class Tools {
         } finally {
             if (writer != null) writer.close();
         }
-    }
-
-    public static Map<String, String> getCPUInfo() {
-        Map<String, String> output = new HashMap<>();
-        try {
-            BufferedReader br;
-            br = new BufferedReader(new FileReader("/proc/cpuinfo"));
-
-            String str;
-
-            while ((str = br.readLine()) != null) {
-                String[] data = str.split(":");
-
-                if (data.length > 1) {
-                    String key = data[0].trim().replace(" ", "_");
-                    if (key.equals("model_name")) key = "cpu_model";
-                    String value = data[1].trim();
-                    if (key.equals("cpu_model"))
-                        value = value.replaceAll("\\s+", " ");
-                    output.put(key, value);
-                }
-            }
-            br.close();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return output;
     }
 }

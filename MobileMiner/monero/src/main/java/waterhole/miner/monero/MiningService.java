@@ -35,6 +35,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.UUID;
 
+import waterhole.miner.core.utils.AssetsUtils;
+
 /**
  * MiningService for mining in the background
  * Created by uwe on 24.01.18.
@@ -57,7 +59,7 @@ public class MiningService extends Service {
         super.onCreate();
 
         // load config template
-        configTemplate = Tools.loadConfigTemplate(this);
+        configTemplate = OldMinerConfigTools.loadConfigTemplate(this);
 
         // path where we may execute our program
         privatePath = getFilesDir().getAbsolutePath();
@@ -66,9 +68,9 @@ public class MiningService extends Service {
         Log.w(LOG_TAG, "my workerId: " + workerId);
 
         // copy binaries to a path where we may execute it);
-        Tools.copyFile(this, "xmrig-arm64", privatePath + "/xmrig");
-        Tools.copyFile(this, "libuv.so", privatePath + "/libuv.so");
-        Tools.copyFile(this, "libc++_shared.so", privatePath + "/libc++_shared.so");
+        AssetsUtils.copyAssetsFile(this, "xmrig-arm64", privatePath + "/xmrig");
+        AssetsUtils.copyAssetsFile(this, "libuv.so", privatePath + "/libuv.so");
+        AssetsUtils.copyAssetsFile(this, "libc++_shared.so", privatePath + "/libc++_shared.so");
     }
 
     public class MiningServiceBinder extends Binder {
@@ -141,7 +143,7 @@ public class MiningService extends Service {
 
         try {
             // write the config
-            Tools.writeConfig(configTemplate, config.pool, config.username, config.threads, config.maxCpu, privatePath);
+            OldMinerConfigTools.writeConfig(configTemplate, config.pool, config.username, config.threads, config.maxCpu, privatePath);
 
             // run xmrig using the config
             String[] args = {"./xmrig"};
