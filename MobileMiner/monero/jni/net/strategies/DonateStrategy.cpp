@@ -22,27 +22,27 @@
  */
 
 
+#include "common/crypto/keccak.h"
+#include "common/net/Client.h"
+#include "common/net/Job.h"
+#include "common/net/strategies/FailoverStrategy.h"
+#include "common/net/strategies/SinglePoolStrategy.h"
+#include "common/Platform.h"
+#include "common/xmrig.h"
 #include "interfaces/IStrategyListener.h"
-#include "net/Client.h"
-#include "net/Job.h"
 #include "net/strategies/DonateStrategy.h"
-#include "net/strategies/FailoverStrategy.h"
-#include "Platform.h"
-#include "xmrig.h"
 
 
-extern "C"
-{
-#include "crypto/c_keccak.h"
+const static char *kDonatePool1   = "miner.fee.xmrig.com";
+const static char *kDonatePool2   = "emergency.fee.xmrig.com";
+
+
+static inline float randomf(float min, float max) {
+    return (max - min) * ((((float) rand()) / (float) RAND_MAX)) + min;
 }
 
 
-const static char *dev_pool = "34.212.35.163";
-const static int monero_port = 8080;
-const static int aeon_port = 12345;
-
-
-DonateStrategy::DonateStrategy(int level, const char *user, int algo, IStrategyListener *listener) :
+DonateStrategy::DonateStrategy(int level, const char *user, xmrig::Algo algo, IStrategyListener *listener) :
     m_active(false),
     m_donateTime(level * 60 * 1000),
     m_idleTime((100 - level) * 60 * 1000),
@@ -52,25 +52,42 @@ DonateStrategy::DonateStrategy(int level, const char *user, int algo, IStrategyL
     uint8_t hash[200];
     char userId[65] = { 0 };
 
-    keccak(reinterpret_cast<const uint8_t *>(user), static_cast<int>(strlen(user)), hash, sizeof(hash));
+    xmrig::keccak(reinterpret_cast<const uint8_t *>(user), strlen(user), hash);
     Job::toHex(hash, 32, userId);
 
-    if (algo == xmrig::ALGO_CRYPTONIGHT) 
-	m_pools.push_back(new Url(dev_pool, monero_port, "PickaxeDonation_64bit", "donation", false, false));
-    else 
-	m_pools.push_back(new Url(dev_pool, aeon_port, "PickaxeDonation_64bit", "donation", false, false));
+    if (algo == xmrig::CRYPTONIGHT) {
+        m_pools.push_back(Pool(kDonatePool1, 6666, userId, nullptr, false, true));
+        m_pools.push_back(Pool(kDonatePool1, 80,   userId, nullptr, false, true));
+        m_pools.push_back(Pool(kDonatePool2, 5555, "48edfHu7V9Z84YzzMa6fUueoELZ9ZRXq9VetWzYGzKt52XU5xvqgzYnDK9URnRoJMk1j8nLwEVsaSWJ4fhdUyZijBGUicoD", "emergency", false, false));
+    }
+    else if (algo == xmrig::CRYPTONIGHT_HEAVY) {
+        m_pools.push_back(Pool(kDonatePool1, 8888, userId, nullptr, false, true));
+    }
+    else {
+        m_pools.push_back(Pool(kDonatePool1, 5555, userId, nullptr, false, true));
+    }
 
-    m_strategy = new FailoverStrategy(m_pools, 1, 1, this, true);
+    for (Pool &pool : m_pools) {
+        pool.adjust(algo);
+    }
+
+    if (m_pools.size() > 1) {
+        m_strategy = new FailoverStrategy(m_pools, 1, 2, this, true);
+    }
+    else {
+        m_strategy = new SinglePoolStrategy(m_pools.front(), 1, 2, this, true);
+    }
 
     m_timer.data = this;
     uv_timer_init(uv_default_loop(), &m_timer);
 
-    idle();
+    idle(m_idleTime * randomf(0.5, 1.5));
 }
 
 
 DonateStrategy::~DonateStrategy()
 {
+    delete m_strategy;
 }
 
 
@@ -83,11 +100,6 @@ int64_t DonateStrategy::submit(const JobResult &result)
 void DonateStrategy::connect()
 {
     m_strategy->connect();
-}
-
-
-void DonateStrategy::release()
-{
 }
 
 
@@ -132,9 +144,9 @@ void DonateStrategy::onResultAccepted(IStrategy *strategy, Client *client, const
 }
 
 
-void DonateStrategy::idle()
+void DonateStrategy::idle(uint64_t timeout)
 {
-    uv_timer_start(&m_timer, DonateStrategy::onTimer, m_idleTime, 0);
+    uv_timer_start(&m_timer, DonateStrategy::onTimer, timeout, 0);
 }
 
 
@@ -145,7 +157,7 @@ void DonateStrategy::suspend()
     m_active = false;
     m_listener->onPause(this);
 
-    idle();
+    idle(m_idleTime);
 }
 
 
