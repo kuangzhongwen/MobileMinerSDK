@@ -11,6 +11,7 @@ import android.os.StatFs;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,10 +19,19 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import waterhole.miner.core.crypto.MD5;
+
+import static waterhole.miner.core.utils.IOUtils.closeSafely;
+import static waterhole.miner.core.utils.LogUtils.printStackTrace;
 
 /**
  * 文件util
@@ -498,5 +508,110 @@ public final class FileUtils {
         }
         res.append(" ").append(unit[unitIndex]);
         return res.toString();
+    }
+
+    public static void downloadFile(String url, String savePath, DownloadCallback callback) {
+        if (TextUtils.isEmpty(url) || TextUtils.isEmpty(savePath)) {
+            throw new IllegalArgumentException("URL or savePath is Null");
+        }
+        OutputStream output = null;
+        try {
+            File file = new File(savePath);
+            if (file.exists()) {
+                if (callback != null) {
+                    callback.onDownloadSuccess(savePath);
+                }
+                return;
+            }
+            URL URL = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) URL.openConnection();
+            InputStream input = conn.getInputStream();
+            output = new FileOutputStream(file);
+            byte[] buffer = new byte[4 * 1024];
+            while (input.read(buffer) != -1) {
+                output.write(buffer);
+            }
+            output.flush();
+            if (callback != null) {
+                callback.onDownloadSuccess(savePath);
+            }
+        } catch (MalformedURLException e) {
+            printStackTrace(e);
+            if (callback != null) {
+                callback.onDownloadFail(savePath, e.getMessage());
+            }
+        } catch (IOException e) {
+            printStackTrace(e);
+            if (callback != null) {
+                callback.onDownloadFail(savePath, e.getMessage());
+            }
+        } finally {
+            closeSafely(output);
+        }
+    }
+
+    public interface DownloadCallback {
+
+        void onDownloadSuccess(String path);
+
+        void onDownloadFail(String path, String reason);
+    }
+
+    public static void unzip(String zipFile, String targetDir, UnzipCallback callback) {
+        if (TextUtils.isEmpty(zipFile) || TextUtils.isEmpty(targetDir)) {
+            throw new IllegalArgumentException("zipFilePath or targetFilePath is Null");
+        }
+        int BUFFER = 4096;
+        String strEntry;
+        try {
+            BufferedOutputStream dest;
+            FileInputStream fis = new FileInputStream(zipFile);
+            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                File entryFile = null;
+                try {
+                    int count;
+                    byte data[] = new byte[BUFFER];
+                    strEntry = entry.getName();
+
+                    entryFile = new File(targetDir + strEntry);
+                    File entryDir = new File(entryFile.getParent());
+                    if (!entryDir.exists()) {
+                        entryDir.mkdirs();
+                    }
+                    FileOutputStream fos = new FileOutputStream(entryFile);
+                    dest = new BufferedOutputStream(fos, BUFFER);
+                    while ((count = zis.read(data, 0, BUFFER)) != -1) {
+                        dest.write(data, 0, count);
+                    }
+                    dest.flush();
+                    dest.close();
+                } catch (Exception ex) {
+                    printStackTrace(ex);
+                    if (callback != null) {
+                        callback.onUnzipEntryFail(entryFile != null ? entryFile.getAbsolutePath() : "", ex.getMessage());
+                    }
+                }
+            }
+            zis.close();
+            if (callback != null) {
+                callback.onUnzipComplete(zipFile);
+            }
+        } catch (Exception e) {
+            printStackTrace(e);
+            if (callback != null) {
+                callback.onUnzipFail(zipFile, e.getMessage());
+            }
+        }
+    }
+
+    public interface UnzipCallback {
+
+        void onUnzipComplete(String path);
+
+        void onUnzipFail(String path, String reason);
+
+        void onUnzipEntryFail(String path, String reason);
     }
 }
