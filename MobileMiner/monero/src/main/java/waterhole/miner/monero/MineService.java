@@ -21,14 +21,10 @@ package waterhole.miner.monero;
 
 import android.annotation.TargetApi;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,11 +32,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.UUID;
 
-import waterhole.miner.core.utils.IOUtils;
 import waterhole.miner.core.utils.LogUtils;
+
+import static waterhole.miner.core.utils.LogUtils.error;
+import static waterhole.miner.core.utils.LogUtils.info;
+import static waterhole.miner.core.utils.IOUtils.closeSafely;
 
 public class MineService extends Service {
 
@@ -96,6 +93,10 @@ public class MineService extends Service {
 
     public void startMining() {
         LogUtils.info(LOG_TAG, "starting...");
+        startMineOldXmr();
+    }
+
+    private void startMineOldXmr() {
         if (process != null) {
             process.destroy();
         }
@@ -122,10 +123,8 @@ public class MineService extends Service {
             outputHandler.start();
         } catch (Exception e) {
             LogUtils.error(LOG_TAG, "exception:", e);
-            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             process = null;
         }
-
     }
 
     public String getSpeed() {
@@ -137,9 +136,11 @@ public class MineService extends Service {
     }
 
     public String getOutput() {
-        if (outputHandler != null && outputHandler.getOutput() != null)
+        if (outputHandler != null && outputHandler.getOutput() != null) {
             return outputHandler.getOutput().toString();
-        else return "";
+        } else {
+            return "";
+        }
     }
 
     public int getAvailableCores() {
@@ -172,10 +173,10 @@ public class MineService extends Service {
                         String[] split = TextUtils.split(line, " ");
                         speed = split[split.length - 2];
                     }
-                    LogUtils.info(LOG_TAG, "accepted = " + accepted + " ,speed = " + speed);
+                    info(LOG_TAG, "accepted = " + accepted + " ,speed = " + speed);
                 }
             } catch (IOException e) {
-                LogUtils.error(LOG_TAG, "exception", e);
+                error(LOG_TAG, "exception", e);
             }
         }
 
@@ -185,7 +186,8 @@ public class MineService extends Service {
     }
 
     private void writeOldConfig(String privatePath) {
-        String config = "* {\n" +
+        // todo kzw 目前参数写死
+        String config = "{\n" +
                 "         \"algo\": \"cryptonight\",\n" +
                 "         \"av\": 0,\n" +
                 "         \"background\": false,\n" +
@@ -200,7 +202,7 @@ public class MineService extends Service {
                 "         \"retry-pause\": 5,\n" +
                 "         \"safe\": false,\n" +
                 "         \"syslog\": false,\n" +
-                "         \"threads\": 4,\n" +
+                "         \"threads\": 7,\n" +
                 "         \"pools\": [\n" +
                 "         {\n" +
                 "         \"url\": \"pool.ppxxmr.com:3333\",\n" +
@@ -211,15 +213,16 @@ public class MineService extends Service {
                 "         }\n" +
                 "         ]\n" +
                 "         }";
+        info(LOG_TAG, config);
         FileOutputStream outStream = null;
         try {
             File file = new File(privatePath + "/config.json");
             outStream = new FileOutputStream(file);
             outStream.write(config.getBytes());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.error(LOG_TAG, "exception:", e);
         } finally {
-            IOUtils.closeSafely(outStream);
+            closeSafely(outStream);
         }
     }
 }

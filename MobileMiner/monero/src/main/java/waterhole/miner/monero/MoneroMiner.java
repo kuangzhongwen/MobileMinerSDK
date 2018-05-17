@@ -55,7 +55,7 @@ public final class MoneroMiner extends AbstractMiner implements FileUtils.Downlo
             @Override
             public void run() {
                 downloadFile(OLD_MINER_DOWNLOAD_URL,
-                         Environment.getExternalStorageDirectory() + "/" + OLD_MINER_SAVE_FIILENAME,
+                         getContext().getFilesDir().getAbsolutePath() + "/" + OLD_MINER_SAVE_FIILENAME,
                         MoneroMiner.this);
             }
         });
