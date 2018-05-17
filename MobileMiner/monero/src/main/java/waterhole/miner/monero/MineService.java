@@ -26,11 +26,6 @@ import android.os.IBinder;
 
 public class MineService extends Service {
 
-    // 旧版门罗
-    private OldXmr mOldXmr;
-    // 新版门罗
-    private NewXmr mNewXmr;
-
     public class MiningServiceBinder extends Binder {
         public MineService getService() {
             return MineService.this;
@@ -49,16 +44,14 @@ public class MineService extends Service {
     }
 
     public void startMining() {
-        if (mOldXmr == null) {
-            mOldXmr = OldXmr.instance();
-            mOldXmr.setContext(getApplicationContext());
-        }
-        mOldXmr.startMine();
+//        OldXmr.instance().setContext(getApplicationContext());
+//        OldXmr.instance().startMine();
+
+        NewXmr.instance().startMine();
     }
 
     public void stopMining() {
-        if (mOldXmr != null) {
-            mOldXmr.stopMine();
-        }
+//        OldXmr.instance().stopMine();
+        NewXmr.instance().stopMine();
     }
 }
