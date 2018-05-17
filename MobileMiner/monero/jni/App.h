@@ -26,10 +26,8 @@
 
 
 #include "3rdparty/uv/uv.h"
-
-
 #include "interfaces/IConsoleListener.h"
-
+#include <jni.h>
 
 class Console;
 class Httpd;
@@ -70,5 +68,9 @@ private:
   xmrig::Controller *m_controller;
 };
 
+void on_mining_start();
+void on_mining_error(const char* error);
+void on_mining_status(const double speed);
+void on_submit(const char* job_id,const char* s1,const char* s2,const char* s3);
 
 #endif /* __APP_H__ */

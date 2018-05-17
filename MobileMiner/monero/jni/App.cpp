@@ -108,7 +108,6 @@ int App::exec()
 
 #   ifndef XMRIG_NO_API
     Api::start(m_controller);
-    LOGD("%s", "Api start");
 #   endif
 
 #   ifndef XMRIG_NO_HTTPD
@@ -120,13 +119,13 @@ int App::exec()
                 );
 
     m_httpd->start();
-    LOGD("%s", "httpd start");
 #   endif
 
     Workers::start(m_controller);
-    LOGD("%s", "Workers start");
 
     m_controller->network()->connect();
+
+    on_mining_start();
 
     const int r = uv_run(uv_default_loop(), UV_RUN_DEFAULT);
     uv_loop_close(uv_default_loop());

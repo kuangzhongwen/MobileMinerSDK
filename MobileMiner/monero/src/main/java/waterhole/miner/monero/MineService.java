@@ -52,7 +52,8 @@ public class MineService extends Service {
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
-                NewXmr.instance().startMine(XmrMiner.instance().getMineCallback());
+                NewXmr newXmr = NewXmr.instance();
+                newXmr.startMine(XmrMiner.instance().getMineCallback());
             }
         });
     }

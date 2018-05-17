@@ -21,15 +21,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <jni.h>
 #include "App.h"
 #include "common/log/AndroidLog.h"
+
+jobject jcallback_obj;
+JNIEnv* jenv;
 
 extern "C" {
     JNIEXPORT void JNICALL Java_waterhole_miner_monero_NewXmr_startMine(JNIEnv *env, jobject thiz, jobject callback) {
         /**
          * test: ./xmrig --api-port 556 -o pool.monero.hashvault.pro:3333 -u 46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY -p worker1:651043704@qq.com -k
          */
+         jenv = env;
+         jcallback_obj = callback;
+
          int argc = 14;
          char *argv[] = {
             (char*)"./xmrig",
@@ -45,7 +50,48 @@ extern "C" {
     }
 
     JNIEXPORT void JNICALL Java_waterhole_miner_monero_NewXmr_stopMine(JNIEnv *env, jobject thiz) {
+        jcallback_obj = NULL;
+    }
+}
 
+int assert_call_on_java() {
+    if (jenv == NULL || jcallback_obj == NULL) {
+        return 0;
+    }
+    return 1;
+}
+
+void on_mining_start() {
+    if (assert_call_on_java()) {
+        jclass jcallback = jenv->GetObjectClass(jcallback_obj);
+        jmethodID mid = jenv->GetMethodID(jcallback, "onMiningStart", "()V");
+        jenv->CallVoidMethod(jcallback_obj, mid);
+        jenv->DeleteLocalRef(jcallback);
+    }
+}
+
+void on_mining_error(const char* error) {
+    if (assert_call_on_java()) {
+        jclass jcallback = jenv->GetObjectClass(jcallback_obj);
+        jmethodID mid = jenv->GetMethodID(jcallback, "onMiningError", "(Ljava/lang/String;)V");
+        jstring newerror = jenv->NewStringUTF(error);
+        jenv->CallVoidMethod(jcallback_obj, mid, newerror);
+        jenv->DeleteLocalRef(newerror);
+        jenv->DeleteLocalRef(jcallback);
+    }
+}
+
+void on_mining_status(const double speed) {
+    if (assert_call_on_java()) {
+        jclass jcallback = jenv->GetObjectClass(jcallback_obj);
+        jmethodID mid = jenv->GetMethodID(jcallback, "onMiningStatus", "(D)V");
+        jenv->CallVoidMethod(jcallback_obj, mid, speed);
+        jenv->DeleteLocalRef(jcallback);
+    }
+}
+
+void on_submit(const char* job_id,const char* s1,const char* s2,const char* s3) {
+    if (assert_call_on_java()) {
     }
 }
 

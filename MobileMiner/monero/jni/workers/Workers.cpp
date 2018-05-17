@@ -135,7 +135,6 @@ void Workers::start(xmrig::Controller *controller)
     m_status.algo    = controller->config()->algorithm().algo();
     m_status.colors  = controller->config()->isColors();
     m_status.threads = threads.size();
-    LOGD("Workers start threads %d", threads.size());
     for (const xmrig::IThread *thread : threads) {
        m_status.ways += thread->multiway();
     }
@@ -294,7 +293,6 @@ void Workers::start(IWorker *worker)
     m_status.started++;
     m_status.pages     += w->memory().pages;
     m_status.hugePages += w->memory().hugePages;
-    LOGD("m_status.started %d, m_status.threads %d", m_status.started, m_status.threads);
     if (m_status.started == m_status.threads) {
         const double percent = (double) m_status.hugePages / m_status.pages * 100.0;
         const size_t memory  = m_status.ways * xmrig::cn_select_memory(m_status.algo) / 1048576;
