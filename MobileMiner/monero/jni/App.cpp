@@ -125,7 +125,7 @@ int App::exec()
 
     m_controller->network()->connect();
 
-    on_mining_start();
+    onConnectPoolBegin();
 
     const int r = uv_run(uv_default_loop(), UV_RUN_DEFAULT);
     uv_loop_close(uv_default_loop());

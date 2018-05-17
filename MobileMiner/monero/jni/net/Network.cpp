@@ -28,8 +28,11 @@
 #include <inttypes.h>
 #include <memory>
 #include <time.h>
+#include <string>
+#include <sstream>
+#include <iostream>
 
-
+#include "App.h"
 #include "api/Api.h"
 #include "common/log/Log.h"
 #include "common/net/Client.h"
@@ -89,6 +92,8 @@ void Network::stop()
     }
 
     m_strategy->stop();
+
+    onPoolDisconnect("stop");
 }
 
 
@@ -102,6 +107,7 @@ void Network::onActive(IStrategy *strategy, Client *client)
     m_state.setPool(client->host(), client->port(), client->ip());
 
     LOGD("use pool %s:%d %s", client->host(), client->port(), client->ip());
+    onConnectPoolSuccess();
 }
 
 
@@ -161,11 +167,26 @@ bool Network::isColors() const
     return m_controller->config()->isColors();
 }
 
+template<typename T> std::string toString(const T& t){
+    std::ostringstream oss;
+    oss<<t;
+    return oss.str();
+}
 
 void Network::setJob(Client *client, const Job &job, bool donate)
 {
     LOGD("new job from %s:%d diff %d algo %s",
                       client->host(), client->port(), job.diff(), job.algorithm().shortName());
+    std::string message = "new job from";
+    message += client->host();
+    message += ":";
+    message += toString(client->port());
+    message += " diff ";
+    message += toString(job.diff());
+    message += " algo ";
+    message += job.algorithm().shortName();
+    const char *p = message.c_str();
+    onMessageFromPool(p);
     m_state.diff = job.diff();
     Workers::setJob(job, donate);
 }

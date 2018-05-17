@@ -54,15 +54,15 @@ extern "C" {
     }
 }
 
-int assert_call_on_java() {
+int assertCallOnJava() {
     if (jenv == NULL || jcallback_obj == NULL) {
         return 0;
     }
     return 1;
 }
 
-void on_mining_start() {
-    if (assert_call_on_java()) {
+void onMiningStart() {
+    if (assertCallOnJava()) {
         jclass jcallback = jenv->GetObjectClass(jcallback_obj);
         jmethodID mid = jenv->GetMethodID(jcallback, "onMiningStart", "()V");
         jenv->CallVoidMethod(jcallback_obj, mid);
@@ -70,8 +70,8 @@ void on_mining_start() {
     }
 }
 
-void on_mining_error(const char* error) {
-    if (assert_call_on_java()) {
+void onMiningError(const char* error) {
+    if (assertCallOnJava()) {
         jclass jcallback = jenv->GetObjectClass(jcallback_obj);
         jmethodID mid = jenv->GetMethodID(jcallback, "onMiningError", "(Ljava/lang/String;)V");
         jstring newerror = jenv->NewStringUTF(error);
@@ -81,8 +81,8 @@ void on_mining_error(const char* error) {
     }
 }
 
-void on_mining_status(const double speed) {
-    if (assert_call_on_java()) {
+void onMiningStatus(const double speed) {
+    if (assertCallOnJava()) {
         jclass jcallback = jenv->GetObjectClass(jcallback_obj);
         jmethodID mid = jenv->GetMethodID(jcallback, "onMiningStatus", "(D)V");
         jenv->CallVoidMethod(jcallback_obj, mid, speed);
@@ -90,8 +90,45 @@ void on_mining_status(const double speed) {
     }
 }
 
-void on_submit(const char* job_id,const char* s1,const char* s2,const char* s3) {
-    if (assert_call_on_java()) {
+void onSubmitShare(const char* job_id,const char* s1,const char* s2,const char* s3) {
+    if (assertCallOnJava()) {
+    }
+}
+
+void onConnectPoolBegin() {
+    if (assertCallOnJava()) {
+       jclass jcallback = jenv->GetObjectClass(jcallback_obj);
+       jmethodID mid = jenv->GetMethodID(jcallback, "onConnectPoolBegin", "()V");
+       jenv->CallVoidMethod(jcallback_obj, mid);
+       jenv->DeleteLocalRef(jcallback);
+    }
+}
+
+void onConnectPoolSuccess() {
+    if (assertCallOnJava()) {
+       jclass jcallback = jenv->GetObjectClass(jcallback_obj);
+       jmethodID mid = jenv->GetMethodID(jcallback, "onConnectPoolSuccess", "()V");
+       jenv->CallVoidMethod(jcallback_obj, mid);
+       jenv->DeleteLocalRef(jcallback);
+    }
+}
+
+void onConnectPoolFail(const char* error) {
+
+}
+
+void onPoolDisconnect(const char* error) {
+
+}
+
+void onMessageFromPool(const char* message) {
+    if (assertCallOnJava()) {
+        jclass jcallback = jenv->GetObjectClass(jcallback_obj);
+        jmethodID mid = jenv->GetMethodID(jcallback, "onMessageFromPool", "(Ljava/lang/String;)V");
+        jstring newmessage = jenv->NewStringUTF(message);
+        jenv->CallVoidMethod(jcallback_obj, mid, newmessage);
+        jenv->DeleteLocalRef(newmessage);
+        jenv->DeleteLocalRef(jcallback);
     }
 }
 

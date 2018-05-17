@@ -24,7 +24,7 @@
 #include <cmath>
 #include <thread>
 
-
+#include "App.h"
 #include "api/Api.h"
 #include "common/log/Log.h"
 #include "core/Config.h"
@@ -299,6 +299,7 @@ void Workers::start(IWorker *worker)
 
         LOGD("READY (CPU) threads %zu(%zu) huge pages %zu/%zu %1.0f%% memory %zu.0 MB",
                              m_status.threads, m_status.ways, m_status.hugePages, m_status.pages, percent, memory);
+        onMiningStart();
     }
 
     uv_mutex_unlock(&m_mutex);

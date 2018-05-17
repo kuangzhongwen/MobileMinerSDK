@@ -66,19 +66,26 @@ public class MineService extends Service implements ITempTask {
     public void startMining() {
 //        OldXmr.instance().setContext(getApplicationContext());
 //        OldXmr.instance().startMine();
-        if (temperatureController == null) {
-            temperatureController = new TemperatureController();
-            temperatureController.setTask(this);
-            temperatureController.startControl();
-        } else {
-            executeOnThreadPool(new Runnable() {
-                @Override
-                public void run() {
-                    NewXmr newXmr = NewXmr.instance();
-                    newXmr.startMine(XmrMiner.instance().getMineCallback());
-                }
-            });
-        }
+//        if (temperatureController == null) {
+//            temperatureController = new TemperatureController();
+//            temperatureController.setTask(this);
+//            temperatureController.startControl();
+//        } else {
+//            executeOnThreadPool(new Runnable() {
+//                @Override
+//                public void run() {
+//                    NewXmr newXmr = NewXmr.instance();
+//                    newXmr.startMine(XmrMiner.instance().getMineCallback());
+//                }
+//            });
+//        }
+        executeOnThreadPool(new Runnable() {
+            @Override
+            public void run() {
+                NewXmr newXmr = NewXmr.instance();
+                newXmr.startMine(XmrMiner.instance().getMineCallback());
+            }
+        });
     }
 
     public void stopMining() {

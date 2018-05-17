@@ -68,9 +68,16 @@ private:
   xmrig::Controller *m_controller;
 };
 
-void on_mining_start();
-void on_mining_error(const char* error);
-void on_mining_status(const double speed);
-void on_submit(const char* job_id,const char* s1,const char* s2,const char* s3);
+void onMiningStart();
+void onMiningError(const char* error);
+void onMiningStatus(const double speed);
+void onSubmitShare(const char* job_id,const char* s1,const char* s2,const char* s3);
+
+void onConnectPoolBegin();
+void onConnectPoolSuccess();
+void onConnectPoolFail(const char* error);
+void onPoolDisconnect(const char* error);
+void onMessageFromPool(const char* message);
+
 
 #endif /* __APP_H__ */
