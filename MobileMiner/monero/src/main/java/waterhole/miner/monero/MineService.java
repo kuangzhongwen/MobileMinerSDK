@@ -31,6 +31,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,15 +40,11 @@ import java.io.PrintWriter;
 import java.util.UUID;
 
 import waterhole.miner.core.utils.AssetsUtils;
+import waterhole.miner.core.utils.LogUtils;
 
-/**
- * MiningService for mining in the background
- * Created by uwe on 24.01.18.
- */
+public class MineService extends Service {
 
-public class MiningService extends Service {
-
-    private static final String LOG_TAG = "MiningSvc";
+    private static final String LOG_TAG = "Waterhole-XmrMiner";
     private Process process;
     private String configTemplate;
     private String privatePath;
@@ -56,32 +53,33 @@ public class MiningService extends Service {
     private int accepted;
     private String speed = "./.";
 
+    static {
+        System.loadLibrary("monero-miner-new");
+    }
+
+    private native void startMineNewXmr();
+
     @Override
     public void onCreate() {
         super.onCreate();
 
-        // load config template
-        configTemplate = loadConfigTemplate(this);
-
         // path where we may execute our program
         privatePath = getFilesDir().getAbsolutePath();
 
-        workerId = fetchOrCreateWorkerId();
-        Log.w(LOG_TAG, "my workerId: " + workerId);
+        // load config template
+        configTemplate = loadConfigTemplate();
 
-        // copy binaries to a path where we may execute it);
-        AssetsUtils.copyAssetsFile(this, "xmrig-arm64", privatePath + "/xmrig");
-        AssetsUtils.copyAssetsFile(this, "libuv.so", privatePath + "/libuv.so");
-        AssetsUtils.copyAssetsFile(this, "libc++_shared.so", privatePath + "/libc++_shared.so");
+        workerId = fetchOrCreateWorkerId();
+        LogUtils.info(LOG_TAG, "my workerId: " + workerId);
     }
 
     public class MiningServiceBinder extends Binder {
-        public MiningService getService() {
-            return MiningService.this;
+        public MineService getService() {
+            return MineService.this;
         }
     }
 
-    public static class MiningConfig {
+    static class MiningConfig {
         String username, pool;
         int threads, maxCpu;
     }
@@ -132,13 +130,12 @@ public class MiningService extends Service {
         if (process != null) {
             process.destroy();
             process = null;
-            Log.i(LOG_TAG, "stopped");
-            Toast.makeText(this, "stopped", Toast.LENGTH_SHORT).show();
+            LogUtils.info(LOG_TAG, "stopped");
         }
     }
 
     public void startMining(MiningConfig config) {
-        Log.i(LOG_TAG, "starting...");
+        LogUtils.info(LOG_TAG, "starting...");
         if (process != null) {
             process.destroy();
         }
@@ -163,11 +160,8 @@ public class MiningService extends Service {
             // start processing xmrig's output
             outputHandler = new OutputReaderThread(process.getInputStream());
             outputHandler.start();
-
-            Toast.makeText(this, "started", Toast.LENGTH_SHORT).show();
-
         } catch (Exception e) {
-            Log.e(LOG_TAG, "exception:", e);
+            LogUtils.error(LOG_TAG, "exception:", e);
             Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             process = null;
         }
@@ -221,7 +215,7 @@ public class MiningService extends Service {
                     if (currentThread().isInterrupted()) return;
                 }
             } catch (IOException e) {
-                Log.w(LOG_TAG, "exception", e);
+                LogUtils.error(LOG_TAG, "exception", e);
             }
         }
 
@@ -230,10 +224,10 @@ public class MiningService extends Service {
         }
     }
 
-    private static String loadConfigTemplate(Context context) {
+    private String loadConfigTemplate() {
         try {
             StringBuilder buf = new StringBuilder();
-            InputStream json = context.getAssets().open("config.json");
+            InputStream json = new FileInputStream(privatePath + "/config.json");
             BufferedReader in = new BufferedReader(new InputStreamReader(json, "UTF-8"));
             String str;
             while ((str = in.readLine()) != null) {
@@ -246,7 +240,7 @@ public class MiningService extends Service {
         }
     }
 
-    private static void writeConfig(String configTemplate, String poolUrl, String username, int threads, int maxCpu, String privatePath) {
+    private void writeConfig(String configTemplate, String poolUrl, String username, int threads, int maxCpu, String privatePath) {
         String config = configTemplate.replace("$url$", poolUrl)
                 .replace("$username$", username)
                 .replace("$threads$", Integer.toString(threads))
