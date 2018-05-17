@@ -161,7 +161,6 @@ void Hashrate::print()
                       format(calc(MediumInterval), num2, sizeof(num2)),
                       format(calc(LargeInterval),  num3, sizeof(num3)),
                       format(m_highest,            num4, sizeof(num4)));
-    on_mining_status(m_highest);
 }
 
 
