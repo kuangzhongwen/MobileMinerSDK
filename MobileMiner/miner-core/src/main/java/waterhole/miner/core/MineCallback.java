@@ -39,16 +39,6 @@ public interface MineCallback extends NoProGuard {
     void onMessageFromPool(String message);
 
     /**
-     * 挖矿开始.
-     */
-    void onMiningStart();
-
-    /**
-     * 挖矿停止.
-     */
-    void onMiningStop();
-
-    /**
      * 挖矿中产生异常.
      *
      * @param error 错误信息

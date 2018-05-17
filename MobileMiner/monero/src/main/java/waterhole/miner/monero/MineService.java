@@ -22,9 +22,14 @@ package waterhole.miner.monero;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
+import java.util.Arrays;
+
+import waterhole.miner.core.utils.APIUtils;
 import waterhole.miner.monero.temperature.ITempTask;
 import waterhole.miner.monero.temperature.TemperatureController;
 
@@ -64,6 +69,15 @@ public class MineService extends Service implements ITempTask {
     }
 
     public void startMining() {
+        if (!APIUtils.hasLollipop()) {
+            XmrMiner.instance().getMineCallback().onMiningError("Android version must be >= 21");
+            return;
+        }
+        if (!Build.CPU_ABI.toLowerCase().equals("arm64-v8a")) {
+            XmrMiner.instance().getMineCallback().onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + Build.CPU_ABI);
+            // this flag will keep the start button disabled
+            return;
+        }
 //        OldXmr.instance().setContext(getApplicationContext());
 //        OldXmr.instance().startMine();
 //        if (temperatureController == null) {

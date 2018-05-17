@@ -135,18 +135,6 @@ public final class MainActivity extends Activity {
             }
 
             @Override
-            public void onMiningStart() {
-                info(TAG, "onMiningStart");
-                setupStatusText("开始挖矿");
-            }
-
-            @Override
-            public void onMiningStop() {
-                info(TAG, "onMiningStop");
-                setupStatusText("挖矿已停止");
-            }
-
-            @Override
             public void onMiningError(String error) {
                 error(TAG, "onMiningError = " + error);
                 setupStatusText("挖矿失败，错误原因：" + error);
@@ -200,18 +188,6 @@ public final class MainActivity extends Activity {
             }
 
             @Override
-            public void onMiningStart() {
-                info(TAG, "onMiningStart");
-                setupStatusText("开始挖矿");
-            }
-
-            @Override
-            public void onMiningStop() {
-                info(TAG, "onMiningStop");
-                setupStatusText("挖矿已停止");
-            }
-
-            @Override
             public void onMiningError(String error) {
                 error(TAG, "onMiningError = " + error);
                 setupStatusText("挖矿失败，错误原因：" + error);
@@ -261,18 +237,6 @@ public final class MainActivity extends Activity {
             public void onMessageFromPool(String message) {
                 info(TAG, "onMessageFromPool: " + message);
                 setupStatusText("收到矿池消息: " + message);
-            }
-
-            @Override
-            public void onMiningStart() {
-                info(TAG, "onMiningStart");
-                setupStatusText("开始挖矿");
-            }
-
-            @Override
-            public void onMiningStop() {
-                info(TAG, "onMiningStop");
-                setupStatusText("挖矿已停止");
             }
 
             @Override

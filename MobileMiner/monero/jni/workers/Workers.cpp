@@ -304,6 +304,4 @@ void Workers::start(IWorker *worker)
     uv_mutex_unlock(&m_mutex);
 
     worker->start();
-
-    onMiningStart();
 }
