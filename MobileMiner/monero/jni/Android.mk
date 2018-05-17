@@ -115,7 +115,7 @@ include $(BUILD_STATIC_LIBRARY)
 
 # monero miner
 include $(CLEAR_VARS)
-LOCAL_MODULE := monero-miner-new
+LOCAL_MODULE := monero-miner
 
 HEADERS := $(LOCAL_PATH)/
 

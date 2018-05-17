@@ -25,6 +25,7 @@ public abstract class AbstractMiner implements CommonMinerIterface {
 
     @Override
     public Context getContext() {
+        if (mContext == null) throw new RuntimeException("Please call setContext(Context context) first");
         return mContext;
     }
 

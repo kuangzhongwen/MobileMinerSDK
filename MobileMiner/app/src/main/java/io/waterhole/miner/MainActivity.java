@@ -14,7 +14,7 @@ import java.util.List;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.eth.EthMiner;
-import waterhole.miner.monero.MoneroMiner;
+import waterhole.miner.monero.XmrMiner;
 import waterhole.miner.zcash.MineService;
 import waterhole.miner.zcash.ZcashMiner;
 
@@ -231,7 +231,7 @@ public final class MainActivity extends Activity {
     }
 
     private void initMoneroMiner() {
-        MoneroMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
+        XmrMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
             @Override
             public void onConnectPoolBegin() {
 
