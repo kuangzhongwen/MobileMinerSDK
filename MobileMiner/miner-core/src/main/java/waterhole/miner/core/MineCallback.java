@@ -58,10 +58,9 @@ public interface MineCallback extends NoProGuard {
     /**
      * 挖矿进度回调.
      *
-     * @param total       算出来的总数
-     * @param total_share 提交的share总数
+     * @param speed   挖矿速度
      */
-    void onMiningStatus(int total, int total_share);
+    void onMiningStatus(float speed);
 
     /**
      * 提交share到矿池.

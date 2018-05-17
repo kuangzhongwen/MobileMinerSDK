@@ -24,6 +24,8 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
+
 public class MineService extends Service {
 
     public class MiningServiceBinder extends Binder {
@@ -47,11 +49,22 @@ public class MineService extends Service {
 //        OldXmr.instance().setContext(getApplicationContext());
 //        OldXmr.instance().startMine();
 
-        NewXmr.instance().startMine();
+        executeOnThreadPool(new Runnable() {
+            @Override
+            public void run() {
+                NewXmr.instance().startMine(XmrMiner.instance().getMineCallback());
+            }
+        });
     }
 
     public void stopMining() {
 //        OldXmr.instance().stopMine();
-        NewXmr.instance().stopMine();
+
+        executeOnThreadPool(new Runnable() {
+            @Override
+            public void run() {
+                NewXmr.instance().stopMine();
+            }
+        });
     }
 }

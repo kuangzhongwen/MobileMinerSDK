@@ -2,13 +2,15 @@ package waterhole.miner.monero;
 
 import java.io.ObjectStreamException;
 
+import waterhole.miner.core.MineCallback;
+
 final class NewXmr {
 
     static {
         System.loadLibrary("monero-miner");
     }
 
-    native void startMine();
+    native void startMine(MineCallback callback);
 
     native void stopMine();
 
