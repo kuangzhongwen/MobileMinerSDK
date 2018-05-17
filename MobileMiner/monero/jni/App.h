@@ -47,13 +47,13 @@ public:
   ~App();
 
   int exec();
+  void close();
 
 protected:
   void onConsoleCommand(char command) override;
 
 private:
   void background();
-  void close();
   void release();
 
   static void onSignal(uv_signal_t *handle, int signum);

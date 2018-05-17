@@ -51,6 +51,7 @@ public final class MainActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mCoinPosition = position;
+                isMining = false;
             }
 
             @Override
@@ -83,7 +84,15 @@ public final class MainActivity extends Activity {
                         isMining = !isMining;
                         break;
                     case 2:
-                        initMoneroMiner();
+                        if (isMining) {
+                            mStatusText.setText("prepare");
+                            minerBtn.setText("开始挖矿");
+                            XmrMiner.instance().stopMine();
+                        } else {
+                            minerBtn.setText("停止挖矿");
+                            initMoneroMiner();
+                        }
+                        isMining = !isMining;
                         break;
                     default:
                         break;
@@ -248,7 +257,7 @@ public final class MainActivity extends Activity {
             @Override
             public void onMiningStatus(double speed) {
                 info(TAG, "onMiningStatus speed = " + speed);
-                setupStatusText("speed = " + parseDoubleKeep2(speed) + " H/s");
+                setupStatusText("挖矿速度： " + parseDoubleKeep2(speed) + " H/s");
             }
 
             @Override

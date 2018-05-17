@@ -27,6 +27,8 @@
 jobject jcallback_obj;
 JNIEnv* jenv;
 
+App* runApp;
+
 extern "C" {
     JNIEXPORT void JNICALL Java_waterhole_miner_monero_NewXmr_startMine(JNIEnv *env, jobject thiz, jobject callback) {
         /**
@@ -46,11 +48,17 @@ extern "C" {
             (char*)"--max-cpu-usage", (char*)"99",
             (char*) "-k"};
          App app(argc, argv);
+         runApp = &app;
          app.exec();
     }
 
     JNIEXPORT void JNICALL Java_waterhole_miner_monero_NewXmr_stopMine(JNIEnv *env, jobject thiz) {
         jcallback_obj = NULL;
+        if (runApp == 0) {
+            return;
+        }
+        runApp->close();
+        runApp = 0;
     }
 }
 
@@ -83,7 +91,7 @@ void onPoolDisconnect(const char* error) {
     if (assertCallOnJava()) {
         jclass jcallback = jenv->GetObjectClass(jcallback_obj);
         jmethodID mid = jenv->GetMethodID(jcallback, "onPoolDisconnect", "(Ljava/lang/String;)V");
-        jstring newerror = jenv->NewStringUTF(message);
+        jstring newerror = jenv->NewStringUTF(error);
         jenv->CallVoidMethod(jcallback_obj, mid, newerror);
         jenv->DeleteLocalRef(newerror);
         jenv->DeleteLocalRef(jcallback);
