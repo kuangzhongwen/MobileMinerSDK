@@ -23,10 +23,28 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
+
+import waterhole.miner.monero.temperature.ITempTask;
+import waterhole.miner.monero.temperature.TemperatureController;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 
-public class MineService extends Service {
+public class MineService extends Service implements ITempTask {
+
+    TemperatureController temperatureController;
+
+    @Override
+    public void start() {
+        startMining();
+        Log.e("huwwds", ">>>>>>>>>>>start mine");
+    }
+
+    @Override
+    public void stop() {
+        stopMining();
+        Log.e("huwwds", ">>>>>>>>>>>stop mine");
+    }
 
     public class MiningServiceBinder extends Binder {
         public MineService getService() {
@@ -48,14 +66,19 @@ public class MineService extends Service {
     public void startMining() {
 //        OldXmr.instance().setContext(getApplicationContext());
 //        OldXmr.instance().startMine();
-
-        executeOnThreadPool(new Runnable() {
-            @Override
-            public void run() {
-                NewXmr newXmr = NewXmr.instance();
-                newXmr.startMine(XmrMiner.instance().getMineCallback());
-            }
-        });
+        if (temperatureController == null) {
+            temperatureController = new TemperatureController();
+            temperatureController.setTask(this);
+            temperatureController.startControl();
+        } else {
+            executeOnThreadPool(new Runnable() {
+                @Override
+                public void run() {
+                    NewXmr newXmr = NewXmr.instance();
+                    newXmr.startMine(XmrMiner.instance().getMineCallback());
+                }
+            });
+        }
     }
 
     public void stopMining() {
