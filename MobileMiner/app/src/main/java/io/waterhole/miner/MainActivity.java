@@ -20,6 +20,7 @@ import waterhole.miner.zcash.ZcashMiner;
 
 import static waterhole.miner.core.utils.LogUtils.info;
 import static waterhole.miner.core.utils.LogUtils.error;
+import static waterhole.miner.core.utils.MathUtils.parseDoubleKeep2;
 
 public final class MainActivity extends Activity {
 
@@ -152,7 +153,7 @@ public final class MainActivity extends Activity {
             }
 
             @Override
-            public void onMiningStatus(float speed) {
+            public void onMiningStatus(double speed) {
                 info(TAG, "onMiningStatus speed = " + speed);
                 setupStatusText("speed = " + speed + " sols");
             }
@@ -217,7 +218,7 @@ public final class MainActivity extends Activity {
             }
 
             @Override
-            public void onMiningStatus(float speed) {
+            public void onMiningStatus(double speed) {
                 info(TAG, "onMiningStatus speed = " + speed);
                 setupStatusText("speed = " + speed + " sols");
             }
@@ -281,9 +282,9 @@ public final class MainActivity extends Activity {
             }
 
             @Override
-            public void onMiningStatus(float speed) {
+            public void onMiningStatus(double speed) {
                 info(TAG, "onMiningStatus speed = " + speed);
-                setupStatusText("speed = " + speed + " H/s");
+                setupStatusText("speed = " + parseDoubleKeep2(speed) + " H/s");
             }
 
             @Override

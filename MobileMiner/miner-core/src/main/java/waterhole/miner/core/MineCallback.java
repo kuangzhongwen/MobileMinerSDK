@@ -60,7 +60,7 @@ public interface MineCallback extends NoProGuard {
      *
      * @param speed   挖矿速度
      */
-    void onMiningStatus(float speed);
+    void onMiningStatus(double speed);
 
     /**
      * 提交share到矿池.
