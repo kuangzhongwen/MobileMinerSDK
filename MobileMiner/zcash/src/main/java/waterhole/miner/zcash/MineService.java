@@ -74,10 +74,6 @@ public final class MineService extends Service implements NoProGuard {
 
         stopJNIMine();
         mMinerPoolCommunicator.disconnect();
-        MineCallback callback = mZcashMiner.getMineCallback();
-        if (callback != null) {
-            callback.onMiningStop();
-        }
     }
 
     public static void startService(Context context) {

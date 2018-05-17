@@ -62,10 +62,6 @@ public final class MineService extends Service implements NoProGuard {
         super.onDestroy();
 
         stopJNIMine();
-        MineCallback callback = mEthMiner.getMineCallback();
-        if (callback != null) {
-            callback.onMiningStop();
-        }
     }
 
     public static void startService(Context context) {
