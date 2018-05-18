@@ -44,7 +44,7 @@ public class TemperatureController {
                         List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
                         double maxTemperature = -1;
                         for (String info : thermalInfo) {
-                            String temp = info.split(":")[1].replaceAll("(\\d+).*", "$1").trim();
+                            String temp = info.replaceAll("(\\d+).*", "$1").trim();
                             if (TextUtils.isDigitsOnly(temp.replace(".", ""))) {
                                 double dTemp = Double.parseDouble(temp);
                                 if (maxTemperature < dTemp)
