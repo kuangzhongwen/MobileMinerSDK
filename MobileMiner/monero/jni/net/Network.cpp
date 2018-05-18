@@ -157,15 +157,18 @@ void Network::onResultAccepted(IStrategy *strategy, Client *client, const Submit
 {
     m_state.add(result, error);
 
+    std::string message;
     if (error) {
         LOGD("rejected (%" PRId64 "/%" PRId64 ") diff %u \"%s\" (%" PRIu64 " ms)",
                               m_state.accepted, m_state.rejected, result.diff, error, result.elapsed);
+        message = "rejected (";
     }
     else {
         LOGD("accepted (%" PRId64 "/%" PRId64 ") diff %u (%" PRIu64 " ms)",
                               m_state.accepted, m_state.rejected, result.diff, result.elapsed);
+        message = "accepted (";
     }
-    std::string message = "accepted (";
+
     message += toString(m_state.accepted);
     message += "/";
     message += toString(m_state.rejected);
