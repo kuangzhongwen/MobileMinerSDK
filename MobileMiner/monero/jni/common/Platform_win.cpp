@@ -28,6 +28,7 @@
 
 
 #include "log/Log.h"
+#include "common/log/AndroidLog.h"
 #include "Platform.h"
 #include "version.h"
 
@@ -87,7 +88,7 @@ static inline char *createUserAgent()
 bool Platform::setThreadAffinity(uint64_t cpu_id)
 {
     if (cpu_id >= 64) {
-        LOG_ERR("Unable to set affinity. Windows supports only affinity up to 63.");
+        LOGD("%s", "Unable to set affinity. Windows supports only affinity up to 63.");
     }
 
     return SetThreadAffinityMask(GetCurrentThread(), 1ULL << cpu_id) != 0;

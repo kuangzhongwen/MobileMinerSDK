@@ -31,6 +31,7 @@
 #include "common/api/HttpReply.h"
 #include "common/api/HttpRequest.h"
 #include "common/log/Log.h"
+#include "common/log/AndroidLog.h"
 
 
 Httpd::Httpd(int port, const char *accessToken, bool IPv6, bool restricted) :
@@ -77,7 +78,7 @@ bool Httpd::start()
 
     m_daemon = MHD_start_daemon(flags, m_port, nullptr, nullptr, &Httpd::handler, this, MHD_OPTION_END);
     if (!m_daemon) {
-        LOG_ERR("HTTP Daemon failed to start.");
+        LOGD("%s", "HTTP Daemon failed to start.");
         return false;
     }
 

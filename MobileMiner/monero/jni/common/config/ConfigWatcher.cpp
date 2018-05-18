@@ -28,6 +28,7 @@
 #include "common/config/ConfigLoader.h"
 #include "common/config/ConfigWatcher.h"
 #include "common/log/Log.h"
+#include "common/log/AndroidLog.h"
 #include "core/ConfigCreator.h"
 #include "interfaces/IWatcherListener.h"
 
@@ -78,13 +79,13 @@ void xmrig::ConfigWatcher::queueUpdate()
 
 void xmrig::ConfigWatcher::reload()
 {
-    LOG_WARN("\"%s\" was changed, reloading configuration", m_path.data());
+    LOGD("\"%s\" was changed, reloading configuration", m_path.data());
 
     IConfig *config = m_creator->create();
     ConfigLoader::loadFromFile(config, m_path.data());
 
     if (!config->finalize()) {
-        LOG_ERR("reloading failed");
+        LOGD("%s", "reloading failed");
 
         delete config;
         return;

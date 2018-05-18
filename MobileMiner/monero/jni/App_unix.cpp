@@ -30,6 +30,7 @@
 
 #include "App.h"
 #include "common/log/Log.h"
+#include "common/log/AndroidLog.h"
 #include "core/Config.h"
 #include "core/Controller.h"
 
@@ -54,11 +55,11 @@ void App::background()
     i = setsid();
 
     if (i < 0) {
-        LOG_ERR("setsid() failed (errno = %d)", errno);
+        LOGD("setsid() failed (errno = %d)", errno);
     }
 
     i = chdir("/");
     if (i < 0) {
-        LOG_ERR("chdir() failed (errno = %d)", errno);
+        LOGD("chdir() failed (errno = %d)", errno);
     }
 }
