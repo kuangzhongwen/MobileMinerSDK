@@ -46,6 +46,12 @@
 #include "workers/Workers.h"
 #include "common/log/AndroidLog.h"
 
+template<typename T> std::string toString(const T& t){
+    std::ostringstream oss;
+    oss<<t;
+    return oss.str();
+}
+
 Network::Network(xmrig::Controller *controller) :
     m_donate(nullptr),
     m_controller(controller)
@@ -159,18 +165,24 @@ void Network::onResultAccepted(IStrategy *strategy, Client *client, const Submit
         LOGD("accepted (%" PRId64 "/%" PRId64 ") diff %u (%" PRIu64 " ms)",
                               m_state.accepted, m_state.rejected, result.diff, result.elapsed);
     }
+    std::string message = "accepted (";
+    message += toString(m_state.accepted);
+    message += "/";
+    message += toString(m_state.rejected);
+    message += ")";
+    message += " diff ";
+    message += toString(result.diff);
+    message += "(";
+    message += toString(result.elapsed);
+    message += " ms)";
+    const char *p = message.c_str();
+    onMessageFromPool(p);
 }
 
 
 bool Network::isColors() const
 {
     return m_controller->config()->isColors();
-}
-
-template<typename T> std::string toString(const T& t){
-    std::ostringstream oss;
-    oss<<t;
-    return oss.str();
 }
 
 void Network::setJob(Client *client, const Job &job, bool donate)
@@ -187,6 +199,7 @@ void Network::setJob(Client *client, const Job &job, bool donate)
     message += job.algorithm().shortName();
     const char *p = message.c_str();
     onMessageFromPool(p);
+
     m_state.diff = job.diff();
     Workers::setJob(job, donate);
 }
