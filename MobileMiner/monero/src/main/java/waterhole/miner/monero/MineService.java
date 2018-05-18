@@ -25,13 +25,13 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
-
-import java.util.Arrays;
 
 import waterhole.miner.core.utils.APIUtils;
+import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.monero.temperature.ITempTask;
 import waterhole.miner.monero.temperature.TemperatureController;
+
+import static waterhole.miner.monero.XmrMiner.LOG_TAG;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 
@@ -73,6 +73,7 @@ public class MineService extends Service implements ITempTask {
             XmrMiner.instance().getMineCallback().onMiningError("Android version must be >= 21");
             return;
         }
+        LogUtils.info(LOG_TAG, Build.CPU_ABI);
         if (!Build.CPU_ABI.toLowerCase().equals("arm64-v8a")) {
             XmrMiner.instance().getMineCallback().onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + Build.CPU_ABI);
             // this flag will keep the start button disabled

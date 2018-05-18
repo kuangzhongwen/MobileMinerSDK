@@ -27,40 +27,36 @@ LOCAL_SRC_FILES    := \
                       $(LOCAL_PATH)/3rdparty/uv/fs-poll.c \
                       $(LOCAL_PATH)/3rdparty/uv/inet.c \
                       $(LOCAL_PATH)/3rdparty/uv/threadpool.c \
-                      $(LOCAL_PATH)/3rdparty/uv/uv-common.c \
                       $(LOCAL_PATH)/3rdparty/uv/uv-data-getter-setters.c \
+                      $(LOCAL_PATH)/3rdparty/uv/uv-common.c \
                       $(LOCAL_PATH)/3rdparty/uv/version.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/android-ifaddrs.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/async.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/core.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/cygwin.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/dl.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/fs.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/getaddrinfo.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/getnameinfo.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/linux-core.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/linux-inotify.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/linux-syscalls.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/loop.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/loop-watcher.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/no-fsevents.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/no-proctitle.c \
+                      $(LOCAL_PATH)/3rdparty/uv/unix/loop.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/pipe.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/poll.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/posix-hrtime.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/process.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/procfs-exepath.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/proctitle.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/pthread-fixes.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/signal.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/stream.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/sysinfo-loadavg.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/sysinfo-memory.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/tcp.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/thread.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/timer.c \
                       $(LOCAL_PATH)/3rdparty/uv/unix/tty.c \
-                      $(LOCAL_PATH)/3rdparty/uv/unix/udp.c
+                      $(LOCAL_PATH)/3rdparty/uv/unix/udp.c \
+                      $(LOCAL_PATH)/3rdparty/uv/unix/android-ifaddrs.c \
+                      $(LOCAL_PATH)/3rdparty/uv/unix/pthread-fixes.c \
+                      $(LOCAL_PATH)/3rdparty/uv/unix/linux-core.c \
+                      $(LOCAL_PATH)/3rdparty/uv/unix/linux-inotify.c \
+                      $(LOCAL_PATH)/3rdparty/uv/unix/linux-syscalls.c \
+                      $(LOCAL_PATH)/3rdparty/uv/unix/procfs-exepath.c \
+                      $(LOCAL_PATH)/3rdparty/uv/unix/proctitle.c \
+                      $(LOCAL_PATH)/3rdparty/uv/unix/sysinfo-loadavg.c \
+                      $(LOCAL_PATH)/3rdparty/uv/unix/sysinfo-memory.c
 
 LOCAL_CFLAGS  += -std=gnu99 -Os
 include $(BUILD_STATIC_LIBRARY)

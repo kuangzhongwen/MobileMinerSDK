@@ -180,6 +180,7 @@ void Workers::stop()
 
 void Workers::submit(const JobResult &result)
 {
+    LOGD("%s", "Workers/submit");
     uv_mutex_lock(&m_mutex);
     m_queue.push_back(result);
     uv_mutex_unlock(&m_mutex);
