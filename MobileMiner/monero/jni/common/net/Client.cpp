@@ -198,6 +198,8 @@ int64_t Client::submit(const JobResult &result)
 
     doc.AddMember("params", params, allocator);
 
+    LOGD("%s", "Client/submit/m_result put");
+
 #   ifdef XMRIG_PROXY_PROJECT
     m_results[m_sequence] = SubmitResult(m_sequence, result.diff, result.actualDiff(), result.id);
 #   else
@@ -398,7 +400,7 @@ int64_t Client::send(const rapidjson::Document &doc)
 
 int64_t Client::send(size_t size)
 {
-    LOGD("[%s] send (%d bytes): \"%s\"", m_pool.url(), size, m_sendBuf);
+    //LOGD("[%s] send (%d bytes): \"%s\"", m_pool.url(), size, m_sendBuf);
     if (state() != ConnectedState || !uv_is_writable(m_stream)) {
         LOGD("[%s] send failed, invalid state: %d", m_pool.url(), m_state);
         return -1;
@@ -510,7 +512,7 @@ void Client::parse(char *line, size_t len)
 
     line[len - 1] = '\0';
 
-    LOGD("[%s] received (%d bytes): \"%s\"", m_pool.url(), len, line);
+    //LOGD("[%s] received (%d bytes): \"%s\"", m_pool.url(), len, line);
 
     if (len < 32 || line[0] != '{') {
         if (!isQuiet()) {
@@ -637,7 +639,6 @@ void Client::parseResponse(int64_t id, const rapidjson::Value &result, const rap
         m_listener->onJobReceived(this, m_job);
         return;
     }
-    LOGD("%s", "parseResponse result find id");
     auto it = m_results.find(id);
     if (it != m_results.end()) {
         it->second.done();
@@ -678,7 +679,7 @@ void Client::reconnect()
 
 void Client::setState(SocketState state)
 {
-    LOGD("[%s] state: %d", m_pool.url(), state);
+    //LOGD("[%s] state: %d", m_pool.url(), state);
 
     if (m_state == state) {
         return;

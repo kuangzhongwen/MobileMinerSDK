@@ -21,7 +21,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#include "common/log/AndroidLog.h"
 #include "common/net/Client.h"
 #include "common/net/strategies/SinglePoolStrategy.h"
 #include "common/Platform.h"
@@ -48,6 +48,7 @@ SinglePoolStrategy::~SinglePoolStrategy()
 
 int64_t SinglePoolStrategy::submit(const JobResult &result)
 {
+    LOGE("%s", "SinglePoolStrategy/submit");
     return m_client->submit(result);
 }
 

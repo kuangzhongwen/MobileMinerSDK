@@ -146,7 +146,7 @@ void Workers::start(xmrig::Controller *controller)
 
     m_sequence = 1;
     m_paused   = 1;
-
+    LOGD("%s", "Workers/start");
     uv_async_init(uv_default_loop(), &m_async, Workers::onResult);
     uv_timer_init(uv_default_loop(), &m_timer);
     uv_timer_start(&m_timer, Workers::onTick, 500, 500);
@@ -252,6 +252,7 @@ void Workers::onReady(void *arg)
 
 void Workers::onResult(uv_async_t *handle)
 {
+    LOGD("%s", "Workers/onResult");
     std::list<JobResult> results;
 
     uv_mutex_lock(&m_mutex);
@@ -260,11 +261,9 @@ void Workers::onResult(uv_async_t *handle)
         m_queue.pop_front();
     }
     uv_mutex_unlock(&m_mutex);
-
     for (auto result : results) {
         m_listener->onJobResult(result);
     }
-
     results.clear();
 }
 

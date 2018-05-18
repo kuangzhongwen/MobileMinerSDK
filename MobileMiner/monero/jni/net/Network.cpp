@@ -129,11 +129,11 @@ void Network::onJob(IStrategy *strategy, Client *client, const Job &job)
 
 void Network::onJobResult(const JobResult &result)
 {
+    LOGD("%s", "Network/onJobResult");
     if (result.poolId == -1 && m_donate) {
         m_donate->submit(result);
         return;
     }
-
     m_strategy->submit(result);
 }
 

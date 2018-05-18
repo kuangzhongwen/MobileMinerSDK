@@ -55,7 +55,6 @@ int64_t FailoverStrategy::submit(const JobResult &result)
     if (m_active == -1) {
         return -1;
     }
-
     return m_pools[m_active]->submit(result);
 }
 
