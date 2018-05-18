@@ -38,6 +38,7 @@ extern "C" {
          jcallback_obj = callback;
 
          int argc = 14;
+         // todo kzw 要读取cpu核心线程数，然后 -1，否则在一些低核手机上核心线程数太大算不出结果
          char *argv[] = {
             (char*)"./xmrig",
             (char*)"--api-port", (char*)"556",
