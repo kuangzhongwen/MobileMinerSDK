@@ -20,43 +20,12 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include <string.h>
 #include "App.h"
 #include "common/log/AndroidLog.h"
+#include "StringUtils.h"
 
 jobject jcallbackObj;
 JNIEnv* jenv;
-
-char* intToChar(int a) {
-    //int 32位
-    char *b = new char[32];
-    int i = 0;
-    int flag = 1;
-    if (a < 0) {
-        b[i++] = '-';
-        a = 0 -a ;
-        flag = -1;
-    }
-    while(a) {
-        b[i++] = a % 10 + '0';
-        a /=10;
-    }
-    b[i] = '\0';
-    int n = strlen(b);
-    char c;
-    int j = 0;
-
-    if (flag == -1) {
-        j = 1;
-    }
-    int k = 0;
-    for(; j < n / 2; j++, k++) {
-        c = b[j];
-        b[j] = b[n - k - 1];
-        b[n - k - 1] = c;
-    }
-    return b;
-}
 
 extern "C" {
     JNIEXPORT void JNICALL Java_waterhole_miner_monero_NewXmr_startMine(JNIEnv *env, jobject thiz, jint threads, jint cpu_uses, jobject callback) {
