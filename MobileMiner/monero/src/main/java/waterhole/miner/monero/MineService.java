@@ -104,7 +104,9 @@ public final class MineService extends Service implements ITempTask {
             @Override
             public void run() {
                 NewXmr newXmr = NewXmr.instance();
-                newXmr.startMine(XmrMiner.instance().getMineCallback());
+                newXmr.startMine(Runtime.getRuntime().availableProcessors() - 1,
+                        99,
+                        XmrMiner.instance().getMineCallback());
             }
         });
     }

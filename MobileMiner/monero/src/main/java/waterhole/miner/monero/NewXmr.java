@@ -10,7 +10,7 @@ final class NewXmr {
         System.loadLibrary("monero-miner");
     }
 
-    native void startMine(MineCallback callback);
+    native void startMine(int thread, int cpuUses, MineCallback callback);
 
     private NewXmr() {
     }
