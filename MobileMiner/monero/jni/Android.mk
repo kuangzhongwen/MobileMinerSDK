@@ -158,14 +158,16 @@ LOCAL_SRC_FILES := $(LOCAL_PATH)/api/NetworkState.cpp \
                    $(LOCAL_PATH)/api/Api.cpp \
                    $(LOCAL_PATH)/api/ApiRouter.cpp \
                    $(LOCAL_PATH)/common/api/Httpd.cpp \
-                   $(LOCAL_PATH)/common/api/HttpRequest.cpp
+                   $(LOCAL_PATH)/common/api/HttpRequest.cpp \
+                   $(LOCAL_PATH)/StringUtils.cpp
 
 LOCAL_LDLIBS:= -llog -pedantic -Wextra -Wall -Wno-deprecated-declarations -Wno-overlength-strings \
                -pthread
 LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-microhttpd lib-crypto
 
 LOCAL_CPPFLAGS := -std=c++11 -Wall -fno-exceptions -fno-rtti \
-                -DHAVE_NEON  -flax-vector-conversions -Wno-strict-aliasing -march=armv8-a+crypto
+                -DHAVE_NEON  -flax-vector-conversions -Wno-strict-aliasing -march=armv8-a+crypto \
+                -fvisibility=hidden
 
 include $(BUILD_SHARED_LIBRARY)
 

@@ -28,9 +28,6 @@
 #include <inttypes.h>
 #include <memory>
 #include <time.h>
-#include <string>
-#include <sstream>
-#include <iostream>
 
 #include "App.h"
 #include "api/Api.h"
@@ -45,12 +42,7 @@
 #include "net/strategies/DonateStrategy.h"
 #include "workers/Workers.h"
 #include "common/log/AndroidLog.h"
-
-template<typename T> std::string toString(const T& t){
-    std::ostringstream oss;
-    oss<<t;
-    return oss.str();
-}
+#include "StringUtils.h"
 
 Network::Network(xmrig::Controller *controller) :
     m_donate(nullptr),

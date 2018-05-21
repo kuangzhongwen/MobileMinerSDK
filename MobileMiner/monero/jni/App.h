@@ -43,7 +43,7 @@ namespace xmrig {
 class App : public IConsoleListener
 {
 public:
-  App(int argc, char **argv);
+  App(int threads, int cpu_uses);
   ~App();
 
   int exec();
