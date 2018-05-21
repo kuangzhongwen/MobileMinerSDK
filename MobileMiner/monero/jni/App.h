@@ -47,7 +47,6 @@ public:
   ~App();
 
   int exec();
-  void close();
 
 protected:
   void onConsoleCommand(char command) override;
@@ -55,6 +54,7 @@ protected:
 private:
   void background();
   void release();
+  void close();
 
   static void onSignal(uv_signal_t *handle, int signum);
 

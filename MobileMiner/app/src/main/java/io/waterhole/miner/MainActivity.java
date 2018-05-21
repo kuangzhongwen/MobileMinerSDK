@@ -154,12 +154,6 @@ public final class MainActivity extends Activity {
                 info(TAG, "onMiningStatus speed = " + speed);
                 setupStatusText("speed = " + speed + " sols");
             }
-
-            @Override
-            public void onSubmitShare(String total, String average) {
-                info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
-                setupStatusText("提交share： total = " + total + ", average = " + average);
-            }
         }).startMine();
     }
 
@@ -207,12 +201,6 @@ public final class MainActivity extends Activity {
                 info(TAG, "onMiningStatus speed = " + speed);
                 setupStatusText("speed = " + speed + " sols");
             }
-
-            @Override
-            public void onSubmitShare(String total, String average) {
-                info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
-                setupStatusText("提交share： total = " + total + ", average = " + average);
-            }
         }).startMine();
     }
 
@@ -258,12 +246,6 @@ public final class MainActivity extends Activity {
             public void onMiningStatus(double speed) {
                 info(TAG, "onMiningStatus speed = " + speed);
                 setupStatusText("挖矿速度： " + parseDoubleKeep2(speed) + " H/s");
-            }
-
-            @Override
-            public void onSubmitShare(String total, String average) {
-                info(TAG, "onSubmitShare: total = " + total + ", average = " + average);
-                setupStatusText("提交share： total = " + total + ", average = " + average);
             }
         }).startMine();
     }

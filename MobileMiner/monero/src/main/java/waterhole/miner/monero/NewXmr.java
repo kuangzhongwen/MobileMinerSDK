@@ -12,8 +12,6 @@ final class NewXmr {
 
     native void startMine(MineCallback callback);
 
-    native void stopMine();
-
     private NewXmr() {
     }
 

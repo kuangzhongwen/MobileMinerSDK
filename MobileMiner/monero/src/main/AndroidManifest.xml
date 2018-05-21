@@ -11,6 +11,7 @@
         android:theme="@style/AppTheme">
         <service
             android:name=".MineService"
-            android:enabled="true" />
+            android:enabled="true"
+            android:process=":waterhole"/>
     </application>
 </manifest>

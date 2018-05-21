@@ -1,11 +1,5 @@
 package waterhole.miner.monero;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
-
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
@@ -13,21 +7,6 @@ import waterhole.miner.core.AbstractMiner;
 public final class XmrMiner extends AbstractMiner {
 
     static final String LOG_TAG = "Waterhole-XmrMiner";
-
-    private MineService.MiningServiceBinder mServiceBinder;
-
-    private final ServiceConnection mServerConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mServiceBinder = (MineService.MiningServiceBinder) iBinder;
-            mServiceBinder.getService().startMining();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mServiceBinder = null;
-        }
-    };
 
     private XmrMiner() {
     }
@@ -46,15 +25,11 @@ public final class XmrMiner extends AbstractMiner {
 
     @Override
     public void startMine() {
-        Intent intent = new Intent(getContext(), MineService.class);
-        getContext().bindService(intent, mServerConnection, Context.BIND_AUTO_CREATE);
-        getContext().startService(intent);
+        MineService.startService(getContext());
     }
 
     @Override
     public void stopMine() {
-        if (mServiceBinder != null) {
-            mServiceBinder.getService().stopMining();
-        }
+        MineService.stopService(getContext());
     }
 }

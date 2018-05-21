@@ -1,11 +1,13 @@
 package waterhole.miner.core;
 
+import java.io.Serializable;
+
 /**
  * 通用挖矿回调，供接入方使用，如果有特殊需求，可继承此接口.
  *
  * @author kzw on 2018/03/14.
  */
-public interface MineCallback extends NoProGuard {
+public interface MineCallback extends Serializable {
 
     /**
      * 开始连接矿池.
@@ -51,12 +53,4 @@ public interface MineCallback extends NoProGuard {
      * @param speed   挖矿速度
      */
     void onMiningStatus(double speed);
-
-    /**
-     * 提交share到矿池.
-     *
-     * @param total   总数量
-     * @param average 平均进度
-     */
-    void onSubmitShare(String total, String average);
 }
