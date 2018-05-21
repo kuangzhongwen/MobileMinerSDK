@@ -11,7 +11,7 @@ import android.os.RemoteException;
 public class CallbackService extends Service {
     static MineCallback sMineCallback;
 
-    static void setCallBack(MineCallback mineCallback) {
+    public static void setCallBack(MineCallback mineCallback) {
         sMineCallback = mineCallback;
     }
 

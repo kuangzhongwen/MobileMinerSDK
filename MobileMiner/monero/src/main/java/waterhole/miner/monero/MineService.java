@@ -31,6 +31,7 @@ import android.os.Looper;
 
 import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
+import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.monero.temperature.ITempTask;
 import waterhole.miner.monero.temperature.TemperatureController;
 
@@ -47,6 +48,7 @@ public final class MineService extends Service implements ITempTask {
 
     public TemperatureController temperatureController;
     private MineCallback mineCallback;
+    private boolean isMining;
 
     @Override
     public void start() {
@@ -97,35 +99,48 @@ public final class MineService extends Service implements ITempTask {
         super.onDestroy();
         sMineService = null;
         stopMine();
+
+        Intent intent = new Intent("waterhole.miner.monero.destroy");
+        sendBroadcast(intent);
     }
 
     void startMine() {
+        LogUtils.debug("huwwds", ">>>>>>>>>>>>>>>>>>startMine");
+        if (isMining) {
+            mineCallback.onMiningError("Xmr miner is Running");
+            return;
+        }
         if (!hasLollipop()) {
-            if (mineCallback != null) {
-                mineCallback.onMiningError("Android version must be >= 21");
-            }
+            mineCallback.onMiningError("Android version must be >= 21");
             return;
         }
         final String cpuABI = Build.CPU_ABI;
         info(LOG_TAG, cpuABI);
         if (!cpuABI.toLowerCase().equals("arm64-v8a")) {
-            if (mineCallback != null) {
-                mineCallback.onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + cpuABI);
-            }
+            mineCallback.onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + cpuABI);
+            // this flag will keep the start button disabled
             return;
         }
-        executeOnThreadPool(new Runnable() {
+        mMainHandler.post(new Runnable() {
             @Override
             public void run() {
-                NewXmr newXmr = NewXmr.instance();
-                newXmr.startMine(Runtime.getRuntime().availableProcessors() - 1,
-                        99,
-                        mineCallback);
+                executeOnThreadPool(new Runnable() {
+                    @Override
+                    public void run() {
+                        isMining = true;
+                        NewXmr newXmr = NewXmr.instance();
+                        newXmr.startMine(Runtime.getRuntime().availableProcessors() - 1,
+                                99,
+                                mineCallback);
+                    }
+                });
             }
         });
     }
 
     void stopMine() {
+        isMining = false;
+        //      OldXmr.instance().stopMine();
         System.exit(0);
         android.os.Process.killProcess(android.os.Process.myPid());
     }

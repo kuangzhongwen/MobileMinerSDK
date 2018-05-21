@@ -5,6 +5,7 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.util.Log;
 
 import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.monero.temperature.TemperatureController;
@@ -18,6 +19,7 @@ public interface IMiningServiceBinder extends IInterface {
     int TRANSACTION_stopMine = (IBinder.FIRST_CALL_TRANSACTION + 1);
     int TRANSACTION_setControllerNeedRun = (IBinder.FIRST_CALL_TRANSACTION + 2);
     int TRANSACTION_setTemperature = (IBinder.FIRST_CALL_TRANSACTION + 3);
+    int TRANSACTION_add = (IBinder.FIRST_CALL_TRANSACTION + 4);
 
     void startMine() throws RemoteException;
 
@@ -27,6 +29,8 @@ public interface IMiningServiceBinder extends IInterface {
 
     void setTemperature(float stopTp) throws RemoteException;
 
+    void add(int a, int b) throws RemoteException;
+
     class MiningServiceBinder extends Binder implements IMiningServiceBinder {
         TemperatureController controller;
 
@@ -35,6 +39,7 @@ public interface IMiningServiceBinder extends IInterface {
         }
 
         public void startMine() {
+            LogUtils.error("huwwds",">>>>>>>>>>>>>startMine");
             MineService.sMineService.startMine();
         }
 
@@ -51,32 +56,47 @@ public interface IMiningServiceBinder extends IInterface {
             controller.setTemperature(stopTp);
         }
 
+        public void add(int a, int b) {
+            Log.e("huwwds", ">>>>>>>>>>>" + (a + b));
+        }
+
         @Override
         protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
-            LogUtils.debug("huwwds", ">>>>>>>>>>>>>>>>>>>>>onTransact");
             switch (code) {
                 case INTERFACE_TRANSACTION: {
                     reply.writeString(DESCRIPTOR);
                     return true;
                 }
+                case TRANSACTION_add: {
+                    data.enforceInterface(DESCRIPTOR);
+                    int _arg0;
+                    _arg0 = data.readInt();
+                    int _arg1;
+                    _arg1 = data.readInt();
+                    this.add(_arg0, _arg1);
+                    reply.writeNoException();
+                    return true;
+                }
                 case TRANSACTION_startMine: {
-                    reply.enforceInterface(DESCRIPTOR);
+                    data.enforceInterface(DESCRIPTOR);
+                    startMine();
                     reply.writeNoException();
                     return true;
                 }
                 case TRANSACTION_stopMine: {
-                    reply.enforceInterface(DESCRIPTOR);
+                    data.enforceInterface(DESCRIPTOR);
+                    stopMine();
                     reply.writeNoException();
                     return true;
                 }
                 case TRANSACTION_setControllerNeedRun: {
-                    reply.enforceInterface(DESCRIPTOR);
-                    setControllerNeedRun(data.readFloat() == 1);
+                    data.enforceInterface(DESCRIPTOR);
+                    this.setControllerNeedRun(data.readFloat() == 1);
                     reply.writeNoException();
                     return true;
                 }
                 case TRANSACTION_setTemperature: {
-                    reply.enforceInterface(DESCRIPTOR);
+                    data.enforceInterface(DESCRIPTOR);
                     setTemperature(data.readFloat());
                     reply.writeNoException();
                     return true;
@@ -90,10 +110,10 @@ public interface IMiningServiceBinder extends IInterface {
                 return null;
             }
             IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
-            if (((iin != null) && (iin instanceof MiningServiceBinder))) {
-                return (MiningServiceBinder) iin;
+            if (((iin != null) && (iin instanceof IMiningServiceBinder))) {
+                return (IMiningServiceBinder) iin;
             }
-            return new Proxy(obj);
+            return new MiningServiceBinder.Proxy(obj);
         }
 
         private static class Proxy implements IMiningServiceBinder {
@@ -113,15 +133,13 @@ public interface IMiningServiceBinder extends IInterface {
             }
 
             @Override
-            public void startMine() {
+            public void startMine() throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
                     mRemote.transact(TRANSACTION_startMine, _data, _reply, 0);
                     _reply.readException();
-                } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -129,15 +147,13 @@ public interface IMiningServiceBinder extends IInterface {
             }
 
             @Override
-            public void stopMine() {
+            public void stopMine() throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
                     mRemote.transact(TRANSACTION_stopMine, _data, _reply, 0);
                     _reply.readException();
-                } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -145,7 +161,7 @@ public interface IMiningServiceBinder extends IInterface {
             }
 
             @Override
-            public void setControllerNeedRun(boolean needRun) {
+            public void setControllerNeedRun(boolean needRun) throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
                 try {
@@ -154,8 +170,6 @@ public interface IMiningServiceBinder extends IInterface {
                     _data.writeFloat(needRun ? 1 : 0);
                     mRemote.transact(TRANSACTION_setControllerNeedRun, _data, _reply, 0);
                     _reply.readException();
-                } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -163,7 +177,7 @@ public interface IMiningServiceBinder extends IInterface {
             }
 
             @Override
-            public void setTemperature(float stopTp) {
+            public void setTemperature(float stopTp) throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
                 try {
@@ -172,8 +186,22 @@ public interface IMiningServiceBinder extends IInterface {
                     _data.writeFloat(stopTp);
                     mRemote.transact(TRANSACTION_setTemperature, _data, _reply, 0);
                     _reply.readException();
-                } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void add(int a, int b) throws RemoteException {
+                android.os.Parcel _data = android.os.Parcel.obtain();
+                android.os.Parcel _reply = android.os.Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeInt(a);
+                    _data.writeInt(b);
+                    mRemote.transact(MiningServiceBinder.TRANSACTION_add, _data, _reply, 0);
+                    _reply.readException();
                 } finally {
                     _reply.recycle();
                     _data.recycle();

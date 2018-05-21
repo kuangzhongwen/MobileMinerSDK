@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.eth.EthMiner;
@@ -216,7 +217,7 @@ public final class MainActivity extends Activity {
     }
 
     private void initMoneroMiner() {
-        XmrMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
+        MineCallback mineCallback = new MineCallback() {
             @Override
             public IBinder asBinder() {
                 return null;
@@ -263,6 +264,8 @@ public final class MainActivity extends Activity {
                 info(TAG, "onMiningStatus speed = " + speed);
                 setupStatusText("挖矿速度： " + parseDoubleKeep2(speed) + " H/s");
             }
-        }).startMine();
+        };
+        CallbackService.setCallBack(mineCallback);
+        XmrMiner.instance().setContext(this).setMineCallback(mineCallback).startMine();
     }
 }

