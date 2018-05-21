@@ -54,7 +54,6 @@ public final class XmrMiner extends AbstractMiner {
 
     @Override
     public void stopMine() {
-        MineService.stopService(getContext());
         if (mServiceBinder != null) {
             mServiceBinder.getService().stopMine();
             mServiceBinder.controller.needRun = false;

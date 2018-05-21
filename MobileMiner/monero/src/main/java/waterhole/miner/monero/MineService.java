@@ -39,6 +39,7 @@ import static waterhole.miner.monero.XmrMiner.LOG_TAG;
 public final class MineService extends Service implements ITempTask {
 
     Handler mMainHandler = new Handler(Looper.getMainLooper());
+
     public TemperatureController temperatureController;
 
     public class MiningServiceBinder extends Binder {
@@ -112,19 +113,5 @@ public final class MineService extends Service implements ITempTask {
         //      OldXmr.instance().stopMine();
         System.exit(0);
         android.os.Process.killProcess(android.os.Process.myPid());
-    }
-
-    public static void startService(Context context) {
-        if (context != null) {
-            Intent intent = new Intent(context, MineService.class);
-            context.startService(intent);
-        }
-    }
-
-    public static void stopService(Context context) {
-        if (context != null) {
-            Intent intent = new Intent(context, MineService.class);
-            context.stopService(intent);
-        }
     }
 }
