@@ -19,9 +19,9 @@ public final class XmrMiner extends AbstractMiner {
     private final ServiceConnection mServerConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mServiceBinder = (MineService.MiningServiceBinder) iBinder;
-            mServiceBinder.controller.needRun = true;
-            mServiceBinder.getService().startMine();
+            mServiceBinder = (MineService.MiningServiceBinder) MineService.MiningServiceBinder.asInterface(iBinder);
+            mServiceBinder.setControllerNeedRun(true);
+            mServiceBinder.startMine();
         }
 
         @Override
@@ -55,8 +55,8 @@ public final class XmrMiner extends AbstractMiner {
     @Override
     public void stopMine() {
         if (mServiceBinder != null) {
-            mServiceBinder.getService().stopMine();
-            mServiceBinder.controller.needRun = false;
+            mServiceBinder.stopMine();
+            mServiceBinder.setControllerNeedRun(false);
         }
     }
 }

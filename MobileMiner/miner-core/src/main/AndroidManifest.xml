@@ -1,2 +1,10 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="waterhole.miner.core" />
+<manifest package="waterhole.miner.core"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <service
+            android:name=".CallbackService"
+            android:enabled="true"
+            android:process=":waterhole"/>
+    </application>
+</manifest>
