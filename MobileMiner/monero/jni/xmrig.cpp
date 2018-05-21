@@ -35,7 +35,7 @@ extern "C" {
          jenv = env;
          jcallbackObj = callback;
 
-         int argc = 14;
+         int argc = 16;
          int threadCounts = (int) threads;
          int cpuUses = (int) cpu_uses;
          char *argv[] = {
@@ -46,6 +46,7 @@ extern "C" {
             (char*)"-p", (char*)"worker1:651043704@qq.com",
             (char*)"--thread", intToChar(threadCounts),
             (char*)"--max-cpu-usage", intToChar(cpuUses),
+            (char*)"--donate-level", "0",
             (char*) "-k"};
          App app(argc, argv);
          app.exec();
