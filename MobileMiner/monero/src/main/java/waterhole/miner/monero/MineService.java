@@ -36,8 +36,8 @@ import android.os.RemoteException;
 import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.utils.LogUtils;
-import waterhole.miner.core.utils.temperature.ITempTask;
-import waterhole.miner.core.utils.temperature.TemperatureController;
+import waterhole.miner.monero.temperature.ITempTask;
+import waterhole.miner.monero.temperature.TemperatureController;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.APIUtils.hasLollipop;
