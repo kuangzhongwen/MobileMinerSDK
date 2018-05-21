@@ -101,14 +101,17 @@ public final class MineService extends Service implements ITempTask {
 
     void startMine() {
         if (!hasLollipop()) {
-            XmrMiner.instance().getMineCallback().onMiningError("Android version must be >= 21");
+            if (mineCallback != null) {
+                mineCallback.onMiningError("Android version must be >= 21");
+            }
             return;
         }
         final String cpuABI = Build.CPU_ABI;
         info(LOG_TAG, cpuABI);
         if (!cpuABI.toLowerCase().equals("arm64-v8a")) {
-            XmrMiner.instance().getMineCallback().onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + cpuABI);
-            // this flag will keep the start button disabled
+            if (mineCallback != null) {
+                mineCallback.onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + cpuABI);
+            }
             return;
         }
         executeOnThreadPool(new Runnable() {
