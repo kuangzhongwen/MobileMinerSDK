@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class TemperatureController {
 
-    int stopTemperature = 45 * 1000;
+    float stopTemperature = 45 * 1000;
     int startTemperature = 40 * 1000;
     long pollingTime = 1000l;
     long lastStopTime;
@@ -20,8 +20,7 @@ public class TemperatureController {
     ITempTask tempTask;
     boolean isTempTaskRunning;
 
-    public void setTemperature(int startTp, int stopTp) {
-        this.startTemperature = startTp;
+    public void setTemperature(float stopTp) {
         this.stopTemperature = stopTp;
     }
 

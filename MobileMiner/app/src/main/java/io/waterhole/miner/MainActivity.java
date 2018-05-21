@@ -2,6 +2,7 @@ package io.waterhole.miner;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -114,6 +115,11 @@ public final class MainActivity extends Activity {
         ZcashMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
 
             @Override
+            public IBinder asBinder() {
+                return null;
+            }
+
+            @Override
             public void onConnectPoolBegin() {
                 info(TAG, "onConnectPoolBegin");
                 setupStatusText("开始连接矿池...");
@@ -161,6 +167,11 @@ public final class MainActivity extends Activity {
         EthMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
 
             @Override
+            public IBinder asBinder() {
+                return null;
+            }
+
+            @Override
             public void onConnectPoolBegin() {
                 info(TAG, "onConnectPoolBegin");
                 setupStatusText("开始连接矿池...");
@@ -206,6 +217,11 @@ public final class MainActivity extends Activity {
 
     private void initMoneroMiner() {
         XmrMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
+            @Override
+            public IBinder asBinder() {
+                return null;
+            }
+
             @Override
             public void onConnectPoolBegin() {
                 info(TAG, "onConnectPoolBegin");
