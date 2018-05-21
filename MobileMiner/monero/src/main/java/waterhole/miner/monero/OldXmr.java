@@ -30,18 +30,20 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
     private Context mContext;
     private Process mProcess;
     private OutputReaderThread mOutputHandler;
+
     private int mAccepted;
     private String mSpeed = "./.";
 
     @TargetApi(19)
     private final class OutputReaderThread extends Thread {
 
-        private InputStream inputStream;
-        private StringBuilder output = new StringBuilder();
+        private final InputStream inputStream;
+        private final StringBuilder output;
         private BufferedReader reader;
 
         OutputReaderThread(InputStream inputStream) {
             this.inputStream = inputStream;
+            this.output = new StringBuilder();
         }
 
         public void run() {
@@ -158,10 +160,8 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
         String fileDir = mContext.getFilesDir().getAbsolutePath();
         File xmrig = new File(fileDir + "/xmrig");
         info(LOG_TAG, "xmrig exist: " + xmrig.exists());
-
         File uvFile = new File(fileDir + "/libuv.so");
         info(LOG_TAG, "libuv.so exist: " + uvFile.exists());
-
         File cplusFile = new File(fileDir + "/libc++_shared.so");
         info(LOG_TAG, "libc++_shared.so exist: " + cplusFile.exists());
 
