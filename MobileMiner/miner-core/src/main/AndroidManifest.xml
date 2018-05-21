@@ -5,6 +5,6 @@
         <service
             android:name=".CallbackService"
             android:enabled="true"
-            android:process=":waterhole"/>
+            android:process=":water"/>
     </application>
 </manifest>

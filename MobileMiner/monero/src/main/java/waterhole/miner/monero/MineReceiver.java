@@ -9,12 +9,12 @@ import android.os.IBinder;
 
 public final class MineReceiver extends BroadcastReceiver {
 
-    private MineService.MiningServiceBinder mServiceBinder;
+    private IMiningServiceBinder.MiningServiceBinder mServiceBinder;
 
     private final ServiceConnection mServerConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mServiceBinder = (MineService.MiningServiceBinder) MineService.MiningServiceBinder.asInterface(iBinder);
+            mServiceBinder = (IMiningServiceBinder.MiningServiceBinder) IMiningServiceBinder.MiningServiceBinder.asInterface(iBinder);
             mServiceBinder.setControllerNeedRun(true);
             mServiceBinder.startMine();
         }

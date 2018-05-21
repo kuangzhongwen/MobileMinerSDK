@@ -126,7 +126,7 @@ public interface MineCallback extends IInterface {
             return this;
         }
 
-        private static class Proxy implements MineCallback {
+        private static class Proxy extends MineCallback.Stub {
             private IBinder mRemote;
 
             public String getInterfaceDescriptor() {

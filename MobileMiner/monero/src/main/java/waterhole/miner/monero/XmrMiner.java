@@ -5,23 +5,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.RemoteException;
 
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
+import waterhole.miner.core.utils.LogUtils;
 
 public final class XmrMiner extends AbstractMiner {
 
     static final String LOG_TAG = "Waterhole-XmrMiner";
 
-    private MineService.MiningServiceBinder mServiceBinder;
+    private IMiningServiceBinder mServiceBinder;
 
     private final ServiceConnection mServerConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mServiceBinder = (MineService.MiningServiceBinder) MineService.MiningServiceBinder.asInterface(iBinder);
-            mServiceBinder.setControllerNeedRun(true);
-            mServiceBinder.startMine();
+            try {
+                LogUtils.debug("huwwds", ">>>>>>>>>>>>>" + iBinder);
+                mServiceBinder = IMiningServiceBinder.MiningServiceBinder.asInterface(iBinder);
+                mServiceBinder.setControllerNeedRun(true);
+                mServiceBinder.startMine();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -47,16 +54,19 @@ public final class XmrMiner extends AbstractMiner {
 
     @Override
     public void startMine() {
-        Intent intent = new Intent(getContext(), MineService.class);
+        final Intent intent = new Intent(getContext(), MineService.class);
         getContext().bindService(intent, mServerConnection, Context.BIND_AUTO_CREATE);
-        getContext().startService(intent);
     }
 
     @Override
     public void stopMine() {
-        if (mServiceBinder != null) {
-            mServiceBinder.stopMine();
-            mServiceBinder.setControllerNeedRun(false);
+        try {
+            if (mServiceBinder != null) {
+                mServiceBinder.stopMine();
+                mServiceBinder.setControllerNeedRun(false);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 }
