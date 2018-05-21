@@ -22,34 +22,82 @@ package waterhole.miner.monero;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 
-import static waterhole.miner.monero.XmrMiner.LOG_TAG;
-import static waterhole.miner.core.utils.LogUtils.info;
-import static waterhole.miner.core.utils.APIUtils.hasLollipop;
+import waterhole.miner.monero.temperature.ITempTask;
+import waterhole.miner.monero.temperature.TemperatureController;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
+import static waterhole.miner.core.utils.APIUtils.hasLollipop;
+import static waterhole.miner.core.utils.LogUtils.info;
+import static waterhole.miner.monero.XmrMiner.LOG_TAG;
 
-public final class MineService extends Service {
+public final class MineService extends Service implements ITempTask {
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    Handler mMainHandler = new Handler(Looper.getMainLooper());
+    public TemperatureController temperatureController;
+
+    public class MiningServiceBinder extends Binder {
+        TemperatureController controller;
+
+        MiningServiceBinder(TemperatureController temperatureController) {
+            this.controller = temperatureController;
+        }
+
+        public MineService getService() {
+            return MineService.this;
+        }
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public void start() {
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                startMine();
+            }
+        });
+    }
+
+    @Override
+    public void stop() {
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                stopMine();
+            }
+        });
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        temperatureController = new TemperatureController();
+        temperatureController.setTask(this);
+        temperatureController.startControl();
+        return new MiningServiceBinder(temperatureController);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopMine();
+    }
+
+    void startMine() {
         if (!hasLollipop()) {
             XmrMiner.instance().getMineCallback().onMiningError("Android version must be >= 21");
-            return START_STICKY;
+            return;
         }
         final String cpuABI = Build.CPU_ABI;
         info(LOG_TAG, cpuABI);
         if (!cpuABI.toLowerCase().equals("arm64-v8a")) {
             XmrMiner.instance().getMineCallback().onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + cpuABI);
             // this flag will keep the start button disabled
-            return START_STICKY;
+            return;
         }
         executeOnThreadPool(new Runnable() {
             @Override
@@ -58,14 +106,10 @@ public final class MineService extends Service {
                 newXmr.startMine(XmrMiner.instance().getMineCallback());
             }
         });
-        return START_STICKY;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-//      OldXmr.instance().stopMine();
+    void stopMine() {
+        //      OldXmr.instance().stopMine();
         System.exit(0);
         android.os.Process.killProcess(android.os.Process.myPid());
     }
