@@ -1,4 +1,4 @@
-package waterhole.miner.monero.temperature;
+package waterhole.miner.core.utils.temperature;
 
 public interface ITempTask {
     void start();
