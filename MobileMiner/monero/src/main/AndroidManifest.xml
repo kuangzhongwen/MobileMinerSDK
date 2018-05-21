@@ -13,13 +13,5 @@
             android:name="waterhole.miner.monero.MineService"
             android:enabled="true"
             android:process=":waterhole"/>
-
-        <receiver android:name=".MineReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.USER_PRESENT"/>
-                <action android:name="waterhole.miner.monero.destroy"/>
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>

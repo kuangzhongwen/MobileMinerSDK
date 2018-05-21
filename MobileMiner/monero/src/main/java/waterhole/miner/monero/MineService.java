@@ -47,7 +47,6 @@ public final class MineService extends Service implements ITempTask {
 
     public TemperatureController temperatureController;
     private MineCallback mineCallback;
-    private boolean isMining;
 
     @Override
     public void start() {
@@ -104,10 +103,6 @@ public final class MineService extends Service implements ITempTask {
     }
 
     void startMine() {
-        if (isMining) {
-            XmrMiner.instance().getMineCallback().onMiningError("Xmr miner is Running");
-            return;
-        }
         if (!hasLollipop()) {
             XmrMiner.instance().getMineCallback().onMiningError("Android version must be >= 21");
             return;
@@ -122,7 +117,6 @@ public final class MineService extends Service implements ITempTask {
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
-                isMining = true;
                 NewXmr newXmr = NewXmr.instance();
                 newXmr.startMine(Runtime.getRuntime().availableProcessors() - 1,
                         99,
@@ -132,8 +126,6 @@ public final class MineService extends Service implements ITempTask {
     }
 
     void stopMine() {
-        isMining = false;
-        //      OldXmr.instance().stopMine();
         System.exit(0);
         android.os.Process.killProcess(android.os.Process.myPid());
     }
