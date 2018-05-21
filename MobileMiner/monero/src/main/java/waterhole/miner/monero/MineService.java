@@ -24,32 +24,14 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.util.Log;
-
-import waterhole.miner.core.utils.APIUtils;
-import waterhole.miner.core.utils.LogUtils;
-import waterhole.miner.monero.temperature.ITempTask;
-import waterhole.miner.monero.temperature.TemperatureController;
 
 import static waterhole.miner.monero.XmrMiner.LOG_TAG;
+import static waterhole.miner.core.utils.LogUtils.info;
+import static waterhole.miner.core.utils.APIUtils.hasLollipop;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 
-public class MineService extends Service implements ITempTask {
-
-    TemperatureController temperatureController;
-
-    @Override
-    public void start() {
-        startMining();
-        Log.e("huwwds", ">>>>>>>>>>>start mine");
-    }
-
-    @Override
-    public void stop() {
-        stopMining();
-        Log.e("huwwds", ">>>>>>>>>>>stop mine");
-    }
+public final class MineService extends Service {
 
     public class MiningServiceBinder extends Binder {
         public MineService getService() {
@@ -58,54 +40,34 @@ public class MineService extends Service implements ITempTask {
     }
 
     @Override
-    public void onDestroy() {
-        stopMining();
-        super.onDestroy();
-    }
-
-    @Override
     public IBinder onBind(Intent intent) {
         return new MiningServiceBinder();
     }
 
     public void startMining() {
-        if (!APIUtils.hasLollipop()) {
-            XmrMiner.instance().getMineCallback().onMiningError("Android version must be >= 21");
+        final XmrMiner xmrMiner = XmrMiner.instance();
+        if (!hasLollipop()) {
+            xmrMiner.getMineCallback().onMiningError("Android version must be >= 21");
             return;
         }
-        LogUtils.info(LOG_TAG, Build.CPU_ABI);
-        if (!Build.CPU_ABI.toLowerCase().equals("arm64-v8a")) {
-            XmrMiner.instance().getMineCallback().onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + Build.CPU_ABI);
+        final String cpuABI = Build.CPU_ABI;
+        info(LOG_TAG, cpuABI);
+        if (!cpuABI.toLowerCase().equals("arm64-v8a")) {
+            xmrMiner.getMineCallback().onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + cpuABI);
             // this flag will keep the start button disabled
             return;
         }
-//        OldXmr.instance().setContext(getApplicationContext());
-//        OldXmr.instance().startMine();
-//        if (temperatureController == null) {
-//            temperatureController = new TemperatureController();
-//            temperatureController.setTask(this);
-//            temperatureController.startControl();
-//        } else {
-//            executeOnThreadPool(new Runnable() {
-//                @Override
-//                public void run() {
-//                    NewXmr newXmr = NewXmr.instance();
-//                    newXmr.startMine(XmrMiner.instance().getMineCallback());
-//                }
-//            });
-//        }
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
                 NewXmr newXmr = NewXmr.instance();
-                newXmr.startMine(XmrMiner.instance().getMineCallback());
+                newXmr.startMine(xmrMiner.getMineCallback());
             }
         });
     }
 
     public void stopMining() {
 //        OldXmr.instance().stopMine();
-
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
