@@ -10,11 +10,12 @@ import java.util.List;
  */
 public class TemperatureController {
 
-    int stopTemperature = 45;
-    int startTemperature = 40;
+    int stopTemperature = 45 * 1000;
+    int startTemperature = 40 * 1000;
     long pollingTime = 1000l;
     long lastStopTime;
     long stopDelay = 5000l;
+    public boolean needRun = false;
 
     ITempTask tempTask;
     boolean isTempTaskRunning;
@@ -40,28 +41,31 @@ public class TemperatureController {
             @Override
             public void run() {
                 for (; ; ) {
-                    try {
-                        List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
-                        double maxTemperature = -1;
-                        for (String info : thermalInfo) {
-                            String temp = info.replaceAll("(\\d+).*", "$1").trim();
-                            if (TextUtils.isDigitsOnly(temp.replace(".", ""))) {
-                                double dTemp = Double.parseDouble(temp);
-                                if (maxTemperature < dTemp)
-                                    maxTemperature = dTemp;
+                    if (needRun) {
+                        try {
+                            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
+                            double maxTemperature = -1;
+                            for (String info : thermalInfo) {
+                                String temp = info.replaceAll("(\\d+).*", "$1").trim();
+                                if (TextUtils.isDigitsOnly(temp.replace(".", ""))) {
+                                    double dTemp = Double.parseDouble(temp);
+                                    if (maxTemperature < dTemp)
+                                        maxTemperature = dTemp;
+                                }
                             }
+                            if (maxTemperature > stopTemperature && isTempTaskRunning) {
+                                isTempTaskRunning = false;
+                                lastStopTime = System.currentTimeMillis();
+                                tempTask.stop();
+                            }
+                            if (maxTemperature < startTemperature && !isTempTaskRunning && (System.currentTimeMillis() - lastStopTime > stopDelay)) {
+                                isTempTaskRunning = true;
+                                tempTask.start();
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        if (maxTemperature > stopTemperature && isTempTaskRunning) {
-                            isTempTaskRunning = false;
-                            lastStopTime = System.currentTimeMillis();
-                            tempTask.stop();
-                        }
-                        if (maxTemperature < startTemperature && !isTempTaskRunning && (System.currentTimeMillis() - lastStopTime > stopDelay)) {
-                            isTempTaskRunning = true;
-                            tempTask.start();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                     SystemClock.sleep(pollingTime);
                 }

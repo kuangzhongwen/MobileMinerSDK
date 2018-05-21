@@ -23,17 +23,50 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 
-import static waterhole.miner.monero.XmrMiner.LOG_TAG;
-import static waterhole.miner.core.utils.LogUtils.info;
-import static waterhole.miner.core.utils.APIUtils.hasLollipop;
+import waterhole.miner.monero.temperature.ITempTask;
+import waterhole.miner.monero.temperature.TemperatureController;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
+import static waterhole.miner.core.utils.APIUtils.hasLollipop;
+import static waterhole.miner.core.utils.LogUtils.info;
+import static waterhole.miner.monero.XmrMiner.LOG_TAG;
 
-public final class MineService extends Service {
+public final class MineService extends Service implements ITempTask {
+
+    Handler mMainHandler = new Handler(Looper.getMainLooper());
+    public TemperatureController temperatureController;
+
+    @Override
+    public void start() {
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                startMining();
+            }
+        });
+    }
+
+    @Override
+    public void stop() {
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                stopMining();
+            }
+        });
+    }
 
     public class MiningServiceBinder extends Binder {
+        TemperatureController controller;
+
+        MiningServiceBinder(TemperatureController temperatureController) {
+            this.controller = temperatureController;
+        }
+
         public MineService getService() {
             return MineService.this;
         }
@@ -41,7 +74,10 @@ public final class MineService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return new MiningServiceBinder();
+        temperatureController = new TemperatureController();
+        temperatureController.setTask(this);
+        temperatureController.startControl();
+        return new MiningServiceBinder(temperatureController);
     }
 
     public void startMining() {
