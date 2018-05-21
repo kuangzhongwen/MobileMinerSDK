@@ -97,9 +97,6 @@ public final class MineService extends Service implements ITempTask {
         super.onDestroy();
         sMineService = null;
         stopMine();
-
-        Intent intent = new Intent("waterhole.miner.monero.destroy");
-        sendBroadcast(intent);
     }
 
     void startMine() {
