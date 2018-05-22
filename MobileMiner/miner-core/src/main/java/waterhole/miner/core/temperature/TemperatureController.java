@@ -5,8 +5,6 @@ import android.text.TextUtils;
 
 import java.util.List;
 
-import waterhole.miner.core.utils.ThermalInfoUtil;
-
 /**
  * 温控任务
  */

@@ -1,4 +1,4 @@
-package waterhole.miner.core.utils;
+package waterhole.miner.core.temperature;
 
 import java.io.IOException;
 import java.io.InputStream;
