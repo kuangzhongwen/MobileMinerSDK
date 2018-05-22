@@ -1,11 +1,14 @@
 package waterhole.miner.monero;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Handler;
 import android.os.IBinder;
-import android.os.RemoteException;
+import android.os.Looper;
 
 import java.io.ObjectStreamException;
 
@@ -16,6 +19,8 @@ public final class XmrMiner extends AbstractMiner {
     static final String LOG_TAG = "Waterhole-XmrMiner";
 
     private IMiningServiceBinder mServiceBinder;
+
+    private MineReceiver mineReceiver;
 
     private final ServiceConnection mServerConnection = new ServiceConnection() {
         @Override
@@ -54,6 +59,10 @@ public final class XmrMiner extends AbstractMiner {
 
     @Override
     public void startMine() {
+        mineReceiver = new MineReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("waterhole.miner.monero.restart");
+        getContext().registerReceiver(mineReceiver, intentFilter);
         final Intent intent = new Intent(getContext(), MineService.class);
         getContext().bindService(intent, mServerConnection, Context.BIND_AUTO_CREATE);
     }
@@ -62,11 +71,28 @@ public final class XmrMiner extends AbstractMiner {
     public void stopMine() {
         try {
             if (mServiceBinder != null) {
-                mServiceBinder.stopMine();
-                mServiceBinder.setControllerNeedRun(false);
+                getContext().unbindService(mServerConnection);
             }
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public class MineReceiver extends BroadcastReceiver {
+        public MineReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            stopMine();
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startMine();
+                }
+            }, 1000);
+        }
+    }
+
+
 }

@@ -51,23 +51,20 @@ public final class MineService extends Service implements ITempTask {
     private boolean isMining;
 
     @Override
-    public void start() {
+    public void start(final int[] temperatureSurface) {
         mMainHandler.post(new Runnable() {
             @Override
             public void run() {
-                startMine();
+                startMine(temperatureSurface);
             }
         });
     }
 
     @Override
     public void stop() {
-        mMainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                stopMine();
-            }
-        });
+        //通知重启
+        Intent intent = new Intent("waterhole.miner.monero.restart");
+        sendBroadcast(intent);
     }
 
     ServiceConnection serviceConnection = new ServiceConnection() {
@@ -103,13 +100,11 @@ public final class MineService extends Service implements ITempTask {
     public void onDestroy() {
         super.onDestroy();
         sMineService = null;
-        stopMine();
-
-        Intent intent = new Intent("waterhole.miner.monero.destroy");
-        sendBroadcast(intent);
+        System.exit(0);
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 
-    void startMine() {
+    void startMine(final int[] temperatureSurface) {
         do {
             SystemClock.sleep(100);
             if (mineCallback == null)
@@ -141,19 +136,11 @@ public final class MineService extends Service implements ITempTask {
                         public void run() {
                             isMining = true;
                             NewXmr newXmr = NewXmr.instance();
-                            newXmr.startMine(Runtime.getRuntime().availableProcessors() - 1, 99, mineCallback);
+                            newXmr.startMine(temperatureSurface[1], temperatureSurface[2], mineCallback);
                         }
                     });
                 }
             });
         } while (mineCallback == null);
-
-    }
-
-    void stopMine() {
-        isMining = false;
-        //      OldXmr.instance().stopMine();
-        System.exit(0);
-        android.os.Process.killProcess(android.os.Process.myPid());
     }
 }

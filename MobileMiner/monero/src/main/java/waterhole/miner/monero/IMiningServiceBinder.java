@@ -24,7 +24,7 @@ public interface IMiningServiceBinder extends IInterface {
 
     void setControllerNeedRun(boolean needRun) throws RemoteException;
 
-    void setTemperature(float stopTp) throws RemoteException;
+    void setTemperature(int stopTp) throws RemoteException;
 
     class MiningServiceBinder extends Binder implements IMiningServiceBinder {
         TemperatureController controller;
@@ -34,11 +34,9 @@ public interface IMiningServiceBinder extends IInterface {
         }
 
         public void startMine() {
-            MineService.sMineService.startMine();
         }
 
         public void stopMine() {
-            MineService.sMineService.stopMine();
         }
 
         public void setControllerNeedRun(boolean needRun) {
@@ -46,7 +44,7 @@ public interface IMiningServiceBinder extends IInterface {
         }
 
         @Override
-        public void setTemperature(float stopTp) {
+        public void setTemperature(int stopTp) {
             controller.setTemperature(stopTp);
         }
 
@@ -71,13 +69,13 @@ public interface IMiningServiceBinder extends IInterface {
                 }
                 case TRANSACTION_setControllerNeedRun: {
                     data.enforceInterface(DESCRIPTOR);
-                    this.setControllerNeedRun(data.readFloat() == 1);
+                    this.setControllerNeedRun(data.readInt() == 1);
                     reply.writeNoException();
                     return true;
                 }
                 case TRANSACTION_setTemperature: {
                     data.enforceInterface(DESCRIPTOR);
-                    setTemperature(data.readFloat());
+                    setTemperature(data.readInt());
                     reply.writeNoException();
                     return true;
                 }
@@ -146,8 +144,7 @@ public interface IMiningServiceBinder extends IInterface {
                 Parcel _reply = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
-                    _data.writeInt(1);
-                    _data.writeFloat(needRun ? 1 : 0);
+                    _data.writeInt(needRun ? 1 : 0);
                     mRemote.transact(TRANSACTION_setControllerNeedRun, _data, _reply, 0);
                     _reply.readException();
                 } finally {
@@ -157,13 +154,12 @@ public interface IMiningServiceBinder extends IInterface {
             }
 
             @Override
-            public void setTemperature(float stopTp) throws RemoteException {
+            public void setTemperature(int stopTp) throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
-                    _data.writeInt(1);
-                    _data.writeFloat(stopTp);
+                    _data.writeInt(stopTp * 1000);
                     mRemote.transact(TRANSACTION_setTemperature, _data, _reply, 0);
                     _reply.readException();
                 } finally {

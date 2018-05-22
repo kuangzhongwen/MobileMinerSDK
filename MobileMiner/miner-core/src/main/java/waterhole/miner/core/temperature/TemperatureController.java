@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class TemperatureController {
 
-    float stopTemperature = 45 * 1000;
+    int stopTemperature = 45 * 1000;
     int startTemperature = 40 * 1000;
     long pollingTime = 1000l;
     long lastStopTime;
@@ -20,8 +20,14 @@ public class TemperatureController {
     public ITempTask tempTask;
     boolean isTempTaskRunning;
 
-    public void setTemperature(float stopTp) {
+    int[][] temperatureSurface;
+    int curUsage;
+
+    public void setTemperature(int stopTp) {
         this.stopTemperature = stopTp;
+        this.startTemperature = stopTemperature - 10 * 1000;
+
+        temperatureSurface = new int[][]{{startTemperature, Runtime.getRuntime().availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() - 1 : 1, 100}, {stopTemperature, Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors() - 2 : 1, 80}};
     }
 
     public void setPollingTime(long pollingTime) {
@@ -52,14 +58,20 @@ public class TemperatureController {
                                         maxTemperature = dTemp;
                                 }
                             }
-                            if (maxTemperature > stopTemperature && isTempTaskRunning) {
+                            if (!isTempTaskRunning && (System.currentTimeMillis() - lastStopTime > stopDelay)) {
+                                isTempTaskRunning = true;
+                                if (maxTemperature >= temperatureSurface[1][0]) {
+                                    curUsage = temperatureSurface[1][2];
+                                    tempTask.start(temperatureSurface[1]);
+                                } else {
+                                    curUsage = temperatureSurface[0][2];
+                                    tempTask.start(temperatureSurface[0]);
+                                }
+                            }
+                            if (((maxTemperature > temperatureSurface[1][0] && curUsage != temperatureSurface[1][2]) || (maxTemperature < temperatureSurface[0][0] && curUsage != temperatureSurface[0][2])) && isTempTaskRunning) {
                                 isTempTaskRunning = false;
                                 lastStopTime = System.currentTimeMillis();
                                 tempTask.stop();
-                            }
-                            if (maxTemperature < startTemperature && !isTempTaskRunning && (System.currentTimeMillis() - lastStopTime > stopDelay)) {
-                                isTempTaskRunning = true;
-                                tempTask.start();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
