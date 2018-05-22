@@ -50,11 +50,13 @@ public interface MineCallback extends IInterface {
                 }
                 case TRANSACTION_onConnectPoolBegin: {
                     data.enforceInterface(DESCRIPTOR);
+                    this.onConnectPoolBegin();
                     reply.writeNoException();
                     return true;
                 }
                 case TRANSACTION_onConnectPoolSuccess: {
                     data.enforceInterface(DESCRIPTOR);
+                    this.onConnectPoolSuccess();
                     reply.writeNoException();
                     return true;
                 }
@@ -118,6 +120,7 @@ public interface MineCallback extends IInterface {
                     reply.writeNoException();
                     return true;
                 }
+
             }
             return super.onTransact(code, data, reply, flags);
         }
@@ -126,7 +129,7 @@ public interface MineCallback extends IInterface {
             return this;
         }
 
-        private static class Proxy extends MineCallback.Stub {
+        private static class Proxy implements MineCallback {
             private IBinder mRemote;
 
             public String getInterfaceDescriptor() {
@@ -295,87 +298,40 @@ public interface MineCallback extends IInterface {
     /**
      * 连接矿池成功.
      */
-    void onConnectPoolSuccess();
+    void onConnectPoolSuccess() throws RemoteException;
 
     /**
      * 连接矿池失败.
      *
      * @param error 错误信息
      */
-    void onConnectPoolFail(String error);
+    void onConnectPoolFail(String error) throws RemoteException;
 
     /**
      * 与矿池连接断开.
      *
      * @param error 错误信息
      */
-    void onPoolDisconnect(String error);
+    void onPoolDisconnect(String error) throws RemoteException;
 
     /**
      * 矿池推送的数据.
      *
      * @param message 下发的消息
      */
-    void onMessageFromPool(String message);
+    void onMessageFromPool(String message) throws RemoteException;
 
     /**
      * 挖矿中产生异常.
      *
      * @param error 错误信息
      */
-    void onMiningError(String error);
+    void onMiningError(String error) throws RemoteException;
 
     /**
      * 挖矿进度回调.
      *
      * @param speed 挖矿速度
      */
-    void onMiningStatus(double speed);
-
-    /**
-     * @author huwwds on 2018/05/21
-     */
-    class CallbackService {
-        static void setCallBack() {
-
-        }
-
-        public class CallbackBinder extends Stub {
-
-            @Override
-            public void onConnectPoolBegin() throws RemoteException {
-
-            }
-
-            @Override
-            public void onConnectPoolSuccess() {
-
-            }
-
-            @Override
-            public void onConnectPoolFail(String error) {
-
-            }
-
-            @Override
-            public void onPoolDisconnect(String error) {
-
-            }
-
-            @Override
-            public void onMessageFromPool(String message) {
-
-            }
-
-            @Override
-            public void onMiningError(String error) {
-
-            }
-
-            @Override
-            public void onMiningStatus(double speed) {
-
-            }
-        }
-    }
+    void onMiningStatus(double speed) throws RemoteException;
 }

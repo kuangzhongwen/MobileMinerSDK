@@ -1,9 +1,11 @@
-package waterhole.miner.monero.temperature;
+package waterhole.miner.core.temperature;
 
 import android.os.SystemClock;
 import android.text.TextUtils;
 
 import java.util.List;
+
+import waterhole.miner.core.utils.ThermalInfoUtil;
 
 /**
  * 温控任务
@@ -17,7 +19,7 @@ public class TemperatureController {
     long stopDelay = 5000l;
     public boolean needRun = false;
 
-    ITempTask tempTask;
+    public ITempTask tempTask;
     boolean isTempTaskRunning;
 
     public void setTemperature(float stopTp) {
@@ -29,7 +31,7 @@ public class TemperatureController {
     }
 
     public void setTask(ITempTask iTempTask) {
-        this.tempTask = iTempTask;
+        tempTask = iTempTask;
     }
 
     public void startControl() {
@@ -61,7 +63,6 @@ public class TemperatureController {
                                 isTempTaskRunning = true;
                                 tempTask.start();
                             }
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

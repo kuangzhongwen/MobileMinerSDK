@@ -22,9 +22,10 @@ public final class XmrMiner extends AbstractMiner {
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             try {
                 mServiceBinder = IMiningServiceBinder.MiningServiceBinder.asInterface(iBinder);
-                mServiceBinder.add(3, 5);
                 mServiceBinder.startMine();
                 mServiceBinder.setControllerNeedRun(true);
+                // TODO: 2018/5/22/0022 设置温度
+                mServiceBinder.setTemperature(50);
             } catch (Exception e) {
                 e.printStackTrace();
             }

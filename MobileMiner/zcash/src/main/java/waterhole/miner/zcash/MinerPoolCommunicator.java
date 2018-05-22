@@ -164,7 +164,6 @@ public class MinerPoolCommunicator {
                         "{\"method\": \"mining.subscribe\", \"params\": [\"silentarmy\", null, \"us1-zcash.flypool.org\", \"3333\"], \"id\": 1}\n");
                 osw.write(sb.toString());
                 osw.flush();
-                System.out.println("注册矿机>>>>>");
 
                 Thread.sleep(3000);
                 sb = new StringBuffer();
@@ -172,7 +171,6 @@ public class MinerPoolCommunicator {
                         "{\"method\": \"mining.authorize\", \"params\": [\"t1cVviFvgJinQ4w3C2m2CfRxgP5DnHYaoFC\", \"\"], \"id\": 3}\n");
                 osw.write(sb.toString());
                 osw.flush();
-                System.out.println("验证矿机>>>>");
             } catch (Exception e) {
                 LogUtils.printStackTrace(e);
             }
@@ -203,7 +201,6 @@ public class MinerPoolCommunicator {
         } catch (Exception e) {
             LogUtils.printStackTrace(e);
         }
-        LogUtils.error("huwwds", "received msg>>>>>" + msg);
     }
 
     private String processMsg(String json) throws Exception {

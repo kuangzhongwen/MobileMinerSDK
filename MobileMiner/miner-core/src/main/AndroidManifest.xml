@@ -4,7 +4,6 @@
     <application>
         <service
             android:name=".CallbackService"
-            android:enabled="true"
-            android:process=":water"/>
+            android:enabled="true"/>
     </application>
 </manifest>

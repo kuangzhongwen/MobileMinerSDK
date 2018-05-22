@@ -1,6 +1,7 @@
 package io.waterhole.miner;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
@@ -20,8 +21,8 @@ import waterhole.miner.monero.XmrMiner;
 import waterhole.miner.zcash.MineService;
 import waterhole.miner.zcash.ZcashMiner;
 
-import static waterhole.miner.core.utils.LogUtils.info;
 import static waterhole.miner.core.utils.LogUtils.error;
+import static waterhole.miner.core.utils.LogUtils.info;
 import static waterhole.miner.core.utils.MathUtils.parseDoubleKeep2;
 
 public final class MainActivity extends Activity {
@@ -40,7 +41,8 @@ public final class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         LogUtils.enableDebug(true);
-
+        final Intent callbackIntent = new Intent(this, CallbackService.class);
+        startService(callbackIntent);
         Spinner spinner = (Spinner) findViewById(R.id.coins_spinner);
         final List<String> datas = new ArrayList<>();
         datas.add("eth");

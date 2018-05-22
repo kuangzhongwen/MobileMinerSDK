@@ -5,10 +5,8 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
-import android.util.Log;
 
-import waterhole.miner.core.utils.LogUtils;
-import waterhole.miner.monero.temperature.TemperatureController;
+import waterhole.miner.core.temperature.TemperatureController;
 
 /**
  * @author huwwds on 2018/05/21
@@ -19,7 +17,6 @@ public interface IMiningServiceBinder extends IInterface {
     int TRANSACTION_stopMine = (IBinder.FIRST_CALL_TRANSACTION + 1);
     int TRANSACTION_setControllerNeedRun = (IBinder.FIRST_CALL_TRANSACTION + 2);
     int TRANSACTION_setTemperature = (IBinder.FIRST_CALL_TRANSACTION + 3);
-    int TRANSACTION_add = (IBinder.FIRST_CALL_TRANSACTION + 4);
 
     void startMine() throws RemoteException;
 
@@ -29,8 +26,6 @@ public interface IMiningServiceBinder extends IInterface {
 
     void setTemperature(float stopTp) throws RemoteException;
 
-    void add(int a, int b) throws RemoteException;
-
     class MiningServiceBinder extends Binder implements IMiningServiceBinder {
         TemperatureController controller;
 
@@ -39,7 +34,6 @@ public interface IMiningServiceBinder extends IInterface {
         }
 
         public void startMine() {
-            LogUtils.error("huwwds",">>>>>>>>>>>>>startMine");
             MineService.sMineService.startMine();
         }
 
@@ -56,25 +50,11 @@ public interface IMiningServiceBinder extends IInterface {
             controller.setTemperature(stopTp);
         }
 
-        public void add(int a, int b) {
-            Log.e("huwwds", ">>>>>>>>>>>" + (a + b));
-        }
-
         @Override
         protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
             switch (code) {
                 case INTERFACE_TRANSACTION: {
                     reply.writeString(DESCRIPTOR);
-                    return true;
-                }
-                case TRANSACTION_add: {
-                    data.enforceInterface(DESCRIPTOR);
-                    int _arg0;
-                    _arg0 = data.readInt();
-                    int _arg1;
-                    _arg1 = data.readInt();
-                    this.add(_arg0, _arg1);
-                    reply.writeNoException();
                     return true;
                 }
                 case TRANSACTION_startMine: {
@@ -192,21 +172,6 @@ public interface IMiningServiceBinder extends IInterface {
                 }
             }
 
-            @Override
-            public void add(int a, int b) throws RemoteException {
-                android.os.Parcel _data = android.os.Parcel.obtain();
-                android.os.Parcel _reply = android.os.Parcel.obtain();
-                try {
-                    _data.writeInterfaceToken(DESCRIPTOR);
-                    _data.writeInt(a);
-                    _data.writeInt(b);
-                    mRemote.transact(MiningServiceBinder.TRANSACTION_add, _data, _reply, 0);
-                    _reply.readException();
-                } finally {
-                    _reply.recycle();
-                    _data.recycle();
-                }
-            }
         }
 
         @Override

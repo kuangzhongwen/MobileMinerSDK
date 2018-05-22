@@ -1,4 +1,4 @@
-package waterhole.miner.monero.temperature;
+package waterhole.miner.core.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ThermalInfoUtil {
 
-    static List<String> getThermalInfo() {
+    public  static List<String> getThermalInfo() {
         String[] input = {"/system/bin/cat", "sys/class/thermal/thermal_zone0/temp"};
         ProcessBuilder pB;
         String result = "";

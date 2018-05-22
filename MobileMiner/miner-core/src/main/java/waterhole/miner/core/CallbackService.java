@@ -29,32 +29,56 @@ public class CallbackService extends Service {
 
         @Override
         public void onConnectPoolSuccess() {
-            sMineCallback.onConnectPoolSuccess();
+            try {
+                sMineCallback.onConnectPoolSuccess();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onConnectPoolFail(String error) {
-            sMineCallback.onConnectPoolFail(error);
+            try {
+                sMineCallback.onConnectPoolFail(error);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onPoolDisconnect(String error) {
-            sMineCallback.onPoolDisconnect(error);
+            try {
+                sMineCallback.onPoolDisconnect(error);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onMessageFromPool(String message) {
-            sMineCallback.onMessageFromPool(message);
+            try {
+                sMineCallback.onMessageFromPool(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onMiningError(String error) {
-            sMineCallback.onMiningError(error);
+            try {
+                sMineCallback.onMiningError(error);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onMiningStatus(double speed) {
-            sMineCallback.onMiningStatus(speed);
+            try {
+                sMineCallback.onMiningStatus(speed);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
