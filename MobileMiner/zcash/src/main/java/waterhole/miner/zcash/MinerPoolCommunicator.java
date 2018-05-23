@@ -311,7 +311,7 @@ public class MinerPoolCommunicator {
             new Thread() {
                 @Override
                 public void run() {
-                    mineService.startJNIMine(mineService.getPackageName(), mineService.mZcashMiner.getMineCallback(), MinerPoolCommunicator.this);
+                    mineService.startJNIMine(mineService.getPackageName(), mineService.mZcashMiner.getStateObserver(), MinerPoolCommunicator.this);
                 }
             }.start();
         }

@@ -1,6 +1,7 @@
 package waterhole.miner.core;
 
 import android.content.Context;
+import android.content.Intent;
 
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
 
@@ -15,12 +16,18 @@ public abstract class AbstractMiner implements CommonMinerIterface {
     private Context mContext;
 
     // 挖矿回调
-    private MineCallback mMineCallback;
+    private StateObserver mMineCallback;
 
     @Override
     public CommonMinerIterface setContext(Context context) {
         mContext = context;
+        startCallbackServer();
         return this;
+    }
+
+    private void startCallbackServer() {
+        final Intent callbackIntent = new Intent(mContext, CallbackService.class);
+        mContext.startService(callbackIntent);
     }
 
     @Override
@@ -30,13 +37,14 @@ public abstract class AbstractMiner implements CommonMinerIterface {
     }
 
     @Override
-    public AbstractMiner setMineCallback(MineCallback callback) {
-        mMineCallback = callback;
+    public AbstractMiner setStateObserver(StateObserver stateObserver) {
+        mMineCallback = stateObserver;
+        CallbackService.setCallBack(stateObserver);
         return this;
     }
 
     @Override
-    public MineCallback getMineCallback() {
+    public StateObserver getStateObserver() {
         return mMineCallback;
     }
 

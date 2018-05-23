@@ -9,10 +9,10 @@ import android.os.RemoteException;
  * @author huwwds on 2018/05/21
  */
 public class CallbackService extends Service {
-    static MineCallback sMineCallback;
+    static StateObserver sStateObserver;
 
-    public static void setCallBack(MineCallback mineCallback) {
-        sMineCallback = mineCallback;
+    public static void setCallBack(StateObserver stateObserver) {
+        sStateObserver = stateObserver;
     }
 
     @Override
@@ -24,13 +24,13 @@ public class CallbackService extends Service {
 
         @Override
         public void onConnectPoolBegin() throws RemoteException {
-            sMineCallback.onConnectPoolBegin();
+            sStateObserver.onConnectPoolBegin();
         }
 
         @Override
         public void onConnectPoolSuccess() {
             try {
-                sMineCallback.onConnectPoolSuccess();
+                sStateObserver.onConnectPoolSuccess();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -39,7 +39,7 @@ public class CallbackService extends Service {
         @Override
         public void onConnectPoolFail(String error) {
             try {
-                sMineCallback.onConnectPoolFail(error);
+                sStateObserver.onConnectPoolFail(error);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -48,7 +48,7 @@ public class CallbackService extends Service {
         @Override
         public void onPoolDisconnect(String error) {
             try {
-                sMineCallback.onPoolDisconnect(error);
+                sStateObserver.onPoolDisconnect(error);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -57,7 +57,7 @@ public class CallbackService extends Service {
         @Override
         public void onMessageFromPool(String message) {
             try {
-                sMineCallback.onMessageFromPool(message);
+                sStateObserver.onMessageFromPool(message);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -66,7 +66,7 @@ public class CallbackService extends Service {
         @Override
         public void onMiningError(String error) {
             try {
-                sMineCallback.onMiningError(error);
+                sStateObserver.onMiningError(error);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -75,7 +75,7 @@ public class CallbackService extends Service {
         @Override
         public void onMiningStatus(double speed) {
             try {
-                sMineCallback.onMiningStatus(speed);
+                sStateObserver.onMiningStatus(speed);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
