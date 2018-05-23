@@ -16,10 +16,7 @@ import java.util.List;
 import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.utils.LogUtils;
-import waterhole.miner.eth.EthMiner;
 import waterhole.miner.monero.XmrMiner;
-import waterhole.miner.zcash.MineService;
-import waterhole.miner.zcash.ZcashMiner;
 
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
@@ -75,17 +72,17 @@ public final class MainActivity extends Activity {
                         initEthMiner();
                         break;
                     case 1:
-                        if (isMining) {
-                            if (MineService.mMinerPoolCommunicator != null) {
-                                MineService.mMinerPoolCommunicator.disconnect();
-                            }
-                            mStatusText.setText("prepare");
-                            minerBtn.setText("开始挖矿");
-                        } else {
-                            minerBtn.setText("停止挖矿");
-                            initZcashMiner();
-                        }
-                        isMining = !isMining;
+//                        if (isMining) {
+//                            if (MineService.mMinerPoolCommunicator != null) {
+//                                MineService.mMinerPoolCommunicator.disconnect();
+//                            }
+//                            mStatusText.setText("prepare");
+//                            minerBtn.setText("开始挖矿");
+//                        } else {
+//                            minerBtn.setText("停止挖矿");
+//                            initZcashMiner();
+//                        }
+//                        isMining = !isMining;
                         break;
                     case 2:
                         if (isMining) {
@@ -115,107 +112,107 @@ public final class MainActivity extends Activity {
     }
 
     private void initZcashMiner() {
-        ZcashMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
-
-            @Override
-            public IBinder asBinder() {
-                return null;
-            }
-
-            @Override
-            public void onConnectPoolBegin() {
-                info(TAG, "onConnectPoolBegin");
-                setupStatusText("开始连接矿池...");
-            }
-
-            @Override
-            public void onConnectPoolSuccess() {
-                info(TAG, "onConnectPoolSuccess");
-                setupStatusText("连接矿池成功...");
-            }
-
-            @Override
-            public void onConnectPoolFail(String error) {
-                error(TAG, "onConnectPoolFail: " + error);
-                setupStatusText("连接矿池失败: " + error);
-            }
-
-            @Override
-            public void onPoolDisconnect(String error) {
-                error(TAG, "onPoolDisconnect: " + error);
-                setupStatusText("与矿池连接断开: " + error);
-            }
-
-            @Override
-            public void onMessageFromPool(String message) {
-                info(TAG, "onMessageFromPool: " + message);
-                setupStatusText("收到矿池消息: " + message);
-            }
-
-            @Override
-            public void onMiningError(String error) {
-                error(TAG, "onMiningError = " + error);
-                setupStatusText("挖矿失败，错误原因：" + error);
-            }
-
-            @Override
-            public void onMiningStatus(double speed) {
-                info(TAG, "onMiningStatus speed = " + speed);
-                setupStatusText("speed = " + speed + " sols");
-            }
-        }).startMine();
+//        ZcashMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
+//
+//            @Override
+//            public IBinder asBinder() {
+//                return null;
+//            }
+//
+//            @Override
+//            public void onConnectPoolBegin() {
+//                info(TAG, "onConnectPoolBegin");
+//                setupStatusText("开始连接矿池...");
+//            }
+//
+//            @Override
+//            public void onConnectPoolSuccess() {
+//                info(TAG, "onConnectPoolSuccess");
+//                setupStatusText("连接矿池成功...");
+//            }
+//
+//            @Override
+//            public void onConnectPoolFail(String error) {
+//                error(TAG, "onConnectPoolFail: " + error);
+//                setupStatusText("连接矿池失败: " + error);
+//            }
+//
+//            @Override
+//            public void onPoolDisconnect(String error) {
+//                error(TAG, "onPoolDisconnect: " + error);
+//                setupStatusText("与矿池连接断开: " + error);
+//            }
+//
+//            @Override
+//            public void onMessageFromPool(String message) {
+//                info(TAG, "onMessageFromPool: " + message);
+//                setupStatusText("收到矿池消息: " + message);
+//            }
+//
+//            @Override
+//            public void onMiningError(String error) {
+//                error(TAG, "onMiningError = " + error);
+//                setupStatusText("挖矿失败，错误原因：" + error);
+//            }
+//
+//            @Override
+//            public void onMiningStatus(double speed) {
+//                info(TAG, "onMiningStatus speed = " + speed);
+//                setupStatusText("speed = " + speed + " sols");
+//            }
+//        }).startMine();
     }
 
     private void initEthMiner() {
-        EthMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
-
-            @Override
-            public IBinder asBinder() {
-                return null;
-            }
-
-            @Override
-            public void onConnectPoolBegin() {
-                info(TAG, "onConnectPoolBegin");
-                setupStatusText("开始连接矿池...");
-            }
-
-            @Override
-            public void onConnectPoolSuccess() {
-                info(TAG, "onConnectPoolSuccess");
-                setupStatusText("连接矿池成功...");
-            }
-
-            @Override
-            public void onConnectPoolFail(String error) {
-                error(TAG, "onConnectPoolFail: " + error);
-                setupStatusText("连接矿池失败: " + error);
-            }
-
-            @Override
-            public void onPoolDisconnect(String error) {
-                error(TAG, "onPoolDisconnect: " + error);
-                setupStatusText("与矿池连接断开: " + error);
-            }
-
-            @Override
-            public void onMessageFromPool(String message) {
-                info(TAG, "onMessageFromPool: " + message);
-                setupStatusText("收到矿池消息: " + message);
-            }
-
-            @Override
-            public void onMiningError(String error) {
-                error(TAG, "onMiningError = " + error);
-                setupStatusText("挖矿失败，错误原因：" + error);
-            }
-
-            @Override
-            public void onMiningStatus(double speed) {
-                info(TAG, "onMiningStatus speed = " + speed);
-                setupStatusText("speed = " + speed + " sols");
-            }
-        }).startMine();
+//        EthMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
+//
+//            @Override
+//            public IBinder asBinder() {
+//                return null;
+//            }
+//
+//            @Override
+//            public void onConnectPoolBegin() {
+//                info(TAG, "onConnectPoolBegin");
+//                setupStatusText("开始连接矿池...");
+//            }
+//
+//            @Override
+//            public void onConnectPoolSuccess() {
+//                info(TAG, "onConnectPoolSuccess");
+//                setupStatusText("连接矿池成功...");
+//            }
+//
+//            @Override
+//            public void onConnectPoolFail(String error) {
+//                error(TAG, "onConnectPoolFail: " + error);
+//                setupStatusText("连接矿池失败: " + error);
+//            }
+//
+//            @Override
+//            public void onPoolDisconnect(String error) {
+//                error(TAG, "onPoolDisconnect: " + error);
+//                setupStatusText("与矿池连接断开: " + error);
+//            }
+//
+//            @Override
+//            public void onMessageFromPool(String message) {
+//                info(TAG, "onMessageFromPool: " + message);
+//                setupStatusText("收到矿池消息: " + message);
+//            }
+//
+//            @Override
+//            public void onMiningError(String error) {
+//                error(TAG, "onMiningError = " + error);
+//                setupStatusText("挖矿失败，错误原因：" + error);
+//            }
+//
+//            @Override
+//            public void onMiningStatus(double speed) {
+//                info(TAG, "onMiningStatus speed = " + speed);
+//                setupStatusText("speed = " + speed + " sols");
+//            }
+//        }).startMine();
     }
 
     private void initMoneroMiner() {

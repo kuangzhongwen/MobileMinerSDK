@@ -32,12 +32,23 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
-    compile project(':monero')
-    compile project(':zcash')
-    compile project(':eth')
+    // aar引用方式
+    compile(name: 'miner-core-release', ext: 'aar')
+    compile(name: 'monero-release', ext: 'aar')
+
+    // project引用方式
+    //compile project(':monero')
+    //compile project(':zcash')
+    //compile project(':eth')
 }
