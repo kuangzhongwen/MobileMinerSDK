@@ -11,11 +11,11 @@ public interface CommonMinerIterface extends NoProGuard {
 
     CommonMinerIterface setContext(Context context);
 
-    CommonMinerIterface setMineCallback(MineCallback callback);
+    CommonMinerIterface setStateObserver(StateObserver callback);
 
     Context getContext();
 
-    MineCallback getMineCallback();
+    StateObserver getStateObserver();
 
     void startMine();
 

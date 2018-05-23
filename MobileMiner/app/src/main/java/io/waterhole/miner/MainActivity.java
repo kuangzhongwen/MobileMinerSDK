@@ -1,9 +1,7 @@
 package io.waterhole.miner;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -13,8 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import waterhole.miner.core.CallbackService;
-import waterhole.miner.core.MineCallback;
+import waterhole.miner.core.StateObserver;
 import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.eth.EthMiner;
 import waterhole.miner.monero.XmrMiner;
@@ -37,12 +34,8 @@ public final class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-
         LogUtils.enableDebug(true);
-        final Intent callbackIntent = new Intent(this, CallbackService.class);
-        startService(callbackIntent);
         Spinner spinner = (Spinner) findViewById(R.id.coins_spinner);
         final List<String> datas = new ArrayList<>();
         datas.add("eth");
@@ -115,12 +108,7 @@ public final class MainActivity extends Activity {
     }
 
     private void initZcashMiner() {
-        ZcashMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
-
-            @Override
-            public IBinder asBinder() {
-                return null;
-            }
+        ZcashMiner.instance().setContext(getApplicationContext()).setStateObserver(new StateObserver() {
 
             @Override
             public void onConnectPoolBegin() {
@@ -167,12 +155,7 @@ public final class MainActivity extends Activity {
     }
 
     private void initEthMiner() {
-        EthMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
-
-            @Override
-            public IBinder asBinder() {
-                return null;
-            }
+        EthMiner.instance().setContext(getApplicationContext()).setStateObserver(new StateObserver() {
 
             @Override
             public void onConnectPoolBegin() {
@@ -219,11 +202,7 @@ public final class MainActivity extends Activity {
     }
 
     private void initMoneroMiner() {
-        MineCallback mineCallback = new MineCallback() {
-            @Override
-            public IBinder asBinder() {
-                return null;
-            }
+        XmrMiner.instance().setContext(this).setStateObserver(new StateObserver() {
 
             @Override
             public void onConnectPoolBegin() {
@@ -266,8 +245,6 @@ public final class MainActivity extends Activity {
                 info(TAG, "onMiningStatus speed = " + speed);
                 setupStatusText("挖矿速度： " + parseDoubleKeep2(speed) + " H/s");
             }
-        };
-        CallbackService.setCallBack(mineCallback);
-        XmrMiner.instance().setContext(this).setMineCallback(mineCallback).startMine();
+        }).startMine();
     }
 }

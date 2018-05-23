@@ -4,9 +4,13 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.RemoteException;
+
 import waterhole.miner.core.KernelCopy;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.NoProGuard;
+import waterhole.miner.core.StateObserver;
+
 import static waterhole.miner.core.utils.LogUtils.printStackTrace;
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 
@@ -34,7 +38,7 @@ public final class MineService extends Service implements NoProGuard {
         }
     }
 
-    public native void startJNIMine(String packName, MineCallback callback, MinerPoolCommunicator communicator);
+    public native void startJNIMine(String packName, StateObserver callback, MinerPoolCommunicator communicator);
 
     private native void stopJNIMine();
 
@@ -58,9 +62,13 @@ public final class MineService extends Service implements NoProGuard {
 
                     mMinerPoolCommunicator.startCommunicate();
                 } catch (Exception e) {
-                    MineCallback callback = mZcashMiner.getMineCallback();
+                    StateObserver callback = mZcashMiner.getStateObserver();
                     if (callback != null) {
-                        callback.onMiningError(e.getMessage());
+                        try {
+                            callback.onMiningError(e.getMessage());
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }
             }
