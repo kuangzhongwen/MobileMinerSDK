@@ -30,7 +30,7 @@ public final class XmrMiner extends AbstractMiner {
                 mServiceBinder.startMine();
                 mServiceBinder.setControllerNeedRun(true);
                 // TODO: 2018/5/22/0022 设置温度
-                mServiceBinder.setTemperature(50);
+                mServiceBinder.setTemperature(30);
             } catch (Exception e) {
                 e.printStackTrace();
             }

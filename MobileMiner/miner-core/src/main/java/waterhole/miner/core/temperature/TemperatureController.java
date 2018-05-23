@@ -10,18 +10,17 @@ import java.util.List;
  */
 public class TemperatureController {
 
-    int stopTemperature = 45 * 1000;
+    int stopTemperature = 60 * 1000;
     int startTemperature = 40 * 1000;
     long pollingTime = 1000l;
     long lastStopTime;
     long stopDelay = 5000l;
     public boolean needRun = false;
-
     public ITempTask tempTask;
     boolean isTempTaskRunning;
-
-    int[][] temperatureSurface;
     int curUsage;
+
+    int[][] temperatureSurface = {{startTemperature, Runtime.getRuntime().availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() - 1 : 1, 100}, {stopTemperature, Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors() - 2 : 1, 80}};
 
     public void setTemperature(int stopTp) {
         this.stopTemperature = stopTp;

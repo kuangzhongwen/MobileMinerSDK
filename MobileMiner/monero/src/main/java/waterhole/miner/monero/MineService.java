@@ -29,6 +29,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.util.Log;
 
 import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
