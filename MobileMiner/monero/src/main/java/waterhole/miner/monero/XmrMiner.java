@@ -9,7 +9,6 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.RemoteException;
 
 import java.io.ObjectStreamException;
 
@@ -23,7 +22,6 @@ public final class XmrMiner extends AbstractMiner {
 
     private MineReceiver mineReceiver;
 
-    private int topTemperature = -1;
 
     private final ServiceConnection mServerConnection = new ServiceConnection() {
         @Override
@@ -50,17 +48,6 @@ public final class XmrMiner extends AbstractMiner {
 
     public static XmrMiner instance() {
         return Holder.instance;
-    }
-
-    public void setTopTemperature(int temperature) {
-        this.topTemperature = temperature;
-        if (mServiceBinder != null) {
-            try {
-                mServiceBinder.setTemperature(topTemperature);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private static class Holder {

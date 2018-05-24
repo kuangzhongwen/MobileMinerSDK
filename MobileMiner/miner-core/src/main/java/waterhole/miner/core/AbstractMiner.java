@@ -3,6 +3,8 @@ package waterhole.miner.core;
 import android.content.Context;
 import android.content.Intent;
 
+import waterhole.miner.core.temperature.ThermalInfoUtil;
+
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
 
 /**
@@ -17,6 +19,16 @@ public abstract class AbstractMiner implements CommonMinerIterface {
 
     // 挖矿回调
     private StateObserver mMineCallback;
+
+    protected int topTemperature = -1;
+
+    public void setMaxTemperature(int temperature) {
+        this.topTemperature = temperature;
+    }
+
+    public String getCurrentTemperature() {
+        return ThermalInfoUtil.getThermalInfo().get(0);
+    }
 
     @Override
     public CommonMinerIterface setContext(Context context) {
