@@ -8,7 +8,7 @@ import android.os.RemoteException;
 /**
  * @author huwwds on 2018/05/21
  */
-public class CallbackService extends Service {
+public final class CallbackService extends Service {
     static StateObserver sStateObserver;
 
     public static void setCallBack(StateObserver stateObserver) {

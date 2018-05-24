@@ -62,7 +62,6 @@ public final class MineService extends Service implements ITempTask {
 
     @Override
     public void stop() {
-        //通知重启
         Intent intent = new Intent("waterhole.miner.monero.restart");
         sendBroadcast(intent);
     }
