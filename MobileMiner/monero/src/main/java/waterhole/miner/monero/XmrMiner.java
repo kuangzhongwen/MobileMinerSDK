@@ -60,10 +60,12 @@ public final class XmrMiner extends AbstractMiner {
 
     @Override
     public void startMine() {
-        mineReceiver = new MineReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("waterhole.miner.monero.restart");
-        getContext().registerReceiver(mineReceiver, intentFilter);
+        if (mineReceiver == null) {
+            mineReceiver = new MineReceiver();
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction("waterhole.miner.monero.restart");
+            getContext().registerReceiver(mineReceiver, intentFilter);
+        }
         final Intent intent = new Intent(getContext(), MineService.class);
         getContext().bindService(intent, mServerConnection, Context.BIND_AUTO_CREATE);
     }
