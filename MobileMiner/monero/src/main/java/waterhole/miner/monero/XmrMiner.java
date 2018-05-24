@@ -73,6 +73,7 @@ public final class XmrMiner extends AbstractMiner {
         try {
             if (mServiceBinder != null) {
                 getContext().unbindService(mServerConnection);
+                getContext().unregisterReceiver(mineReceiver);
             }
         } catch (Exception e) {
             e.printStackTrace();
