@@ -184,7 +184,7 @@ void Network::setJob(Client *client, const Job &job, bool donate)
 {
     LOGD("new job from %s:%d diff %d algo %s",
                       client->host(), client->port(), job.diff(), job.algorithm().shortName());
-    std::string message = "new job from";
+    std::string message = "new job from ";
     message += client->host();
     message += ":";
     message += toString(client->port());
