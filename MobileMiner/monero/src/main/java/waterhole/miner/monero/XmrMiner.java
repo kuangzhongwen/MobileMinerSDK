@@ -9,7 +9,6 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.RemoteException;
 
 import java.io.ObjectStreamException;
 
@@ -35,6 +34,8 @@ public final class XmrMiner extends AbstractMiner {
                 mServiceBinder.setControllerNeedRun(true);
                 if (topTemperature != -1)
                     mServiceBinder.setTemperature(topTemperature);
+                if (walletAddr != null)
+                    mServiceBinder.setWalletAddr(walletAddr);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -51,11 +52,7 @@ public final class XmrMiner extends AbstractMiner {
     }
 
     public CommonMinerInterface setWalletAddr(String walletAddr) {
-        try {
-            mServiceBinder.setWalletAddr(walletAddr);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        this.walletAddr = walletAddr;
         return this;
     }
 

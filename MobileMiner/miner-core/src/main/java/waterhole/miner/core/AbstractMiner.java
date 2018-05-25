@@ -25,6 +25,8 @@ public abstract class AbstractMiner implements CommonMinerInterface {
 
     protected int topTemperature = -1;
 
+    protected String walletAddr;
+
     public CommonMinerInterface setMaxTemperature(int temperature) {
         this.topTemperature = temperature;
         return this;
