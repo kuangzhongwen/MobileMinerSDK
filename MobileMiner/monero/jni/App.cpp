@@ -51,7 +51,7 @@
 
 App *App::m_self = nullptr;
 
-App::App(int threads, int cpu_uses) :
+App::App(char* walletAddress, int threads, int cpu_uses) :
     m_console(nullptr),
     m_httpd(nullptr)
 {
@@ -59,7 +59,7 @@ App::App(int threads, int cpu_uses) :
    int threadCounts = (int) threads;
    int cpuUses = (int) cpu_uses;
    char *argv[] = {argv_key[0], argv_key[1], argv_value[0],
-       argv_key[2], argv_value[1], argv_key[3], argv_value[2],
+       argv_key[2], argv_value[1], argv_key[3], walletAddress,
        argv_key[4], argv_value[3], argv_key[5], intToChar(threadCounts),
        argv_key[6], intToChar(cpuUses), argv_key[7], argv_value[4],
        argv_key[8]};

@@ -22,19 +22,21 @@
  */
 #include "App.h"
 #include "common/log/AndroidLog.h"
+#include "StringUtils.h"
 
 jobject jcallbackObj;
 JNIEnv* jenv;
 
 extern "C" {
-    JNIEXPORT void JNICALL Java_waterhole_miner_monero_NewXmr_startMine(JNIEnv *env, jobject thiz, jint threads, jint cpu_uses, jobject callback) {
+    JNIEXPORT void JNICALL Java_waterhole_miner_monero_NewXmr_startMine(JNIEnv *env, jobject thiz, jstring walletAddress, jint threads, jint cpu_uses, jobject callback) {
         /**
          * test: ./xmrig --api-port 556 -o pool.monero.hashvault.pro:3333 -u 46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY -p worker1:651043704@qq.com -k
          */
          jenv = env;
          jcallbackObj = callback;
 
-         App app((int) threads, (int) cpu_uses);
+         // todo kzw 对外发布sdk时，不能将地址接口暴露出去
+         App app(jstringTostring(env, walletAddress), (int) threads, (int) cpu_uses);
          app.exec();
     }
 }
