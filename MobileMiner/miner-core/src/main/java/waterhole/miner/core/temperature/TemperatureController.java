@@ -23,8 +23,10 @@ public class TemperatureController {
     int[][] temperatureSurface = {{startTemperature, Runtime.getRuntime().availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() - 1 : 1, 100}, {stopTemperature, Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors() - 2 : 1, 80}};
 
     public void setTemperature(int stopTp) {
+        if (stopTp > 1000)
+            stopTp /= 1000;
         this.stopTemperature = stopTp;
-        this.startTemperature = stopTemperature - 10 * 1000;
+        this.startTemperature = stopTemperature - 20 * 1000;
 
         temperatureSurface = new int[][]{{startTemperature, Runtime.getRuntime().availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() - 1 : 1, 100}, {stopTemperature, Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors() - 2 : 1, 80}};
     }

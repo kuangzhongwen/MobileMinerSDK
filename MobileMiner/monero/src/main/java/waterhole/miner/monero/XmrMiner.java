@@ -13,6 +13,7 @@ import android.os.Looper;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
+import waterhole.miner.core.utils.LogUtils;
 
 public final class XmrMiner extends AbstractMiner {
 
@@ -60,6 +61,7 @@ public final class XmrMiner extends AbstractMiner {
 
     @Override
     public void startMine() {
+        LogUtils.debug("huwwds", ">>>>>>>>>>>>>>>startMine");
         if (mineReceiver == null) {
             mineReceiver = new MineReceiver();
             IntentFilter intentFilter = new IntentFilter();
@@ -73,6 +75,7 @@ public final class XmrMiner extends AbstractMiner {
     @Override
     public void stopMine() {
         try {
+            LogUtils.debug("huwwds", ">>>>>>>>>>>>>>>stopMine");
             if (mServiceBinder != null) {
                 getContext().unbindService(mServerConnection);
                 getContext().unregisterReceiver(mineReceiver);
