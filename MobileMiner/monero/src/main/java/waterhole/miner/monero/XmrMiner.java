@@ -44,6 +44,10 @@ public final class XmrMiner extends AbstractMiner {
         }
     };
 
+    public boolean isMining() {
+        return mServiceBinder != null;
+    }
+
     private XmrMiner() {
     }
 
@@ -80,6 +84,7 @@ public final class XmrMiner extends AbstractMiner {
                 getContext().unbindService(mServerConnection);
                 getContext().unregisterReceiver(mineReceiver);
                 mineReceiver = null;
+                mServiceBinder = null;
             }
         } catch (Exception e) {
             e.printStackTrace();
