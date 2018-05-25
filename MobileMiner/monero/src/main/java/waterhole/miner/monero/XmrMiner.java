@@ -14,6 +14,7 @@ import android.os.RemoteException;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
+import waterhole.miner.core.CommonMinerInterface;
 import waterhole.miner.core.utils.LogUtils;
 
 public final class XmrMiner extends AbstractMiner {
@@ -49,12 +50,13 @@ public final class XmrMiner extends AbstractMiner {
         return mServiceBinder != null;
     }
 
-    public void setWalletAddr(String walletAddr) {
+    public CommonMinerInterface setWalletAddr(String walletAddr) {
         try {
             mServiceBinder.setWalletAddr(walletAddr);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        return this;
     }
 
     private XmrMiner() {

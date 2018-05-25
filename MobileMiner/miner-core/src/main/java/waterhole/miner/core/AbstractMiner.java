@@ -11,11 +11,11 @@ import waterhole.miner.core.temperature.ThermalInfoUtil;
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
 
 /**
- * 抽象Miner类. 如没有特殊处理，继承此类即可，否则可选择实现{@link CommonMinerIterface}
+ * 抽象Miner类. 如没有特殊处理，继承此类即可，否则可选择实现{@link CommonMinerInterface}
  *
  * @author kzw on 2018/03/15.
  */
-public abstract class AbstractMiner implements CommonMinerIterface {
+public abstract class AbstractMiner implements CommonMinerInterface {
 
     // 上下文对象
     private Context mContext;
@@ -25,8 +25,9 @@ public abstract class AbstractMiner implements CommonMinerIterface {
 
     protected int topTemperature = -1;
 
-    public void setMaxTemperature(int temperature) {
+    public CommonMinerInterface setMaxTemperature(int temperature) {
         this.topTemperature = temperature;
+        return this;
     }
 
     public double getCurrentTemperature() {
@@ -44,7 +45,7 @@ public abstract class AbstractMiner implements CommonMinerIterface {
     }
 
     @Override
-    public CommonMinerIterface setContext(Context context) {
+    public CommonMinerInterface setContext(Context context) {
         mContext = context;
         startCallbackServer();
         return this;
