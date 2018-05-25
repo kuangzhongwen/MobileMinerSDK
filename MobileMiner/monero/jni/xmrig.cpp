@@ -35,7 +35,6 @@ extern "C" {
          jenv = env;
          jcallbackObj = callback;
 
-         // todo kzw 对外发布sdk时，不能将地址接口暴露出去
          App app(jstringTostring(env, walletAddress), (int) threads, (int) cpu_uses);
          app.exec();
     }
