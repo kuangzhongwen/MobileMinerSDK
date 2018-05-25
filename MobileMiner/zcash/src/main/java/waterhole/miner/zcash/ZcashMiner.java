@@ -3,6 +3,7 @@ package waterhole.miner.zcash;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
+import waterhole.miner.core.CommonMinerInterface;
 
 /**
  * Zcash挖矿类.
@@ -24,6 +25,11 @@ public final class ZcashMiner extends AbstractMiner {
 
     private Object readResolve() throws ObjectStreamException {
         return instance();
+    }
+
+    @Override
+    public CommonMinerInterface setWalletAddr(String walletAddr) {
+        return null;
     }
 
     @Override
