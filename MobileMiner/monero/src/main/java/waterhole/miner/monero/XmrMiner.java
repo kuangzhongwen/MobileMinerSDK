@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.RemoteException;
 
 import java.io.ObjectStreamException;
 
@@ -46,6 +47,14 @@ public final class XmrMiner extends AbstractMiner {
 
     public boolean isMining() {
         return mServiceBinder != null;
+    }
+
+    public void setWalletAddr(String walletAddr) {
+        try {
+            mServiceBinder.setWalletAddr(walletAddr);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private XmrMiner() {
