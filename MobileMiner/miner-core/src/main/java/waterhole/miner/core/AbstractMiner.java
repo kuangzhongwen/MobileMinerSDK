@@ -2,6 +2,9 @@ package waterhole.miner.core;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
+
+import java.util.List;
 
 import waterhole.miner.core.temperature.ThermalInfoUtil;
 
@@ -26,8 +29,18 @@ public abstract class AbstractMiner implements CommonMinerIterface {
         this.topTemperature = temperature;
     }
 
-    public String getCurrentTemperature() {
-        return ThermalInfoUtil.getThermalInfo().get(0);
+    public double getCurrentTemperature() {
+        List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
+        double maxTemperature = -1;
+        for (String info : thermalInfo) {
+            String temp = info.replaceAll("(\\d+).*", "$1").trim();
+            if (TextUtils.isDigitsOnly(temp.replace(".", ""))) {
+                double dTemp = Double.parseDouble(temp);
+                if (maxTemperature < dTemp)
+                    maxTemperature = dTemp;
+            }
+        }
+        return maxTemperature;
     }
 
     @Override
