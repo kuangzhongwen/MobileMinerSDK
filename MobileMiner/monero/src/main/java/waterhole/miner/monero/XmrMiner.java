@@ -18,8 +18,6 @@ import waterhole.miner.core.utils.LogUtils;
 
 public final class XmrMiner extends AbstractMiner {
 
-    static final String LOG_TAG = "Waterhole-XmrMiner";
-
     private IMiningServiceBinder mServiceBinder;
 
     private MineReceiver mineReceiver;
@@ -29,6 +27,7 @@ public final class XmrMiner extends AbstractMiner {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             try {
+                LogUtils.debug("XmrMiner onServiceConnected");
                 mServiceBinder = IMiningServiceBinder.MiningServiceBinder.asInterface(iBinder);
                 mServiceBinder.startMine();
                 mServiceBinder.setControllerNeedRun(true);
@@ -73,7 +72,7 @@ public final class XmrMiner extends AbstractMiner {
 
     @Override
     public void startMine() {
-        LogUtils.debug("huwwds", ">>>>>>>>>>>>>>>startMine");
+        LogUtils.debug("XmrMiner startMine");
         if (mineReceiver == null) {
             mineReceiver = new MineReceiver();
             IntentFilter intentFilter = new IntentFilter();
@@ -87,7 +86,7 @@ public final class XmrMiner extends AbstractMiner {
     @Override
     public void stopMine() {
         try {
-            LogUtils.debug("huwwds", ">>>>>>>>>>>>>>>stopMine");
+            LogUtils.debug("XmrMiner stopMine");
             if (mServiceBinder != null) {
                 getContext().unbindService(mServerConnection);
                 getContext().unregisterReceiver(mineReceiver);
@@ -105,6 +104,7 @@ public final class XmrMiner extends AbstractMiner {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            LogUtils.debug("XmrMiner$MineReceiver onReceive");
             stopMine();
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
@@ -114,6 +114,4 @@ public final class XmrMiner extends AbstractMiner {
             }, 1000);
         }
     }
-
-
 }

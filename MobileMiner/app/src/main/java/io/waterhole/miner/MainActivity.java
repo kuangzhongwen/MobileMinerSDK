@@ -32,7 +32,7 @@ public final class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LogUtils.enableDebug(true);
+
         Spinner spinner = (Spinner) findViewById(R.id.coins_spinner);
         final List<String> datas = new ArrayList<>();
         datas.add("eth");
@@ -213,43 +213,43 @@ public final class MainActivity extends Activity {
 
             @Override
             public void onConnectPoolBegin() {
-                info(TAG, "onConnectPoolBegin");
+                info("onConnectPoolBegin");
                 setupStatusText("开始连接矿池...");
             }
 
             @Override
             public void onConnectPoolSuccess() {
-                info(TAG, "onConnectPoolSuccess");
+                info("onConnectPoolSuccess");
                 setupStatusText("连接矿池成功...");
             }
 
             @Override
             public void onConnectPoolFail(String error) {
-                error(TAG, "onConnectPoolFail: " + error);
+                error("onConnectPoolFail: " + error);
                 setupStatusText("连接矿池失败: " + error);
             }
 
             @Override
             public void onPoolDisconnect(String error) {
-                error(TAG, "onPoolDisconnect: " + error);
+                error("onPoolDisconnect: " + error);
                 setupStatusText("与矿池连接断开: " + error);
             }
 
             @Override
             public void onMessageFromPool(String message) {
-                info(TAG, "onMessageFromPool: " + message);
+                info("onMessageFromPool: " + message);
                 setupStatusText("收到矿池消息: " + message);
             }
 
             @Override
             public void onMiningError(String error) {
-                error(TAG, "onMiningError = " + error);
+                error("onMiningError = " + error);
                 setupStatusText("挖矿失败，错误原因：" + error);
             }
 
             @Override
             public void onMiningStatus(double speed) {
-                info(TAG, "onMiningStatus speed = " + speed);
+                info("onMiningStatus speed = " + speed);
                 setupStatusText("挖矿速度： " + parseDoubleKeep2(speed) + " H/s");
             }
         }).startMine();

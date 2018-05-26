@@ -38,7 +38,6 @@ import waterhole.miner.core.temperature.TemperatureController;
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.APIUtils.hasLollipop;
 import static waterhole.miner.core.utils.LogUtils.info;
-import static waterhole.miner.monero.XmrMiner.LOG_TAG;
 
 public final class MineService extends Service implements ITempTask {
 
@@ -119,7 +118,7 @@ public final class MineService extends Service implements ITempTask {
                     return;
                 }
                 final String cpuABI = Build.CPU_ABI;
-                info(LOG_TAG, cpuABI);
+                info(cpuABI);
                 if (!cpuABI.toLowerCase().equals("arm64-v8a")) {
                     mineCallback.onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + cpuABI);
                     // this flag will keep the start button disabled

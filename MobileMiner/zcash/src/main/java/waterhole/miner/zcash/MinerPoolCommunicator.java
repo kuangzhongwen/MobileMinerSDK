@@ -46,8 +46,6 @@ public class MinerPoolCommunicator {
 
     private MinerState minerState;
 
-    private static final String TAG = MinerPoolCommunicator.class.getClass().getSimpleName();
-
     private static final ThreadLocal<Socket> threadConnect = new ThreadLocal<Socket>();
 
     private static final String HOST = "zec-cn.waterhole.xyz";
@@ -181,7 +179,7 @@ public class MinerPoolCommunicator {
         try {
             if (TextUtils.isEmpty(msg))
                 return;
-            LogUtils.info(TAG, "doSend >>>" + msg);
+            LogUtils.info("doSend >>>" + msg);
             OutputStreamWriter osw = new OutputStreamWriter(outStr);
             osw.write(msg + "\n");
             osw.flush();
@@ -191,7 +189,7 @@ public class MinerPoolCommunicator {
     }
 
     public void receivedMsg(String msg) {
-        LogUtils.info(TAG, "receivedMsg >>>" + msg);
+        LogUtils.info("receivedMsg >>>" + msg);
         try {
             String[] jsons = msg.split("\n");
             for (String json : jsons) {
@@ -211,11 +209,11 @@ public class MinerPoolCommunicator {
             }
             if (jsonObject.has("result")) {
                 if (jsonObject.has("error") && jsonObject.get("error") == null) {
-                    LogUtils.error(TAG, "Stratum server returned an error :" + jsonObject.get("error"));
+                    LogUtils.error("Stratum server returned an error :" + jsonObject.get("error"));
                     return null;
                 }
                 if (!jsonObject.getString("id").equals(String.valueOf(exceptedId))) {
-                    LogUtils.error(TAG, "Stratum server returned wrong id: " + jsonObject.getString("id"));
+                    LogUtils.error("Stratum server returned wrong id: " + jsonObject.getString("id"));
                 }
                 exceptedId = 0;
                 if (minerState == MinerState.SENT_SUBSCRIBE) {
@@ -231,7 +229,7 @@ public class MinerPoolCommunicator {
                     minerState = MinerState.AUTHORIZED;
                     updateMiningJob();
                 } else if (minerState == MinerState.AUTHORIZED) {
-                    LogUtils.info(TAG, "Stratum server accepted a share");
+                    LogUtils.info("Stratum server accepted a share");
                     stAccepted += 1;
                 } else {
                     throw new RuntimeException("unknown state : " + minerState);
@@ -246,7 +244,7 @@ public class MinerPoolCommunicator {
                     setNewJob(params.getString(0), params.getString(1), params.getString(2), params.getString(3), params.getString(4), params.getString(5), params.getString(6), params.getBoolean(7));
                     updateMiningJob();
                 } else if (jsonObject.getString("method").equals("client.reconnect")) {
-                    LogUtils.info(TAG, "Stratum server forcing a reconnection");
+                    LogUtils.info("Stratum server forcing a reconnection");
                 } else {
                     throw new Exception("Unimplemented method:" + jsonObject.getString("method"));
                 }
@@ -254,15 +252,15 @@ public class MinerPoolCommunicator {
                 throw new Exception("Message is neither a result nor a method call");
             }
         } catch (Exception e) {
-            LogUtils.error(TAG, "Stratum: invalid msg from server: >>>>" + json);
+            LogUtils.error("Stratum: invalid msg from server: >>>>" + json);
         }
         return null;
     }
 
     private void setNewJob(String job_id, String nversion, String hash_prev_block, String hash_merkle_root, String hash_reserved, String ntime, String nbits, boolean clean_jobs) throws Exception {
-        LogUtils.info(TAG, "Received job : " + job_id);
+        LogUtils.info("Received job : " + job_id);
         if (!clean_jobs) {
-            LogUtils.info(TAG, "Ignoring job " + job_id + " (clean_jobs=False)");
+            LogUtils.info("Ignoring job " + job_id + " (clean_jobs=False)");
             return;
         }
         this.jobId = job_id;
@@ -282,7 +280,7 @@ public class MinerPoolCommunicator {
     }
 
     private void setTarget(String t) throws Exception {
-        LogUtils.info(TAG, "Received target : " + t);
+        LogUtils.info("Received target : " + t);
         if (!t.matches("^[0-9a-fA-F]{64}$"))
             throw new Exception("Invalid target : " + t);
         boolean isFirstTarget = target == null;
@@ -316,12 +314,12 @@ public class MinerPoolCommunicator {
             }.start();
         }
         if (!stHadJob) {
-            LogUtils.info(TAG, "Stratum server sent us the first job");
+            LogUtils.info("Stratum server sent us the first job");
             stHadJob = true;
         }
         job = bytesToHexString(target) + " " + jobId + " " + bytesToHexString(zcashNoncelessHeader) + " " + bytesToHexString(nonceLeftPart);
         mineService.writeJob(job);
-        LogUtils.info(TAG, "to solvers : " + job);
+        LogUtils.info("to solvers : " + job);
     }
 
     public void onSubmit(String jobId, String ntime, String nonce_rightpart, String sol) {
@@ -359,7 +357,7 @@ public class MinerPoolCommunicator {
 
     private void setNonceLeftpart(String hexStr) {
         nonceLeftPart = hexStringToBytes(hexStr);
-        LogUtils.info(TAG, "Stratum server fixes " + nonceLeftPart.length + " bytes of the nonce");
+        LogUtils.info("Stratum server fixes " + nonceLeftPart.length + " bytes of the nonce");
         if (nonceLeftPart.length > 17) {
             throw new RuntimeException("'Stratum: SILENTARMY is not compatible with servers fixing the first " + nonceLeftPart.length + " bytes of the nonce");
         }
