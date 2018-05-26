@@ -5,7 +5,7 @@ import android.os.RemoteException;
 /**
  * @author huwwds on 2018/05/23
  */
-public interface StateObserver {
+public interface StateObserver extends NoProGuard {
     /**
      * 开始连接矿池.
      */

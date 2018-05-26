@@ -75,6 +75,7 @@
     java.lang.Object readResolve();
 }
 
+-keep public class waterhole.miner.monero.IMiningServiceBinder
 -keep public class waterhole.miner.monero.** extends waterhole.miner.core.AbstractMiner
 -keep public class waterhole.miner.monero.** implements waterhole.miner.core.MinerCallback
 -keep public class waterhole.miner.monero.** implements waterhole.miner.core.NoProguard

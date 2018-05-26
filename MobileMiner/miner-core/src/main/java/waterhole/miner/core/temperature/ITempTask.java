@@ -1,6 +1,9 @@
 package waterhole.miner.core.temperature;
 
-public interface ITempTask {
+import waterhole.miner.core.NoProGuard;
+
+public interface ITempTask extends NoProGuard {
+
     void start(int[] temperatureSurface);
 
     void stop();
