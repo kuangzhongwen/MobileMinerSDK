@@ -32,6 +32,7 @@ extern "C" {
         /**
          * test: ./xmrig --api-port 556 -o pool.monero.hashvault.pro:3333 -u 46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY -p worker1:651043704@qq.com -k
          */
+         LOGD("%s", "JNI INTO");
          jenv = env;
          jcallbackObj = callback;
 

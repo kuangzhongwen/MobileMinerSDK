@@ -44,11 +44,11 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     // aar引用方式
-    //compile(name: 'miner-core-release', ext: 'aar')
-    ///compile(name: 'monero-release', ext: 'aar')
+    compile(name: 'miner-core-release', ext: 'aar')
+    compile(name: 'monero-release', ext: 'aar')
 
     // project引用方式
-    compile project(':monero')
-    compile project(':zcash')
-    compile project(':eth')
+    //compile project(':monero')
+    //compile project(':zcash')
+    //compile project(':eth')
 }

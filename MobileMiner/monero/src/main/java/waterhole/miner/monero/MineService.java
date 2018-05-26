@@ -79,7 +79,6 @@ public final class MineService extends Service implements ITempTask {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
         }
     };
 
@@ -133,6 +132,8 @@ public final class MineService extends Service implements ITempTask {
                     executeOnThreadPool(new Runnable() {
                         @Override
                         public void run() {
+                            info("MineService startMine : address=" + miningServiceBinder.walletAddr
+                                + " ,threads=" + temperatureSurface[1] + " ,cpuUse=" + temperatureSurface[2]);
                             isMining = true;
                             NewXmr newXmr = NewXmr.instance();
                             newXmr.startMine(miningServiceBinder.walletAddr, temperatureSurface[1], temperatureSurface[2], mineCallback);

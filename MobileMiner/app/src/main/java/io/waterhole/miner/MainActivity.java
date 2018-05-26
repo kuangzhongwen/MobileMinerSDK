@@ -252,6 +252,7 @@ public final class MainActivity extends Activity {
                 info("onMiningStatus speed = " + speed);
                 setupStatusText("挖矿速度： " + parseDoubleKeep2(speed) + " H/s");
             }
-        }).startMine();
+        }).setWalletAddr("46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY")
+                .startMine();
     }
 }
