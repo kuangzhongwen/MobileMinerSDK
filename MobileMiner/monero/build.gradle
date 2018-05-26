@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
 
+apply plugin: 'maven'
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
@@ -70,4 +72,25 @@ task customFindbugs(type: FindBugs) {
 
 artifacts {
     archives file: file("${projectDir}/build/outputs/mapping/release/mapping.txt"), classifier: 'mapping', type: 'txt'
+}
+
+uploadArchives {
+    configuration = configurations.archives
+    repositories {
+        mavenDeployer {
+            snapshotRepository(url: MAVEN_REPO_SNAPSHOT_URL) {
+                authentication(userName: NEXUS_USERNAME, password: NEXUS_PASSWORD)
+            }
+            repository(url: MAVEN_REPO_RELEASE_URL) {
+                authentication(userName: NEXUS_USERNAME, password: NEXUS_PASSWORD)
+            }
+            pom.project {
+                version '1.0.0'
+                artifactId 'miner-xmr'
+                groupId GROUP_ID
+                packaging TYPE
+                description DESCRIPTION
+            }
+        }
+    }
 }
