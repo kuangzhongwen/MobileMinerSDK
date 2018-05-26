@@ -5,22 +5,27 @@ import android.text.TextUtils;
 
 import java.util.List;
 
+import waterhole.miner.core.NoProGuard;
+
 /**
  * 温控任务
  */
-public class TemperatureController {
+public class TemperatureController implements NoProGuard {
 
-    int stopTemperature = 60 * 1000;
-    int startTemperature = 40 * 1000;
-    long pollingTime = 1000l;
-    long lastStopTime;
-    long stopDelay = 5000l;
+    private int stopTemperature = 70 * 1000;
+    private int startTemperature = 40 * 1000;
+    private long pollingTime = 1000L;
+    private long lastStopTime;
+    private long stopDelay = 5000L;
     public boolean needRun = false;
-    public ITempTask tempTask;
-    boolean isTempTaskRunning;
-    int curUsage;
+    private ITempTask tempTask;
+    private boolean isTempTaskRunning;
+    private int curUsage;
 
-    int[][] temperatureSurface = {{startTemperature, Runtime.getRuntime().availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() - 1 : 1, 100}, {stopTemperature, Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors() - 2 : 1, 80}};
+    private int[][] temperatureSurface = {{startTemperature, Runtime.getRuntime().availableProcessors() > 1
+            ? Runtime.getRuntime().availableProcessors() - 1 : 1, 100},
+            {stopTemperature, Runtime.getRuntime().availableProcessors() > 2
+                    ? Runtime.getRuntime().availableProcessors() - 2 : 1, 80}};
 
     public void setTemperature(int stopTp) {
         if (stopTp > 1000)
@@ -28,7 +33,10 @@ public class TemperatureController {
         this.stopTemperature = stopTp;
         this.startTemperature = stopTemperature - 20 * 1000;
 
-        temperatureSurface = new int[][]{{startTemperature, Runtime.getRuntime().availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() - 1 : 1, 100}, {stopTemperature, Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors() - 2 : 1, 80}};
+        temperatureSurface = new int[][]{{startTemperature, Runtime.getRuntime().availableProcessors() > 1
+                ? Runtime.getRuntime().availableProcessors() - 1 : 1, 100},
+                {stopTemperature, Runtime.getRuntime().availableProcessors() > 2
+                        ? Runtime.getRuntime().availableProcessors() - 2 : 1, 80}};
     }
 
     public void setPollingTime(long pollingTime) {
@@ -69,7 +77,9 @@ public class TemperatureController {
                                     tempTask.start(temperatureSurface[0]);
                                 }
                             }
-                            if (((maxTemperature > temperatureSurface[1][0] && curUsage != temperatureSurface[1][2]) || (maxTemperature < temperatureSurface[0][0] && curUsage != temperatureSurface[0][2])) && isTempTaskRunning) {
+                            if (((maxTemperature > temperatureSurface[1][0]
+                                    && curUsage != temperatureSurface[1][2]) || (maxTemperature < temperatureSurface[0][0]
+                                    && curUsage != temperatureSurface[0][2])) && isTempTaskRunning) {
                                 isTempTaskRunning = false;
                                 lastStopTime = System.currentTimeMillis();
                                 tempTask.stop();

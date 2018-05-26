@@ -76,3 +76,5 @@
     java.lang.Object writeReplace();
     java.lang.Object readResolve();
 }
+
+-keep public class waterhole.miner.core.** implements waterhole.miner.core.NoProGuard

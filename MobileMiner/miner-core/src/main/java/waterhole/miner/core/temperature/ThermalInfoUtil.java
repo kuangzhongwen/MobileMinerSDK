@@ -19,12 +19,11 @@ public class ThermalInfoUtil {
         return list;
     }
 
-    public static String getThermalInfo(String... args) {
+    private static String getThermalInfo(String... args) {
         ProcessBuilder pB;
         String result = "";
 
         try {
-
             pB = new ProcessBuilder(args);
             pB.redirectErrorStream(false);
             Process process = pB.start();
