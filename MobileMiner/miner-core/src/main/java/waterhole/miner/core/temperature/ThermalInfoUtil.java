@@ -2,7 +2,6 @@ package waterhole.miner.core.temperature;
 
 import android.text.TextUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +34,9 @@ public class ThermalInfoUtil {
                 //System.out.println(new String(re));
                 result = new String(re);
             }
+            process.destroy();
             in.close();
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return result;
