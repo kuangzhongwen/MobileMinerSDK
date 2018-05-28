@@ -43,6 +43,10 @@ public abstract class AbstractMiner implements CommonMinerInterface {
                     maxTemperature = dTemp;
             }
         }
+        if (maxTemperature > 1000)
+            maxTemperature /= 1000;
+        if (maxTemperature > 100)
+            maxTemperature /= 10;
         return maxTemperature;
     }
 
