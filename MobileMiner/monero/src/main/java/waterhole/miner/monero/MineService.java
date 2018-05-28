@@ -20,11 +20,9 @@
 package waterhole.miner.monero;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Handler;
@@ -36,7 +34,6 @@ import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.temperature.ITempTask;
 import waterhole.miner.core.temperature.TemperatureController;
-import waterhole.miner.core.temperature.ThermalInfoUtil;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.APIUtils.hasLollipop;
@@ -88,7 +85,6 @@ public final class MineService extends Service implements ITempTask {
 
     @Override
     public IBinder onBind(Intent intent) {
-        registerReceiver(mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         getApplicationContext().bindService(new Intent(this, CallbackService.class), serviceConnection, Context.BIND_AUTO_CREATE);
         temperatureController = new TemperatureController();
         temperatureController.setTask(this);
@@ -98,20 +94,6 @@ public final class MineService extends Service implements ITempTask {
         miningServiceBinder.controller = temperatureController;
         return miningServiceBinder;
     }
-
-    /* 创建广播接收器 */
-    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            /*
-             * 如果捕捉到的action是ACTION_BATTERY_CHANGED， 就运行onBatteryInfoReceiver()
-             */
-            if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
-                batteryTemperature = intent.getIntExtra("temperature", 0);  //电池温度
-                ThermalInfoUtil.batteryTemperature = String.valueOf(batteryTemperature);
-            }
-        }
-    };
 
     @Override
     public void onDestroy() {

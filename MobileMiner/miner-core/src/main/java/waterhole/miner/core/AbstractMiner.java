@@ -1,7 +1,9 @@
 package waterhole.miner.core;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.text.TextUtils;
 
 import java.util.List;
@@ -60,8 +62,26 @@ public abstract class AbstractMiner implements CommonMinerInterface {
     public CommonMinerInterface setContext(Context context) {
         mContext = context;
         startCallbackServer();
+        registerReceiver();
         return this;
     }
+
+    private void registerReceiver() {
+        mContext.registerReceiver(mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+    }
+
+    /* 创建广播接收器 */
+    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            /*
+             * 如果捕捉到的action是ACTION_BATTERY_CHANGED， 就运行onBatteryInfoReceiver()
+             */
+            if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
+                ThermalInfoUtil.batteryTemperature = String.valueOf(intent.getIntExtra("temperature", 0));  //电池温度
+            }
+        }
+    };
 
     private void startCallbackServer() {
         final Intent callbackIntent = new Intent(mContext, CallbackService.class);
