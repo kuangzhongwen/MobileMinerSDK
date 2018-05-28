@@ -33,20 +33,26 @@ public abstract class AbstractMiner implements CommonMinerInterface {
     }
 
     public double getCurrentTemperature() {
-        List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
-        double maxTemperature = -1;
-        for (String info : thermalInfo) {
-            String temp = info.replaceAll("(\\d+).*", "$1").trim();
-            if (TextUtils.isDigitsOnly(temp.replace(".", ""))) {
-                double dTemp = Double.parseDouble(temp);
-                if (maxTemperature < dTemp)
-                    maxTemperature = dTemp;
+        double maxTemperature = 0;
+        try {
+            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
+            maxTemperature = -1;
+            for (String info : thermalInfo) {
+                String temp = info.replaceAll("(\\d+).*", "$1").trim();
+                if (TextUtils.isDigitsOnly(temp.replace(".", ""))) {
+                    double dTemp = Double.parseDouble(temp);
+                    if (maxTemperature < dTemp)
+                        maxTemperature = dTemp;
+                }
             }
+            if (maxTemperature > 1000)
+                maxTemperature /= 1000;
+            if (maxTemperature > 100)
+                maxTemperature /= 10;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 40;
         }
-        if (maxTemperature > 1000)
-            maxTemperature /= 1000;
-        if (maxTemperature > 100)
-            maxTemperature /= 10;
         return maxTemperature;
     }
 

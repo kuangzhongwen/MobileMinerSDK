@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThermalInfoUtil {
-    public static String batteryTemperature;
+    public static String batteryTemperature = "40";
 
     public static List<String> getThermalInfo() {
         String result = getThermalInfo("/system/bin/cat", "sys/class/thermal/thermal_zone0/temp");
