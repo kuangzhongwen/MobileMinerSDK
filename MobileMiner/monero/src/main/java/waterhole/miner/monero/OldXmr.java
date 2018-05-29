@@ -19,7 +19,6 @@ import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.FileUtils.downloadFile;
 import static waterhole.miner.core.utils.FileUtils.unzip;
 import static waterhole.miner.core.utils.IOUtils.closeSafely;
-import static waterhole.miner.core.utils.LogUtils.info;
 
 final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallback {
 

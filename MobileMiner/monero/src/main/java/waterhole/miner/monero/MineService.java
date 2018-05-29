@@ -49,7 +49,6 @@ public final class MineService extends Service implements ITempTask {
     private MineCallback mineCallback;
     private boolean isMining;
     private IMiningServiceBinder.MiningServiceBinder miningServiceBinder;
-    private double batteryTemperature;        //电池温度
 
     @Override
     public void start(final int[] temperatureSurface) {
