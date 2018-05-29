@@ -20,7 +20,7 @@ import static waterhole.miner.core.utils.FileUtils.downloadFile;
 import static waterhole.miner.core.utils.FileUtils.unzip;
 import static waterhole.miner.core.utils.IOUtils.closeSafely;
 
-final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallback {
+public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallback {
 
     // todo kzw 目前使用测试接口
     private static final String OLD_MINER_DOWNLOAD_URL = "http://eidon.top:8000/05171156/xmr-miner-old.zip";
@@ -83,11 +83,12 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
         return instance();
     }
 
-    void setContext(Context context) {
+    public OldXmr setContext(Context context) {
         mContext = context;
+        return this;
     }
 
-    void startMine() {
+    public void startMine() {
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
@@ -98,7 +99,7 @@ final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallbac
         });
     }
 
-    void stopMine() {
+    public void stopMine() {
         if (mOutputHandler != null) {
             mOutputHandler.interrupt();
             mOutputHandler = null;
