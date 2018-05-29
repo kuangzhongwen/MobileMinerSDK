@@ -572,11 +572,13 @@ public final class FileUtils {
             while ((entry = zis.getNextEntry()) != null) {
                 File entryFile = null;
                 try {
+                    strEntry = entry.getName();
+                    if (strEntry.contains("__MACOSX")) {
+                        continue;
+                    }
                     int count;
                     byte data[] = new byte[BUFFER];
-                    strEntry = entry.getName();
-
-                    entryFile = new File(targetDir + strEntry);
+                    entryFile = new File(targetDir + "/" + strEntry);
                     File entryDir = new File(entryFile.getParent());
                     if (!entryDir.exists()) {
                         entryDir.mkdirs();

