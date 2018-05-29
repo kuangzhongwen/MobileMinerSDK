@@ -36,9 +36,6 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
     private int mCpuUses;
     private String mWalletAddress;
 
-    private int mAccepted;
-    private String mSpeed = "./.";
-
     private OldXmr() {
     }
 
@@ -123,7 +120,6 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
             // in case of errors, read them
             pb.redirectErrorStream();
 
-            mAccepted = 0;
             // run it!
             mProcess = pb.start();
             // start processing xmrig's output
@@ -191,6 +187,9 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
         private final InputStream inputStream;
         private final StringBuilder output;
         private BufferedReader reader;
+
+        private int mAccepted;
+        private String mSpeed = "./.";
 
         OutputReaderThread(InputStream inputStream) {
             this.inputStream = inputStream;
