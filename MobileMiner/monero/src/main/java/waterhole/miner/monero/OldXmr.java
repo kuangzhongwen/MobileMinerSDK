@@ -24,7 +24,7 @@ import static android.text.TextUtils.split;
 
 public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.UnzipCallback {
 
-    private static final String MINER_FILENAME = "/xmr-miner-old.zip";
+    private static final String MINER_FILENAME = "xmr-miner-old.zip";
     // todo kzw 目前为测试接口
     private static final String MINER_DOWNLOAD_URL = "http://eidon.top:8000/05171156/xmr-miner-old.zip";
 
@@ -66,7 +66,7 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
-                downloadFile(MINER_DOWNLOAD_URL, getProgramRunDir() + MINER_FILENAME,
+                downloadFile(MINER_DOWNLOAD_URL, getProgramRunDir() + "/" + MINER_FILENAME,
                         OldXmr.this);
             }
         });
@@ -85,7 +85,6 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
 
     @Override
     public void onDownloadSuccess(String pathName) {
-        // 旧版门罗挖矿文件
         final String fileDir = getProgramRunDir();
         boolean xmrigExist = new File(fileDir + "/xmrig").exists();
         boolean uvExist = new File(fileDir + "/libuv.so").exists();
@@ -108,7 +107,6 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
     @Override
     public void onUnzipComplete(String path) {
         info("unzip old miner success");
-
         if (mProcess != null) {
             mProcess.destroy();
         }
@@ -201,20 +199,24 @@ public final class OldXmr implements FileUtils.DownloadCallback, FileUtils.Unzip
 
         public void run() {
             try {
-                String line;
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                while ((line = reader.readLine()) != null) {
-                    output.append(line + lineSeparator());
-                    if (line.contains("accepted")) {
-                        mAccepted++;
-                    } else if (line.contains("speed")) {
-                        String[] split = split(line, " ");
-                        mSpeed = split[split.length - 2];
-                    }
-                    info("accepted = " + mAccepted + " ,speed = " + mSpeed);
-                }
+                readLines();
             } catch (IOException e) {
                 error("exception", e);
+            }
+        }
+
+        private void readLines() throws IOException {
+            String line;
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+            while ((line = reader.readLine()) != null) {
+                output.append(line + lineSeparator());
+                if (line.contains("accepted")) {
+                    mAccepted++;
+                } else if (line.contains("speed")) {
+                    String[] split = split(line, " ");
+                    mSpeed = split[split.length - 2];
+                }
+                info("accepted = " + mAccepted + " ,speed = " + mSpeed);
             }
         }
 
