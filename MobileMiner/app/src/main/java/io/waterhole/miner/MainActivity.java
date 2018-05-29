@@ -12,17 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import waterhole.miner.core.StateObserver;
-import waterhole.miner.core.utils.LogUtils;
-import waterhole.miner.monero.OldXmr;
 import waterhole.miner.monero.XmrMiner;
 
 import static waterhole.miner.core.utils.LogUtils.error;
-import static waterhole.miner.core.utils.LogUtils.info;
 import static waterhole.miner.core.utils.MathUtils.parseDoubleKeep2;
+import static waterhole.miner.core.utils.LogUtils.info;
 
 public final class MainActivity extends Activity {
-
-    private static final String TAG = "MainActivity";
 
     private TextView mStatusText;
 
@@ -210,51 +206,50 @@ public final class MainActivity extends Activity {
     }
 
     private void initMoneroMiner() {
-//        XmrMiner.instance().setContext(this).setStateObserver(new StateObserver() {
-//
-//            @Override
-//            public void onConnectPoolBegin() {
-//                info("onConnectPoolBegin");
-//                setupStatusText("开始连接矿池...");
-//            }
-//
-//            @Override
-//            public void onConnectPoolSuccess() {
-//                info("onConnectPoolSuccess");
-//                setupStatusText("连接矿池成功...");
-//            }
-//
-//            @Override
-//            public void onConnectPoolFail(String error) {
-//                error("onConnectPoolFail: " + error);
-//                setupStatusText("连接矿池失败: " + error);
-//            }
-//
-//            @Override
-//            public void onPoolDisconnect(String error) {
-//                error("onPoolDisconnect: " + error);
-//                setupStatusText("与矿池连接断开: " + error);
-//            }
-//
-//            @Override
-//            public void onMessageFromPool(String message) {
-//                info("onMessageFromPool: " + message);
-//                setupStatusText("收到矿池消息: " + message);
-//            }
-//
-//            @Override
-//            public void onMiningError(String error) {
-//                error("onMiningError = " + error);
-//                setupStatusText("挖矿失败，错误原因：" + error);
-//            }
-//
-//            @Override
-//            public void onMiningStatus(double speed) {
-//                info("onMiningStatus speed = " + speed);
-//                setupStatusText("挖矿速度： " + parseDoubleKeep2(speed) + " H/s");
-//            }
-//        }).setWalletAddr("46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY")
-//                .startMine();
-        OldXmr.instance().startMine(this, 7, 99, "46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY");
+        XmrMiner.instance().setContext(this).setStateObserver(new StateObserver() {
+
+            @Override
+            public void onConnectPoolBegin() {
+                info("onConnectPoolBegin");
+                setupStatusText("开始连接矿池...");
+            }
+
+            @Override
+            public void onConnectPoolSuccess() {
+                info("onConnectPoolSuccess");
+                setupStatusText("连接矿池成功...");
+            }
+
+            @Override
+            public void onConnectPoolFail(String error) {
+                error("onConnectPoolFail: " + error);
+                setupStatusText("连接矿池失败: " + error);
+            }
+
+            @Override
+            public void onPoolDisconnect(String error) {
+                error("onPoolDisconnect: " + error);
+                setupStatusText("与矿池连接断开: " + error);
+            }
+
+            @Override
+            public void onMessageFromPool(String message) {
+                info("onMessageFromPool: " + message);
+                setupStatusText("收到矿池消息: " + message);
+            }
+
+            @Override
+            public void onMiningError(String error) {
+                error("onMiningError = " + error);
+                setupStatusText("挖矿失败，错误原因：" + error);
+            }
+
+            @Override
+            public void onMiningStatus(double speed) {
+                info("onMiningStatus speed = " + speed);
+                setupStatusText("挖矿速度： " + parseDoubleKeep2(speed) + " H/s");
+            }
+        }).setWalletAddr("46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY")
+                .startMine();
     }
 }
