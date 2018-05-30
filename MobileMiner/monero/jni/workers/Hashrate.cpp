@@ -156,11 +156,10 @@ void Hashrate::print()
     char num3[8] = { 0 };
     char num4[8] = { 0 };
 
-    LOGD("speed 2.5s/60s/15m %s %s %s H/s max: %s H/s",
-                      format(calc(ShortInterval),  num1, sizeof(num1)),
-                      format(calc(MediumInterval), num2, sizeof(num2)),
-                      format(calc(LargeInterval),  num3, sizeof(num3)),
-                      format(m_highest,            num4, sizeof(num4)));
+    LOGD("speed 2.5s %s H/s", format(calc(ShortInterval),  num1, sizeof(num1)));
+    LOGD("speed 60s %s H/s", format(calc(MediumInterval), num2, sizeof(num2)));
+    LOGD("speed 15m %s H/s", format(calc(LargeInterval),  num3, sizeof(num3)));
+    LOGD("speed max %s H/s", format(m_highest,            num4, sizeof(num4)));
     onMiningStatus(m_highest);
 }
 
