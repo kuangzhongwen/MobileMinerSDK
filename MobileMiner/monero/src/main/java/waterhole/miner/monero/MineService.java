@@ -84,6 +84,7 @@ public final class MineService extends Service implements ITempTask {
 
     @Override
     public IBinder onBind(Intent intent) {
+        info("MineService onBind");
         getApplicationContext().bindService(new Intent(this, CallbackService.class), serviceConnection, Context.BIND_AUTO_CREATE);
         temperatureController = new TemperatureController();
         temperatureController.setTask(this);
@@ -97,6 +98,7 @@ public final class MineService extends Service implements ITempTask {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        info("MineService onDestroy");
         sMineService = null;
         System.exit(0);
         android.os.Process.killProcess(android.os.Process.myPid());
