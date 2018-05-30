@@ -4,7 +4,7 @@ import java.io.ObjectStreamException;
 
 import waterhole.miner.core.MineCallback;
 
-final class NewXmr {
+final class Xmr {
 
     static {
         System.loadLibrary("monero-miner");
@@ -12,15 +12,15 @@ final class NewXmr {
 
     native void startMine(String walletAddress, int thread, int cpuUses, MineCallback callback);
 
-    private NewXmr() {
+    private Xmr() {
     }
 
-    public static NewXmr instance() {
+    public static Xmr instance() {
         return Holder.instance;
     }
 
     private static class Holder {
-        private static NewXmr instance = new NewXmr();
+        private static Xmr instance = new Xmr();
     }
 
     private Object readResolve() throws ObjectStreamException {

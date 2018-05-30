@@ -28,7 +28,7 @@ jobject jcallbackObj;
 JNIEnv* jenv;
 
 extern "C" {
-    JNIEXPORT void JNICALL Java_waterhole_miner_monero_NewXmr_startMine(JNIEnv *env, jobject thiz, jstring walletAddress, jint threads, jint cpu_uses, jobject callback) {
+    JNIEXPORT void JNICALL Java_waterhole_miner_monero_Xmr_startMine(JNIEnv *env, jobject thiz, jstring walletAddress, jint threads, jint cpu_uses, jobject callback) {
         /**
          * test: ./xmrig --api-port 556 -o pool.monero.hashvault.pro:3333 -u 46Ffvb3jf7ZcVqgPjeReAfZyAk7qKm4FqMb6g6SsT6bpKAhPo9EtNKUVEdMpk62zPpB9GJt75xTD75vYHKredVB3RDHfxdY -p worker1:651043704@qq.com -k
          */
