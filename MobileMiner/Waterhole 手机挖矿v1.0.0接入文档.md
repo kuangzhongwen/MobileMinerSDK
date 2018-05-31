@@ -1,0 +1,243 @@
+## Waterhole手机挖矿v1.0.0 SDK文档
+<br />
+### SDK介绍
+
+Waterhole手机挖矿SDK，目前提供了门罗币（Monero, 代号XMR）的挖矿支持。目前门罗币手机挖矿只支持64位的运行环境，支持的ABI为arm64-v8a。连接的矿池为Waterhole公司矿池，内置钱包地址为Waterhole公司门罗地址，第三方开源代码抽水为0%。
+
+<br />
+### 快速集成
+
+#### 1. 在app主模块的build.gradle中添加挖矿aar引用
+```
+compile(name: 'miner-core-1.0.0', ext: 'aar')
+compile(name: 'miner-xmr-1.0.0', ext: 'aar')
+```
+<br />
+#### 2. 在app主模块的build.gradle中设置NDK ABI参数
+```
+ndk {
+       abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "mips"
+    }
+```
+
+ 注意：由于目前门罗算法在arm平台下，只支持64位，32位存在内存对齐问题。所以在gradle中设置abi，是为了app在运行时能够优先选择arm64-v8a。如果app内部使用了其他so库，则必须有对应的arm64-v8a目录，否则应用不会以64位的环境运行。如果有个别的库没有arm64-v8a包的话，则运行时，使用对应功能会crash。
+
+<br />
+#### 3. 权限
+打开AndroidManifest.xml，添加组件需要的权限：
+
+```
+<uses-permission android:name="android.permission.INTERNET"/>
+```
+注意：SDK内部不做权限处理，交由接入方来处理。
+
+<br />
+#### 4. 混淆
+在混淆文件中加入：
+
+```
+-keep public class waterhole.miner.core.NoProGuard
+-keep class * implements waterhole.miner.core.NoProGuard {*;}
+```
+
+<br />
+#### 5. 接入代码
+
+开始挖矿：
+
+```
+XmrMiner.instance().setContext(context)
+		 .setStateObserver(new StateObserver(){})
+		 .startMine(); 
+```
+
+停止挖矿：
+
+```
+XmrMiner.instance().stopMine(); 
+```
+
+<br />
+#### 6. API说明
+
+##### 6.1 class XmrMiner
+
+###### instance()
+
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>无</td>
+        <td>无</td>
+        <td> 获取XmrMiner实例（单例）</td>
+    </tr>
+</table>
+
+###### startMine()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>无</td>
+        <td>无</td>
+        <td>开始挖矿，内部会开启一个独立进程进行挖矿</td>
+    </tr>
+</table>
+
+###### stopMine()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>无</td>
+        <td>无</td>
+        <td>停止挖矿，会杀掉挖矿进程，释放资源</td>
+    </tr>
+</table>
+
+###### setContext()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>context</td>
+        <td>Context</td>
+        <td>设置上下文对象</td>
+    </tr>
+</table>
+
+###### setStateObserver()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>stateObserver</td>
+        <td>StateObserver</td>
+        <td>挖矿状态观察者回调</td>
+    </tr>
+</table>
+
+<br />
+##### 6.2 class StateObserver
+
+###### onConnectPoolBegin()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>无</td>
+        <td>无</td>
+        <td>开始连接矿池回调</td>
+    </tr>
+</table>
+
+###### onConnectPoolSuccess()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>无</td>
+        <td>无</td>
+        <td>连接矿池成功回调</td>
+    </tr>
+</table>
+
+###### onConnectPoolFail()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>error</td>
+        <td>String</td>
+        <td>连接矿池失败回调，回调失败原因</td>
+    </tr>
+</table>
+
+###### onPoolDisconnect()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>error</td>
+        <td>String</td>
+        <td>与矿池连接断开，回调失败原因</td>
+    </tr>
+</table>
+
+###### onMessageFromPool()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>message</td>
+        <td>String</td>
+        <td>收到矿池信息回调</td>
+    </tr>
+</table>
+
+###### onMiningError()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>error</td>
+        <td>String</td>
+        <td>挖矿错误回调，回调失败原因</td>
+    </tr>
+</table>
+
+###### onMiningStatus()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>speed</td>
+        <td>double</td>
+        <td>挖矿速度，建议保留3-4位小数，门罗币的单位为H/s</td>
+    </tr>
+</table>
+
+
+<br />
+#### 7. 技术支持
+```
+qq: 651043704  
+wechat: k651043704
+```
