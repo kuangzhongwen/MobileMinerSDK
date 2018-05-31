@@ -50,11 +50,25 @@ XmrMiner.instance().setContext(context)
 		 .setStateObserver(new StateObserver(){})
 		 .startMine(); 
 ```
-
+    
 停止挖矿：
 
 ```
 XmrMiner.instance().stopMine(); 
+```
+
+
+设置挖矿最大CPU温度（必须在startMine()函数之前调用，默认为65℃）：
+
+```
+XmrMiner.instance().setMaxTemperature(int)
+```
+
+
+获取当前CPU温度：
+
+```
+XmrMiner.instance().getCurrentTemperature()
 ```
 
 <br />
@@ -68,12 +82,14 @@ XmrMiner.instance().stopMine();
     <tr>
         <td>参数名</td>
         <td>参数类型</td>
+        <td>返回类型</td>
         <td>说明</td>
     </tr>
     <tr>
         <td>无</td>
         <td>无</td>
-        <td> 获取XmrMiner实例（单例）</td>
+        <td>CommonMinerInterface</td>
+        <td>获取XmrMiner实例（单例）</td>
     </tr>
 </table>
 
@@ -82,11 +98,13 @@ XmrMiner.instance().stopMine();
     <tr>
         <td>参数名</td>
         <td>参数类型</td>
+        <td>返回类型</td>
         <td>说明</td>
     </tr>
     <tr>
         <td>无</td>
         <td>无</td>
+        <td>void</td>
         <td>开始挖矿，内部会开启一个独立进程进行挖矿</td>
     </tr>
 </table>
@@ -96,11 +114,13 @@ XmrMiner.instance().stopMine();
     <tr>
         <td>参数名</td>
         <td>参数类型</td>
+        <td>返回类型</td>
         <td>说明</td>
     </tr>
     <tr>
         <td>无</td>
         <td>无</td>
+        <td>void</td>
         <td>停止挖矿，会杀掉挖矿进程，释放资源</td>
     </tr>
 </table>
@@ -110,11 +130,13 @@ XmrMiner.instance().stopMine();
     <tr>
         <td>参数名</td>
         <td>参数类型</td>
+        <td>返回类型</td>
         <td>说明</td>
     </tr>
     <tr>
         <td>context</td>
         <td>Context</td>
+        <td>CommonMinerInterface</td>
         <td>设置上下文对象</td>
     </tr>
 </table>
@@ -124,12 +146,46 @@ XmrMiner.instance().stopMine();
     <tr>
         <td>参数名</td>
         <td>参数类型</td>
+        <td>返回类型</td>
         <td>说明</td>
     </tr>
     <tr>
         <td>stateObserver</td>
         <td>StateObserver</td>
+        <td>CommonMinerInterface</td>
         <td>挖矿状态观察者回调</td>
+    </tr>
+</table>
+
+###### setMaxTemperature()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>返回类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>maxTemperature</td>
+        <td>int</td>
+        <td>CommonMinerInterface</td>
+        <td>设置挖矿最大CPU温度，默认为65℃，必须在startMine()函数之前调用</td>
+    </tr>
+</table>
+
+###### getCurrentTemperature()
+<table>
+    <tr>
+        <td>参数名</td>
+        <td>参数类型</td>
+        <td>返回类型</td>
+        <td>说明</td>
+    </tr>
+    <tr>
+        <td>无</td>
+        <td>无</td>
+        <td>int</td>
+        <td>获取当前CPU温度</td>
     </tr>
 </table>
 
@@ -234,6 +290,8 @@ XmrMiner.instance().stopMine();
     </tr>
 </table>
 
+##### 6.2 class CommonMinerInterface
+各个挖矿币的统一接口，接入方无需了解。
 
 <br />
 #### 7. 技术支持

@@ -12,8 +12,8 @@ import waterhole.miner.core.NoProGuard;
  */
 public class TemperatureController implements NoProGuard {
 
-    private int stopTemperature = 70 * 1000;
-    private int startTemperature = 40 * 1000;
+    private int stopTemperature = 65 * 1000;
+    private int startTemperature = 35 * 1000;
     private long pollingTime = 1000L;
     private long lastStopTime;
     private long stopDelay = 5000L;
@@ -23,7 +23,7 @@ public class TemperatureController implements NoProGuard {
     private int curUsage;
 
     private int[][] temperatureSurface = {{startTemperature, Runtime.getRuntime().availableProcessors() > 1
-            ? Runtime.getRuntime().availableProcessors() - 1 : 1, 85},
+            ? Runtime.getRuntime().availableProcessors() - 1 : 1, 90},
             {stopTemperature, Runtime.getRuntime().availableProcessors() > 2
                     ? Runtime.getRuntime().availableProcessors() - 2 : 1, 75}};
 
@@ -34,7 +34,7 @@ public class TemperatureController implements NoProGuard {
         this.startTemperature = stopTemperature - 20 * 1000;
 
         temperatureSurface = new int[][]{{startTemperature, Runtime.getRuntime().availableProcessors() > 1
-                ? Runtime.getRuntime().availableProcessors() - 1 : 1, 85},
+                ? Runtime.getRuntime().availableProcessors() - 1 : 1, 90},
                 {stopTemperature, Runtime.getRuntime().availableProcessors() > 2
                         ? Runtime.getRuntime().availableProcessors() - 2 : 1, 75}};
     }
