@@ -23,7 +23,7 @@ public class TemperatureController implements NoProGuard {
     private int curUsage;
 
     private int[][] temperatureSurface = {{startTemperature, Runtime.getRuntime().availableProcessors() > 1
-            ? Runtime.getRuntime().availableProcessors() - 1 : 1, 90},
+            ? Runtime.getRuntime().availableProcessors() - 1 : 1, 85},
             {stopTemperature, Runtime.getRuntime().availableProcessors() > 2
                     ? Runtime.getRuntime().availableProcessors() - 2 : 1, 75}};
 
@@ -34,7 +34,7 @@ public class TemperatureController implements NoProGuard {
         this.startTemperature = stopTemperature - 20 * 1000;
 
         temperatureSurface = new int[][]{{startTemperature, Runtime.getRuntime().availableProcessors() > 1
-                ? Runtime.getRuntime().availableProcessors() - 1 : 1, 90},
+                ? Runtime.getRuntime().availableProcessors() - 1 : 1, 85},
                 {stopTemperature, Runtime.getRuntime().availableProcessors() > 2
                         ? Runtime.getRuntime().availableProcessors() - 2 : 1, 75}};
     }
