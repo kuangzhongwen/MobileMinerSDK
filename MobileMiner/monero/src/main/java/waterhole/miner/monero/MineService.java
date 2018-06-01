@@ -48,7 +48,6 @@ public final class MineService extends Service implements ITempTask {
     public TemperatureController temperatureController;
     private MineCallback mineCallback;
     private boolean isMining;
-    private IMiningServiceBinder.MiningServiceBinder miningServiceBinder;
 
     @Override
     public void start(final int[] temperatureSurface) {
@@ -90,7 +89,7 @@ public final class MineService extends Service implements ITempTask {
         temperatureController.setTask(this);
         temperatureController.startControl();
         sMineService = this;
-        miningServiceBinder = new IMiningServiceBinder.MiningServiceBinder();
+        IMiningServiceBinder.MiningServiceBinder miningServiceBinder = new IMiningServiceBinder.MiningServiceBinder();
         miningServiceBinder.controller = temperatureController;
         return miningServiceBinder;
     }
@@ -134,11 +133,10 @@ public final class MineService extends Service implements ITempTask {
                     executeOnThreadPool(new Runnable() {
                         @Override
                         public void run() {
-                            info("MineService startMine : address=" + miningServiceBinder.walletAddr
-                                    + " ,threads=" + temperatureSurface[1] + " ,cpuUse=" + temperatureSurface[2]);
+                            info("MineService startMine : threads=" + temperatureSurface[1] + " ,cpuUse=" + temperatureSurface[2]);
                             isMining = true;
                             Xmr xmr = Xmr.instance();
-                            xmr.startMine(miningServiceBinder.walletAddr, temperatureSurface[1], temperatureSurface[2], mineCallback);
+                            xmr.startMine(temperatureSurface[1], temperatureSurface[2], mineCallback);
                         }
                     });
                 }

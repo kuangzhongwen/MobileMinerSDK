@@ -17,8 +17,6 @@ public interface CommonMinerInterface extends NoProGuard {
 
     StateObserver getStateObserver();
 
-    CommonMinerInterface setWalletAddr(String walletAddr);
-
     CommonMinerInterface setMaxTemperature(int temperature);
 
     void startMine();
