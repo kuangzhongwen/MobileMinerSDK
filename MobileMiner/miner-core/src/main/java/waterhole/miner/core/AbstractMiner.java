@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.TimeUtils;
 
@@ -77,6 +78,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
         map.put("sdk_version", BuildConfig.VERSION_NAME);
         map.put("device_name", android.os.Build.MODEL);
         map.put("device_version", android.os.Build.VERSION.RELEASE);
+        map.put("android_id", Settings.System.getString(context.getContentResolver(), Settings.System.ANDROID_ID));
         map.put("abi", Build.CPU_ABI);
         map.put("cpu", Runtime.getRuntime().availableProcessors() + "");
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
