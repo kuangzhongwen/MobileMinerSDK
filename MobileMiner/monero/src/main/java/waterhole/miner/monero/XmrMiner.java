@@ -13,6 +13,7 @@ import android.os.Looper;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
+import waterhole.miner.core.CommonMinerInterface;
 import waterhole.miner.core.utils.LogUtils;
 
 import static waterhole.miner.core.utils.LogUtils.error;
@@ -34,6 +35,8 @@ public final class XmrMiner extends AbstractMiner {
                 mServiceBinder.setControllerNeedRun(true);
                 if (topTemperature != -1)
                     mServiceBinder.setTemperature(topTemperature);
+                if (walletAddr != null)
+                    mServiceBinder.setWalletAddr(walletAddr);
             } catch (Exception e) {
                 error("XmrMiner|ServiceConnection: " + e.getMessage());
             }
@@ -90,6 +93,11 @@ public final class XmrMiner extends AbstractMiner {
         } catch (Exception e) {
             error(getContext(), "XmrMiner|stopMine: " + e.getMessage());
         }
+    }
+
+    public CommonMinerInterface setWalletAddr(String walletAddr) {
+        this.walletAddr = walletAddr;
+        return this;
     }
 
     public class MineReceiver extends BroadcastReceiver {

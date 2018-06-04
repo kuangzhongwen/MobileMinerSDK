@@ -17,6 +17,7 @@ public interface IMiningServiceBinder extends IInterface {
     int TRANSACTION_stopMine = (IBinder.FIRST_CALL_TRANSACTION + 1);
     int TRANSACTION_setControllerNeedRun = (IBinder.FIRST_CALL_TRANSACTION + 2);
     int TRANSACTION_setTemperature = (IBinder.FIRST_CALL_TRANSACTION + 3);
+    int TRANSACTION_setWalletAddr = (IBinder.FIRST_CALL_TRANSACTION + 4);
 
     void startMine() throws RemoteException;
 
@@ -26,8 +27,11 @@ public interface IMiningServiceBinder extends IInterface {
 
     void setTemperature(int stopTp) throws RemoteException;
 
+    void setWalletAddr(String walletAddr) throws RemoteException;
+
     class MiningServiceBinder extends Binder implements IMiningServiceBinder {
         TemperatureController controller;
+        public String walletAddr;
 
         MiningServiceBinder() {
             this.attachInterface(this, DESCRIPTOR);
@@ -46,6 +50,11 @@ public interface IMiningServiceBinder extends IInterface {
         @Override
         public void setTemperature(int stopTp) {
             controller.setTemperature(stopTp);
+        }
+
+        @Override
+        public void setWalletAddr(String walletAddr) throws RemoteException {
+            this.walletAddr = walletAddr;
         }
 
         @Override
@@ -76,6 +85,12 @@ public interface IMiningServiceBinder extends IInterface {
                 case TRANSACTION_setTemperature: {
                     data.enforceInterface(DESCRIPTOR);
                     setTemperature(data.readInt());
+                    reply.writeNoException();
+                    return true;
+                }
+                case TRANSACTION_setWalletAddr: {
+                    data.enforceInterface(DESCRIPTOR);
+                    setWalletAddr(data.readString());
                     reply.writeNoException();
                     return true;
                 }
@@ -165,6 +180,22 @@ public interface IMiningServiceBinder extends IInterface {
                 } finally {
                     _reply.recycle();
                     _data.recycle();
+                }
+            }
+
+            @Override
+            public void setWalletAddr(String walletAddr) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                Parcel _reply = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(walletAddr);
+                    mRemote.transact(TRANSACTION_setWalletAddr, _data, _reply, 0);
+                    _reply.readException();
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+
                 }
             }
         }

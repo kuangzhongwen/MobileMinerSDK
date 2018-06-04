@@ -43,7 +43,7 @@ namespace xmrig {
 class App : public IConsoleListener
 {
 public:
-  App(int threads, int cpu_uses);
+  App(char* walletAddress, int threads, int cpu_uses);
   ~App();
 
   int exec();

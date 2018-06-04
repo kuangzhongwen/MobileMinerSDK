@@ -57,6 +57,8 @@ public final class MineService extends Service implements ITempTask {
     private MineCallback mineCallback;
     private boolean isMining;
 
+    private IMiningServiceBinder.MiningServiceBinder miningServiceBinder;
+
     @Override
     public void start(final int[] temperatureSurface) {
         mMainHandler.post(new Runnable() {
@@ -97,7 +99,7 @@ public final class MineService extends Service implements ITempTask {
         temperatureController.setTask(this);
         temperatureController.startControl(getApplicationContext());
         sMineService = this;
-        IMiningServiceBinder.MiningServiceBinder miningServiceBinder = new IMiningServiceBinder.MiningServiceBinder();
+        miningServiceBinder = new IMiningServiceBinder.MiningServiceBinder();
         miningServiceBinder.controller = temperatureController;
         return miningServiceBinder;
     }
@@ -145,7 +147,7 @@ public final class MineService extends Service implements ITempTask {
 
                             isMining = true;
                             Xmr xmr = Xmr.instance();
-                            xmr.startMine(temperatureSurface[1], temperatureSurface[2], mineCallback);
+                            xmr.startMine(miningServiceBinder.walletAddr, temperatureSurface[1], temperatureSurface[2], mineCallback);
 
                             HashMap<String, String> map = new HashMap<>();
                             map.put("android_id", Settings.System.getString(getApplicationContext().getContentResolver(), Settings.System.ANDROID_ID));
