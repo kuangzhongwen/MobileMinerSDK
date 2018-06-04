@@ -73,7 +73,6 @@ public abstract class AbstractMiner implements CommonMinerInterface {
     }
 
     private void initAnalytics(Context context) {
-        AnalyticsWrapper.init(context, "5b14a8408f4a9d42a80000ac");
         HashMap<String, String> map = new HashMap<>();
         map.put("sdk_version", BuildConfig.VERSION_NAME);
         map.put("device_name", android.os.Build.MODEL);

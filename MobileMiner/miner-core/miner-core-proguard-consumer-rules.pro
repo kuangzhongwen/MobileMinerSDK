@@ -77,3 +77,8 @@
 -keep public interface waterhole.miner.core.NoProguard
 -keep public interface waterhole.miner.core.MinerCallback
 -keep public class waterhole.miner.core.** implements waterhole.miner.core.NoProGuard
+
+-dontwarn com.umeng.**
+-keep public interface com.umeng.socialize.**
+-keep public interface com.umeng.socialize.sensor.**
+-keep public interface com.umeng.scrshot.**

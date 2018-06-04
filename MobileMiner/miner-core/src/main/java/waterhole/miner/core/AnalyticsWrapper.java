@@ -3,8 +3,6 @@ package waterhole.miner.core;
 import android.content.Context;
 
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.commonsdk.UMConfigure;
-
 import java.util.HashMap;
 
 /**
@@ -17,10 +15,6 @@ public final class AnalyticsWrapper {
 
     public AnalyticsWrapper() {
         throw new RuntimeException("AnalyticsWrapper stub!");
-    }
-
-    public static void init(Context context, String appkey) {
-        UMConfigure.init(context, UMConfigure.DEVICE_TYPE_PHONE, appkey);
     }
 
     /**
