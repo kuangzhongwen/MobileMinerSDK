@@ -9,7 +9,7 @@ import android.content.Context;
  */
 public interface CommonMinerInterface extends NoProGuard {
 
-    CommonMinerInterface setContext(Context context);
+    CommonMinerInterface init(Context context);
 
     CommonMinerInterface setStateObserver(StateObserver callback);
 

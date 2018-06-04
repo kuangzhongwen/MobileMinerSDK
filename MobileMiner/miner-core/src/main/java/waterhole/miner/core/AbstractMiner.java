@@ -4,9 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.text.TextUtils;
+import android.util.TimeUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import waterhole.miner.core.temperature.ThermalInfoUtil;
 
@@ -57,11 +63,25 @@ public abstract class AbstractMiner implements CommonMinerInterface {
     }
 
     @Override
-    public CommonMinerInterface setContext(Context context) {
+    public CommonMinerInterface init(Context context) {
         mContext = context;
         startCallbackServer();
         registerReceiver();
+        initAnalytics(context);
         return this;
+    }
+
+    private void initAnalytics(Context context) {
+        AnalyticsWrapper.init(context, "5b14a8408f4a9d42a80000ac");
+        HashMap<String, String> map = new HashMap<>();
+        map.put("sdk_version", BuildConfig.VERSION_NAME);
+        map.put("device_name", android.os.Build.MODEL);
+        map.put("device_version", android.os.Build.VERSION.RELEASE);
+        map.put("abi", Build.CPU_ABI);
+        map.put("cpu", Runtime.getRuntime().availableProcessors() + "");
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
+        map.put("start_time", sDateFormat.format(new java.util.Date()));
+        AnalyticsWrapper.onEvent(context, "init_rc", map);
     }
 
     private void registerReceiver() {
@@ -88,7 +108,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
 
     @Override
     public Context getContext() {
-        if (mContext == null) throw new RuntimeException("Please call setContext(Context context) first");
+        if (mContext == null) throw new RuntimeException("Please call init(Context context) first");
         return mContext;
     }
 

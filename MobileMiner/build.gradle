@@ -14,7 +14,6 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url "http://dc.eidon.top:9994/repository/waterhole_release/" }
         jcenter()
     }
 }

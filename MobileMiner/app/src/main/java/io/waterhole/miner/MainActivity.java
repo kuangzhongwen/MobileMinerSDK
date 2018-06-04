@@ -102,7 +102,7 @@ public final class MainActivity extends Activity {
     }
 
     private void initZcashMiner() {
-//        ZcashMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
+//        ZcashMiner.instance().init(getApplicationContext()).setMineCallback(new MineCallback() {
 //
 //            @Override
 //            public IBinder asBinder() {
@@ -154,7 +154,7 @@ public final class MainActivity extends Activity {
     }
 
     private void initEthMiner() {
-//        EthMiner.instance().setContext(getApplicationContext()).setMineCallback(new MineCallback() {
+//        EthMiner.instance().init(getApplicationContext()).setMineCallback(new MineCallback() {
 //
 //            @Override
 //            public IBinder asBinder() {
@@ -206,7 +206,7 @@ public final class MainActivity extends Activity {
     }
 
     private void initMoneroMiner() {
-        XmrMiner.instance().setContext(this).setStateObserver(new StateObserver() {
+        XmrMiner.instance().init(this).setStateObserver(new StateObserver() {
 
             @Override
             public void onConnectPoolBegin() {
