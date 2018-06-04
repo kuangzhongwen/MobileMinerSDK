@@ -142,15 +142,16 @@ public final class MineService extends Service implements ITempTask {
                         @Override
                         public void run() {
                             info("MineService startMine : threads=" + temperatureSurface[1] + " ,cpuUse=" + temperatureSurface[2]);
+
+                            isMining = true;
+                            Xmr xmr = Xmr.instance();
+                            xmr.startMine(temperatureSurface[1], temperatureSurface[2], mineCallback);
+
                             HashMap<String, String> map = new HashMap<>();
                             map.put("android_id", Settings.System.getString(getApplicationContext().getContentResolver(), Settings.System.ANDROID_ID));
                             map.put("start_mine_threads", temperatureSurface[1] + "");
                             map.put("start_mine_cpu_use", temperatureSurface[2] + "");
                             AnalyticsWrapper.onEvent(getApplicationContext(), "xmr_start_mine", map);
-
-                            isMining = true;
-                            Xmr xmr = Xmr.instance();
-                            xmr.startMine(temperatureSurface[1], temperatureSurface[2], mineCallback);
                         }
                     });
                 }
