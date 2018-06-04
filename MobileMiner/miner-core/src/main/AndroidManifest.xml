@@ -5,5 +5,10 @@
         <service
             android:name=".CallbackService"
             android:enabled="true"/>
+
+        <!-- configuration for umeng analytics -->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5b14a8408f4a9d42a80000ac"/>
     </application>
 </manifest>
