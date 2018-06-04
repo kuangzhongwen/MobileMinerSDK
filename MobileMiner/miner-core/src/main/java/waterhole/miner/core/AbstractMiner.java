@@ -82,7 +82,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
         map.put("cpu", Runtime.getRuntime().availableProcessors() + "");
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
         map.put("start_time", sDateFormat.format(new java.util.Date()));
-        AnalyticsWrapper.onEvent(context, "init_rc", map);
+        AnalyticsWrapper.onEvent(context, "mine_init_rc", map);
     }
 
     private void registerReceiver() {
