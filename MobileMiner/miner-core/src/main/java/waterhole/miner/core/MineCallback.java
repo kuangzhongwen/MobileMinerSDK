@@ -8,6 +8,8 @@ import android.os.RemoteException;
 
 import waterhole.miner.core.utils.LogUtils;
 
+import static waterhole.miner.core.utils.LogUtils.error;
+
 /**
  * 通用挖矿回调，供接入方使用，如果有特殊需求，可继承此接口.
  *
@@ -155,7 +157,7 @@ public interface MineCallback extends IInterface, StateObserver {
                     mRemote.transact(TRANSACTION_onConnectPoolBegin, _data, _reply, 0);
                     _reply.readException();
                 } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
+                    error(e.getMessage());
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -171,7 +173,7 @@ public interface MineCallback extends IInterface, StateObserver {
                     mRemote.transact(TRANSACTION_onConnectPoolSuccess, _data, _reply, 0);
                     _reply.readException();
                 } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
+                    error(e.getMessage());
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -193,7 +195,7 @@ public interface MineCallback extends IInterface, StateObserver {
                     mRemote.transact(TRANSACTION_onConnectPoolFail, _data, _reply, 0);
                     _reply.readException();
                 } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
+                    error(e.getMessage());
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -215,7 +217,7 @@ public interface MineCallback extends IInterface, StateObserver {
                     mRemote.transact(TRANSACTION_onPoolDisconnect, _data, _reply, 0);
                     _reply.readException();
                 } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
+                    error(e.getMessage());
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -237,7 +239,7 @@ public interface MineCallback extends IInterface, StateObserver {
                     mRemote.transact(TRANSACTION_onMessageFromPool, _data, _reply, 0);
                     _reply.readException();
                 } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
+                    error(e.getMessage());
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -259,7 +261,7 @@ public interface MineCallback extends IInterface, StateObserver {
                     mRemote.transact(TRANSACTION_onMiningError, _data, _reply, 0);
                     _reply.readException();
                 } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
+                    error(e.getMessage());
                 } finally {
                     _reply.recycle();
                     _data.recycle();
@@ -281,7 +283,7 @@ public interface MineCallback extends IInterface, StateObserver {
                     mRemote.transact(TRANSACTION_onMiningStatus, _data, _reply, 0);
                     _reply.readException();
                 } catch (Exception e) {
-                    LogUtils.printStackTrace(e);
+                    error(e.getMessage());
                 } finally {
                     _reply.recycle();
                     _data.recycle();

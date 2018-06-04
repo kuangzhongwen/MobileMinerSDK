@@ -1,7 +1,10 @@
 package waterhole.miner.core.utils;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+
+import waterhole.miner.core.AnalyticsWrapper;
 
 /**
  * 日志打印工具
@@ -31,6 +34,13 @@ public final class LogUtils {
     public static void error(String msg) {
         if (!TextUtils.isEmpty(msg)) {
             Log.e(TAG, msg);
+        }
+    }
+
+    public static void error(Context context, String msg) {
+        if (context != null && !TextUtils.isEmpty(msg)) {
+            Log.e(TAG, msg);
+            AnalyticsWrapper.reportError(context, msg);
         }
     }
 

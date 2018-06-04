@@ -12,6 +12,7 @@ import waterhole.miner.core.annotation.ExcuteOnAsyn;
 
 import static android.content.Context.MODE_PRIVATE;
 import static waterhole.miner.core.utils.IOUtils.closeSafely;
+import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.printStackTrace;
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
 import static waterhole.miner.core.utils.Preconditions.checkOnChildThread;
@@ -52,7 +53,7 @@ public final class KernelCopy {
                 out.write(b, 0, sz);
             }
         } catch (IOException e) {
-            printStackTrace(e);
+            error(context, "KernelCopy|copy: " + e.getMessage());
         } finally {
             closeSafely(in);
             closeSafely(out);

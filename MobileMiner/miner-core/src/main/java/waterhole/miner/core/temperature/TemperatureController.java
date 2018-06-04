@@ -1,11 +1,14 @@
 package waterhole.miner.core.temperature;
 
+import android.content.Context;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
 import java.util.List;
 
 import waterhole.miner.core.NoProGuard;
+
+import static waterhole.miner.core.utils.LogUtils.error;
 
 /**
  * 温控任务
@@ -47,7 +50,7 @@ public class TemperatureController implements NoProGuard {
         tempTask = iTempTask;
     }
 
-    public void startControl() {
+    public void startControl(final Context context) {
         if (tempTask == null)
             throw new NullPointerException("the temp task must be set first");
 
@@ -57,7 +60,7 @@ public class TemperatureController implements NoProGuard {
                 for (; ; ) {
                     if (needRun) {
                         try {
-                            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
+                            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo(context);
                             double maxTemperature = -1;
                             for (String info : thermalInfo) {
                                 String temp = info.replaceAll("(\\d+).*", "$1").trim();
@@ -85,7 +88,7 @@ public class TemperatureController implements NoProGuard {
                                 tempTask.stop();
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            error(context, "TemperatureController|startControl: " + e.getMessage());
                         }
                     }
                     SystemClock.sleep(pollingTime);

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import static waterhole.miner.core.utils.LogUtils.error;
+
 /**
  * @author huwwds on 2018/05/21
  */
@@ -32,7 +34,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onConnectPoolSuccess();
             } catch (RemoteException e) {
-                e.printStackTrace();
+                error(getApplicationContext(), "CallbackService|onConnectPoolSuccess: " + e.getMessage());
             }
         }
 
@@ -41,7 +43,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onConnectPoolFail(error);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                error(getApplicationContext(), "CallbackService|onConnectPoolFail: " + e.getMessage());
             }
         }
 
@@ -50,7 +52,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onPoolDisconnect(error);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                error(getApplicationContext(), "CallbackService|onPoolDisconnect: " + e.getMessage());
             }
         }
 
@@ -59,7 +61,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onMessageFromPool(message);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                error(getApplicationContext(), "CallbackService|onMessageFromPool: " + e.getMessage());
             }
         }
 
@@ -68,7 +70,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onMiningError(error);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                error(getApplicationContext(), "CallbackService|onMiningError: " + e.getMessage());
             }
         }
 
@@ -77,7 +79,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onMiningStatus(speed);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                error(getApplicationContext(), "CallbackService|onMiningStatus: " + e.getMessage());
             }
         }
     }

@@ -12,10 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import waterhole.miner.core.temperature.ThermalInfoUtil;
 
+import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
 
 /**
@@ -41,7 +41,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
     public double getCurrentTemperature() {
         double maxTemperature = 0;
         try {
-            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
+            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo(getContext());
             maxTemperature = -1;
             for (String info : thermalInfo) {
                 String temp = info.replaceAll("(\\d+).*", "$1").trim();
@@ -56,7 +56,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
             if (maxTemperature > 100)
                 maxTemperature /= 10;
         } catch (Exception e) {
-            e.printStackTrace();
+            error(getContext(), "AbstractMiner|getCurrentTemperature: " + e.getMessage());
             return 40;
         }
         return maxTemperature;

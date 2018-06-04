@@ -222,13 +222,13 @@ public final class MainActivity extends Activity {
 
             @Override
             public void onConnectPoolFail(String error) {
-                error("onConnectPoolFail: " + error);
+                error(MainActivity.this, "onConnectPoolFail: " + error);
                 setupStatusText("连接矿池失败: " + error);
             }
 
             @Override
             public void onPoolDisconnect(String error) {
-                error("onPoolDisconnect: " + error);
+                error(MainActivity.this, "onPoolDisconnect: " + error);
                 setupStatusText("与矿池连接断开: " + error);
             }
 
@@ -240,7 +240,7 @@ public final class MainActivity extends Activity {
 
             @Override
             public void onMiningError(String error) {
-                error("onMiningError = " + error);
+                error(MainActivity.this, "onMiningError = " + error);
                 setupStatusText("挖矿失败，错误原因：" + error);
             }
 
