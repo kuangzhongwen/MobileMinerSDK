@@ -53,11 +53,11 @@ dependencies {
     compile 'com.umeng.analytics:analytics:6.1.4'
 
     // aar引用方式
-    compile(name: 'miner-core-release', ext: 'aar')
-    compile(name: 'monero-release', ext: 'aar')
+//    compile(name: 'miner-core-release', ext: 'aar')
+//    compile(name: 'monero-release', ext: 'aar')
 
     // project引用方式
-//    compile project(':monero')
+    compile project(':monero')
 //    compile project(':zcash')
 //    compile project(':eth')
 }
