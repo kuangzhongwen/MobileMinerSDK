@@ -25,8 +25,7 @@ public class TemperatureController implements NoProGuard {
     private boolean isTempTaskRunning;
     private int curUsage;
 
-    private int[][] temperatureSurface = {{startTemperature, 2, 100},
-            {stopTemperature, 2, 80}};
+    private int[][] temperatureSurface = {{startTemperature, 2, 100}, {stopTemperature, 2, 80}};
 
     public void setTemperature(int stopTp) {
         if (stopTp > 1000)
