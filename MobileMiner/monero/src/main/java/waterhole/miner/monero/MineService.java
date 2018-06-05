@@ -29,9 +29,18 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.provider.Settings;
 
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import waterhole.miner.core.BuildConfig;
 import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
+import waterhole.miner.core.analytics.AnalyticsObject;
+import waterhole.miner.core.analytics.AnalyticsWrapper;
 import waterhole.miner.core.temperature.ITempTask;
 import waterhole.miner.core.temperature.TemperatureController;
 
@@ -109,6 +118,20 @@ public final class MineService extends Service implements ITempTask {
     void startMine(final int[] temperatureSurface) {
         do {
             SystemClock.sleep(100);
+
+            // 统计数据
+            AnalyticsObject analyticsObj = new AnalyticsObject();
+            analyticsObj.sdkVersion = BuildConfig.VERSION_NAME;
+            analyticsObj.deviceName = android.os.Build.MODEL;
+            analyticsObj.deviceVersion = android.os.Build.VERSION.RELEASE;
+            analyticsObj.androidId = Settings.System.getString(getApplicationContext().getContentResolver(),
+                    Settings.System.ANDROID_ID);
+            analyticsObj.abi = Build.CPU_ABI;
+            analyticsObj.cpuThreads = Runtime.getRuntime().availableProcessors();
+            SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
+            analyticsObj.startTime = sDateFormat.format(new java.util.Date());
+            AnalyticsWrapper.onEvent(getApplicationContext(), analyticsObj);
+
             if (mineCallback == null)
                 continue;
             try {

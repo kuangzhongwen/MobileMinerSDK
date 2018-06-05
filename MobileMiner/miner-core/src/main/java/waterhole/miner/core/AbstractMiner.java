@@ -4,15 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
-import android.provider.Settings;
 import android.text.TextUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import waterhole.miner.core.temperature.ThermalInfoUtil;
 
@@ -70,21 +64,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
         mContext = context;
         startCallbackServer();
         registerReceiver();
-        initAnalytics(context);
         return this;
-    }
-
-    private void initAnalytics(Context context) {
-        Map<String, String> map = new HashMap<>();
-        map.put("sdk_version", BuildConfig.VERSION_NAME);
-        map.put("device_name", android.os.Build.MODEL);
-        map.put("device_version", android.os.Build.VERSION.RELEASE);
-        map.put("android_id", Settings.System.getString(context.getContentResolver(), Settings.System.ANDROID_ID));
-        map.put("abi", Build.CPU_ABI);
-        map.put("cpu", Runtime.getRuntime().availableProcessors() + "");
-        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
-        map.put("start_time", sDateFormat.format(new java.util.Date()));
-//        AnalyticsWrapper.reportError(context, CollectionUtils.mapToString(map));
     }
 
     private void registerReceiver() {

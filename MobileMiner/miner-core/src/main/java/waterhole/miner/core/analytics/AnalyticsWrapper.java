@@ -15,7 +15,13 @@ public final class AnalyticsWrapper {
 
     public static void onEvent(Context context, AnalyticsObject object) {
         if (context != null && object != null) {
+            // todo kzw 优先考虑国外统计平台，再考虑找阿东写接口
+        }
+    }
 
+    public static void onError(Context context, AnalyticsErrorObject object) {
+        if (context != null && object != null) {
+            // todo kzw 优先考虑国外统计平台，再考虑找阿东写接口
         }
     }
 }

@@ -21,8 +21,10 @@ public final class AnalyticsObject {
     public int cpuThreads;
     // 币种
     public String coin;
-    // 上报时间
-    public String reportTime;
+    // 开始时间
+    public String startTime;
+    // 结束时间
+    public String endTime;
     // 速度
     public double speed;
 
@@ -36,7 +38,8 @@ public final class AnalyticsObject {
                 ", abi='" + abi + '\'' +
                 ", cpuThreads=" + cpuThreads +
                 ", coin='" + coin + '\'' +
-                ", reportTime='" + reportTime + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
                 ", speed=" + speed +
                 '}';
     }
