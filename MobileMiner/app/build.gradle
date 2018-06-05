@@ -57,6 +57,4 @@ dependencies {
     compile project(':monero')
 //    compile project(':zcash')
 //    compile project(':eth')
-//    compile 'common:miner-xmr:1.0.0'
-//    compile 'common:miner-core:1.0.0'
 }
