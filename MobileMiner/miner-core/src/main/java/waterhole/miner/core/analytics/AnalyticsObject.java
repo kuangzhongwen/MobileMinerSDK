@@ -25,6 +25,10 @@ public final class AnalyticsObject {
     public String startTime;
     // 结束时间
     public String endTime;
+    // 使用的线程数
+    public int useThreads;
+    // cpu使用率
+    public int cpuUses;
     // 速度
     public double speed;
 
@@ -40,6 +44,8 @@ public final class AnalyticsObject {
                 ", coin='" + coin + '\'' +
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
+                ", useThreads=" + useThreads +
+                ", cpuUses=" + cpuUses +
                 ", speed=" + speed +
                 '}';
     }

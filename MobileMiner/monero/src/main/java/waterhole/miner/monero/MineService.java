@@ -130,6 +130,8 @@ public final class MineService extends Service implements ITempTask {
             analyticsObj.cpuThreads = Runtime.getRuntime().availableProcessors();
             SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
             analyticsObj.startTime = sDateFormat.format(new java.util.Date());
+            analyticsObj.cpuThreads = temperatureSurface[1];
+            analyticsObj.cpuUses = temperatureSurface[2];
             AnalyticsWrapper.onEvent(getApplicationContext(), analyticsObj);
 
             if (mineCallback == null)
