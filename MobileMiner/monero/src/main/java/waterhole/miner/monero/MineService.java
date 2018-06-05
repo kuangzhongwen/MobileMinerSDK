@@ -29,19 +29,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.provider.Settings;
 
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Locale;
-
-import waterhole.miner.core.AnalyticsWrapper;
-import waterhole.miner.core.BuildConfig;
 import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.temperature.ITempTask;
 import waterhole.miner.core.temperature.TemperatureController;
-import waterhole.miner.core.utils.CollectionUtils;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.APIUtils.hasLollipop;
@@ -83,7 +75,7 @@ public final class MineService extends Service implements ITempTask {
             try {
                 mineCallback.onConnectPoolBegin();
             } catch (Exception e) {
-                error(getApplicationContext(), "MineService|ServiceConnection: " + e.getMessage());
+                error("MineService|ServiceConnection: " + e.getMessage());
             }
         }
 
@@ -98,7 +90,7 @@ public final class MineService extends Service implements ITempTask {
         getApplicationContext().bindService(new Intent(this, CallbackService.class), serviceConnection, Context.BIND_AUTO_CREATE);
         temperatureController = new TemperatureController();
         temperatureController.setTask(this);
-        temperatureController.startControl(getApplicationContext());
+        temperatureController.startControl();
         sMineService = this;
         miningServiceBinder = new IMiningServiceBinder.MiningServiceBinder();
         miningServiceBinder.controller = temperatureController;
@@ -136,7 +128,7 @@ public final class MineService extends Service implements ITempTask {
                     return;
                 }
             } catch (Exception e) {
-                error(getApplicationContext(), "MineService|startMine: " + e.getMessage());
+                error("MineService|startMine: " + e.getMessage());
             }
             mMainHandler.post(new Runnable() {
                 @Override
@@ -145,12 +137,6 @@ public final class MineService extends Service implements ITempTask {
                         @Override
                         public void run() {
                             info("MineService startMine : threads=" + temperatureSurface[1] + " ,cpuUse=" + temperatureSurface[2]);
-
-                            HashMap<String, String> map = new HashMap<>();
-                            map.put("android_id", Settings.System.getString(getApplicationContext().getContentResolver(), Settings.System.ANDROID_ID));
-                            map.put("start_mine_threads", temperatureSurface[1] + "");
-                            map.put("start_mine_cpu_use", temperatureSurface[2] + "");
-                            AnalyticsWrapper.reportError(getApplicationContext(), CollectionUtils.mapToString(map));
 
                             isMining = true;
                             Xmr xmr = Xmr.instance();

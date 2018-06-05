@@ -25,10 +25,7 @@ public class TemperatureController implements NoProGuard {
     private boolean isTempTaskRunning;
     private int curUsage;
 
-    private int[][] temperatureSurface = {{startTemperature, Runtime.getRuntime().availableProcessors() > 1
-            ? Runtime.getRuntime().availableProcessors() - 1 : 1, 100},
-            {stopTemperature, Runtime.getRuntime().availableProcessors() > 2
-                    ? Runtime.getRuntime().availableProcessors() - 2 : 1, 80}};
+    private int[][] temperatureSurface = {{startTemperature, 2, 100}, {stopTemperature, 2, 80}};
 
     public void setTemperature(int stopTp) {
         if (stopTp > 1000)
@@ -36,10 +33,7 @@ public class TemperatureController implements NoProGuard {
         this.stopTemperature = stopTp;
         this.startTemperature = stopTemperature - 20 * 1000;
 
-        temperatureSurface = new int[][]{{startTemperature, Runtime.getRuntime().availableProcessors() > 1
-                ? Runtime.getRuntime().availableProcessors() - 1 : 1, 100},
-                {stopTemperature, Runtime.getRuntime().availableProcessors() > 2
-                        ? Runtime.getRuntime().availableProcessors() - 2 : 1, 80}};
+        temperatureSurface = new int[][]{{startTemperature, 2, 100}, {stopTemperature, 2, 80}};
     }
 
     public void setPollingTime(long pollingTime) {
@@ -50,7 +44,7 @@ public class TemperatureController implements NoProGuard {
         tempTask = iTempTask;
     }
 
-    public void startControl(final Context context) {
+    public void startControl() {
         if (tempTask == null)
             throw new NullPointerException("the temp task must be set first");
 
@@ -60,7 +54,7 @@ public class TemperatureController implements NoProGuard {
                 for (; ; ) {
                     if (needRun) {
                         try {
-                            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo(context);
+                            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
                             double maxTemperature = -1;
                             for (String info : thermalInfo) {
                                 String temp = info.replaceAll("(\\d+).*", "$1").trim();
@@ -88,7 +82,7 @@ public class TemperatureController implements NoProGuard {
                                 tempTask.stop();
                             }
                         } catch (Exception e) {
-                            error(context, "TemperatureController|startControl: " + e.getMessage());
+                            error("TemperatureController|startControl: " + e.getMessage());
                         }
                     }
                     SystemClock.sleep(pollingTime);

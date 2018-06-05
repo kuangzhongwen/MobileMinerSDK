@@ -91,7 +91,7 @@ public final class XmrMiner extends AbstractMiner {
                 mServiceBinder = null;
             }
         } catch (Exception e) {
-            error(getContext(), "XmrMiner|stopMine: " + e.getMessage());
+            error("XmrMiner|stopMine: " + e.getMessage());
         }
     }
 

@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.TimeUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -16,7 +15,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import waterhole.miner.core.temperature.ThermalInfoUtil;
-import waterhole.miner.core.utils.CollectionUtils;
 
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
@@ -46,7 +44,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
     public double getCurrentTemperature() {
         double maxTemperature = 0;
         try {
-            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo(getContext());
+            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
             maxTemperature = -1;
             for (String info : thermalInfo) {
                 String temp = info.replaceAll("(\\d+).*", "$1").trim();
@@ -61,7 +59,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
             if (maxTemperature > 100)
                 maxTemperature /= 10;
         } catch (Exception e) {
-            error(getContext(), "AbstractMiner|getCurrentTemperature: " + e.getMessage());
+            error("AbstractMiner|getCurrentTemperature: " + e.getMessage());
             return 40;
         }
         return maxTemperature;
@@ -86,7 +84,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
         map.put("cpu", Runtime.getRuntime().availableProcessors() + "");
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
         map.put("start_time", sDateFormat.format(new java.util.Date()));
-        AnalyticsWrapper.reportError(context, CollectionUtils.mapToString(map));
+//        AnalyticsWrapper.reportError(context, CollectionUtils.mapToString(map));
     }
 
     private void registerReceiver() {
