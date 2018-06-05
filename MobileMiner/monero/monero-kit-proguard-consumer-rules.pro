@@ -23,44 +23,13 @@
 -dontwarn
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 
--keep public class waterhole.miner.monero.** extends android.app.Activity
--keep public class waterhole.miner.monero.** extends android.app.Application
 -keep public class waterhole.miner.monero.** extends android.app.Service
 -keep public class waterhole.miner.monero.** extends android.content.BroadcastReceiver
--keep public class waterhole.miner.monero.** extends android.content.ContentProvider
--keep public class waterhole.miner.monero.** extends android.app.backup.BackupAgentHelper
--keep public class waterhole.miner.monero.** extends android.preference.Preference
 
 -keepattributes SourceFile,LineNumberTable,InnerClasses
 
 -keepclasseswithmembernames class waterhole.miner.monero.** {
     native <methods>;
-}
-
--keepclasseswithmembers class waterhole.miner.monero.** {
-    public <init>(android.content.Context, android.util.AttributeSet);
-}
-
--keepclasseswithmembers class waterhole.miner.monero.** {
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
-
--keepclassmembers class waterhole.miner.monero.** extends android.app.Activity {
-    public void *(android.view.View);
-}
-
--keepclassmembers enum waterhole.miner.monero.** {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
-
--keep class waterhole.miner.monero.** implements android.os.Parcelable {
-    public static final android.os.Parcelable$Creator *;
-}
-
--keepclassmembernames class waterhole.miner.monero.** {
-    java.lang.Class class$(java.lang.String);
-    java.lang.Class class$(java.lang.String, boolean);
 }
 
 -keepclassmembers class waterhole.miner.monero.** implements java.io.Serializable {
@@ -84,7 +53,6 @@
     public protected *;
 }
 
--keep public class waterhole.miner.monero.IMiningServiceBinder
 -keep public class waterhole.miner.monero.** implements waterhole.miner.core.NoProguard {
     public protected *;
 }

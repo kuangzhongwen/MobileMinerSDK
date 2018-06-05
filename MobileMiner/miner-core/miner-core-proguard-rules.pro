@@ -24,13 +24,8 @@
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 -ignorewarnings
 
--keep public class * extends android.app.Activity
--keep public class * extends android.app.Application
 -keep public class * extends android.app.Service
 -keep public class * extends android.content.BroadcastReceiver
--keep public class * extends android.content.ContentProvider
--keep public class * extends android.app.backup.BackupAgentHelper
--keep public class * extends android.preference.Preference
 
 -keepattributes SourceFile,LineNumberTable,InnerClasses
 
@@ -40,32 +35,6 @@
 
 -keepclasseswithmembernames class waterhole.miner.core.** {
     native <methods>;
-}
-
--keepclasseswithmembers class waterhole.miner.core.** {
-    public <init>(android.content.Context, android.util.AttributeSet);
-}
-
--keepclasseswithmembers class waterhole.miner.core.** {
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
-
--keepclassmembers class waterhole.miner.core.** extends android.app.Activity {
-    public void *(android.view.View);
-}
-
--keepclassmembers enum waterhole.miner.core.** {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
-
--keep class waterhole.miner.core.** implements android.os.Parcelable {
-    public static final android.os.Parcelable$Creator *;
-}
-
--keepclassmembernames class waterhole.miner.core.** {
-    java.lang.Class class$(java.lang.String);
-    java.lang.Class class$(java.lang.String, boolean);
 }
 
 -keepclassmembers class waterhole.miner.core.** implements java.io.Serializable {
