@@ -7,6 +7,9 @@ import android.os.RemoteException;
 import android.provider.Settings;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import waterhole.miner.core.utils.CollectionUtils;
 
 import static waterhole.miner.core.utils.LogUtils.error;
 
@@ -81,11 +84,10 @@ public final class CallbackService extends Service {
         public void onMiningStatus(double speed) {
             try {
                 sStateObserver.onMiningStatus(speed);
-                HashMap<String, String> map = new HashMap<>();
+                Map<String, String> map = new HashMap<>();
                 map.put("android_id", Settings.System.getString(getApplicationContext().getContentResolver(), Settings.System.ANDROID_ID));
                 map.put("xmr_speed", speed + " H/s");
-                AnalyticsWrapper.onEvent(getApplicationContext(), "xmr_mining_speed", map);
-
+                AnalyticsWrapper.reportError(getApplicationContext(), CollectionUtils.mapToString(map));
             } catch (RemoteException e) {
                 error(getApplicationContext(), "CallbackService|onMiningStatus: " + e.getMessage());
             }

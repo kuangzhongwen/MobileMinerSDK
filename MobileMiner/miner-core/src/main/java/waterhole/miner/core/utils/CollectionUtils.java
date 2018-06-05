@@ -3,6 +3,7 @@ package waterhole.miner.core.utils;
 import android.util.ArrayMap;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -138,5 +139,23 @@ public final class CollectionUtils {
             }
         }
         return true;
+    }
+
+    public static String mapToString(Map<String, String> map) {
+        StringBuilder stringBuilder = new StringBuilder();
+        List<String> keys = new ArrayList<>(map.keySet());
+        Collections.sort(keys);
+        stringBuilder.append("{");
+        for (int i = 0, size = keys.size(); i < size; i++) {
+            String k = keys.get(i);
+            String v = map.get(k);
+            stringBuilder.append("\"").append(k).append("\":")
+                    .append("\"").append(v).append("\"");
+            if (i != size - 1) {
+                stringBuilder.append(",");
+            }
+        }
+        stringBuilder.append("}");
+        return stringBuilder.toString();
     }
 }

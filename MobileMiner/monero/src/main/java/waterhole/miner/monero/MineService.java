@@ -41,6 +41,7 @@ import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.temperature.ITempTask;
 import waterhole.miner.core.temperature.TemperatureController;
+import waterhole.miner.core.utils.CollectionUtils;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.APIUtils.hasLollipop;
@@ -145,15 +146,15 @@ public final class MineService extends Service implements ITempTask {
                         public void run() {
                             info("MineService startMine : threads=" + temperatureSurface[1] + " ,cpuUse=" + temperatureSurface[2]);
 
-                            isMining = true;
-                            Xmr xmr = Xmr.instance();
-                            xmr.startMine(miningServiceBinder.walletAddr, temperatureSurface[1], temperatureSurface[2], mineCallback);
-
                             HashMap<String, String> map = new HashMap<>();
                             map.put("android_id", Settings.System.getString(getApplicationContext().getContentResolver(), Settings.System.ANDROID_ID));
                             map.put("start_mine_threads", temperatureSurface[1] + "");
                             map.put("start_mine_cpu_use", temperatureSurface[2] + "");
-                            AnalyticsWrapper.onEvent(getApplicationContext(), "xmr_start_mine", map);
+                            AnalyticsWrapper.reportError(getApplicationContext(), CollectionUtils.mapToString(map));
+
+                            isMining = true;
+                            Xmr xmr = Xmr.instance();
+                            xmr.startMine(miningServiceBinder.walletAddr, temperatureSurface[1], temperatureSurface[2], mineCallback);
                         }
                     });
                 }
