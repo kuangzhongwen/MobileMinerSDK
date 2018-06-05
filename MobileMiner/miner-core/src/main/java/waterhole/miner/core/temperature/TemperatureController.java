@@ -15,7 +15,7 @@ import static waterhole.miner.core.utils.LogUtils.error;
  */
 public class TemperatureController implements NoProGuard {
 
-    private int stopTemperature = 65 * 1000;
+    private int stopTemperature = 70 * 1000;
     private int startTemperature = 35 * 1000;
     private long pollingTime = 1000L;
     private long lastStopTime;
@@ -25,7 +25,9 @@ public class TemperatureController implements NoProGuard {
     private boolean isTempTaskRunning;
     private int curUsage;
 
-    private int[][] temperatureSurface = {{startTemperature, 2, 100}, {stopTemperature, 2, 80}};
+    // 需要根据不同的cpu，不同的温度设置不同的参数
+    private int[][] temperatureSurface = {{startTemperature, 2, 100},
+            {stopTemperature, 2, 80}};
 
     public void setTemperature(int stopTp) {
         if (stopTp > 1000)
@@ -33,7 +35,8 @@ public class TemperatureController implements NoProGuard {
         this.stopTemperature = stopTp;
         this.startTemperature = stopTemperature - 20 * 1000;
 
-        temperatureSurface = new int[][]{{startTemperature, 2, 100}, {stopTemperature, 2, 80}};
+        temperatureSurface = new int[][]{{startTemperature, 2, 100},
+                {stopTemperature, 2, 80}};
     }
 
     public void setPollingTime(long pollingTime) {
