@@ -12,8 +12,8 @@ import static waterhole.miner.core.utils.LogUtils.error;
 public class ThermalInfoUtil {
     public static String batteryTemperature = "40";
 
-    public static List<String> getThermalInfo(Context context) {
-        String result = getThermalInfo(context, "/system/bin/cat", "sys/class/thermal/thermal_zone0/temp");
+    public static List<String> getThermalInfo() {
+        String result = getThermalInfo("/system/bin/cat", "sys/class/thermal/thermal_zone0/temp");
         if (TextUtils.isEmpty(result)) {
             result = batteryTemperature;
         }
@@ -22,7 +22,7 @@ public class ThermalInfoUtil {
         return list;
     }
 
-    private static String getThermalInfo(Context context, String... args) {
+    private static String getThermalInfo(String... args) {
         ProcessBuilder pB;
         String result = "";
 
@@ -40,7 +40,7 @@ public class ThermalInfoUtil {
             process.destroy();
             in.close();
         } catch (Exception ex) {
-            error(context,"ThermalInfoUtil|getThermalInfo: " + ex.getMessage());
+            error("ThermalInfoUtil|getThermalInfo: " + ex.getMessage());
         }
         return result;
     }

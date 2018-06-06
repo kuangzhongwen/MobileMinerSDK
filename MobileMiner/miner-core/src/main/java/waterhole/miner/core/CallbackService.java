@@ -9,8 +9,6 @@ import android.provider.Settings;
 import java.util.HashMap;
 import java.util.Map;
 
-import waterhole.miner.core.utils.CollectionUtils;
-
 import static waterhole.miner.core.utils.LogUtils.error;
 
 /**
@@ -40,7 +38,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onConnectPoolSuccess();
             } catch (RemoteException e) {
-                error(getApplicationContext(), "CallbackService|onConnectPoolSuccess: " + e.getMessage());
+                error("CallbackService|onConnectPoolSuccess: " + e.getMessage());
             }
         }
 
@@ -49,7 +47,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onConnectPoolFail(error);
             } catch (RemoteException e) {
-                error(getApplicationContext(), "CallbackService|onConnectPoolFail: " + e.getMessage());
+                error("CallbackService|onConnectPoolFail: " + e.getMessage());
             }
         }
 
@@ -58,7 +56,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onPoolDisconnect(error);
             } catch (RemoteException e) {
-                error(getApplicationContext(), "CallbackService|onPoolDisconnect: " + e.getMessage());
+                error("CallbackService|onPoolDisconnect: " + e.getMessage());
             }
         }
 
@@ -67,7 +65,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onMessageFromPool(message);
             } catch (RemoteException e) {
-                error(getApplicationContext(), "CallbackService|onMessageFromPool: " + e.getMessage());
+                error("CallbackService|onMessageFromPool: " + e.getMessage());
             }
         }
 
@@ -76,7 +74,7 @@ public final class CallbackService extends Service {
             try {
                 sStateObserver.onMiningError(error);
             } catch (RemoteException e) {
-                error(getApplicationContext(), "CallbackService|onMiningError: " + e.getMessage());
+                error("CallbackService|onMiningError: " + e.getMessage());
             }
         }
 
@@ -87,10 +85,9 @@ public final class CallbackService extends Service {
                 Map<String, String> map = new HashMap<>();
                 map.put("android_id", Settings.System.getString(getApplicationContext().getContentResolver(), Settings.System.ANDROID_ID));
                 map.put("xmr_speed", speed + " H/s");
-                AnalyticsWrapper.reportError(getApplicationContext(), CollectionUtils.mapToString(map));
-
+//              AnalyticsWrapper.reportError(getApplicationContext(), CollectionUtils.mapToString(map));
             } catch (RemoteException e) {
-                error(getApplicationContext(), "CallbackService|onMiningStatus: " + e.getMessage());
+                error("CallbackService|onMiningStatus: " + e.getMessage());
             }
         }
     }

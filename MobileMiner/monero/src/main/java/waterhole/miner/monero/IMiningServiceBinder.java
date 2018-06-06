@@ -174,5 +174,4 @@ public interface IMiningServiceBinder extends IInterface {
             return this;
         }
     }
-
 }

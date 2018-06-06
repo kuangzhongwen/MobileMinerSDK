@@ -22,7 +22,6 @@
  */
 #include "App.h"
 #include "common/log/AndroidLog.h"
-#include "StringUtils.h"
 
 jobject jcallbackObj;
 JNIEnv* jenv;

@@ -53,7 +53,7 @@ public final class KernelCopy {
                 out.write(b, 0, sz);
             }
         } catch (IOException e) {
-            error(context, "KernelCopy|copy: " + e.getMessage());
+            error("KernelCopy|copy: " + e.getMessage());
         } finally {
             closeSafely(in);
             closeSafely(out);
