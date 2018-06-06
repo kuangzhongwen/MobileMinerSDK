@@ -43,6 +43,7 @@ import waterhole.miner.core.temperature.ITempTask;
 import waterhole.miner.core.temperature.TemperatureController;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
+import static waterhole.miner.core.utils.APIUtils.hasICS;
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
 
@@ -134,6 +135,10 @@ public final class MineService extends Service implements ITempTask {
             try {
                 if (isMining) {
                     mineCallback.onMiningError("Xmr miner is Running");
+                    return;
+                }
+                if (!hasICS()) {
+                    mineCallback.onMiningError("Android version must be >= 14");
                     return;
                 }
                 final String cpuABI = Build.CPU_ABI;
