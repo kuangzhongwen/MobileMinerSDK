@@ -27,10 +27,6 @@ android {
     }
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-}
-
 def sdkAarName = 'WaterholeMinerCore_1.0'
 def sourceAar = 'WaterholeMinerCore-release'
 
