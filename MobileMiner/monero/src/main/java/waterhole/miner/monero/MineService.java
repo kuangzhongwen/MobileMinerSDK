@@ -32,9 +32,7 @@ import android.os.SystemClock;
 import android.provider.Settings;
 
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import waterhole.miner.core.BuildConfig;
 import waterhole.miner.core.CallbackService;
@@ -45,7 +43,6 @@ import waterhole.miner.core.temperature.ITempTask;
 import waterhole.miner.core.temperature.TemperatureController;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
-import static waterhole.miner.core.utils.APIUtils.hasLollipop;
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
 
@@ -139,10 +136,6 @@ public final class MineService extends Service implements ITempTask {
             try {
                 if (isMining) {
                     mineCallback.onMiningError("Xmr miner is Running");
-                    return;
-                }
-                if (!hasLollipop()) {
-                    mineCallback.onMiningError("Android version must be >= 21");
                     return;
                 }
                 final String cpuABI = Build.CPU_ABI;
