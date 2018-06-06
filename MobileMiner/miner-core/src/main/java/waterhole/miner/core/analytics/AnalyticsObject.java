@@ -31,6 +31,8 @@ public final class AnalyticsObject {
     public int cpuUses;
     // 速度
     public double speed;
+    // 挖矿场景 normal, charging
+    public String scene;
 
     @Override
     public String toString() {
@@ -47,6 +49,7 @@ public final class AnalyticsObject {
                 ", useThreads=" + useThreads +
                 ", cpuUses=" + cpuUses +
                 ", speed=" + speed +
+                ", scene='" + scene + '\'' +
                 '}';
     }
 }
