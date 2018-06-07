@@ -1,7 +1,6 @@
 package waterhole.miner.core.utils;
 
 import android.text.TextUtils;
-
 import java.text.DecimalFormat;
 
 /**
@@ -41,21 +40,10 @@ public final class MathUtils {
         }
         try {
             // 统一在这个地方处理输入法小数点适配问题（德语，俄语,表示.）
-            return Double.parseDouble(StringUtils.fixGermanAndRussianInput(value));
+            return Double.parseDouble(value);
         } catch (NumberFormatException e) {
             return DEF_DOUBLE;
         }
-    }
-
-    /**
-     * String 解析成double，未处理异常，适用于外部想处理异常，做一些提示，特殊处理的情况
-     */
-    public static double parseDoubleWithoutHandleException(String value) {
-        if (TextUtils.isEmpty(value)) {
-            return DEF_DOUBLE;
-        }
-        // 统一在这个地方处理输入法小数点适配问题（德语，俄语,表示.）
-        return Double.parseDouble(StringUtils.fixGermanAndRussianInput(value));
     }
 
     /**
@@ -66,7 +54,7 @@ public final class MathUtils {
             return DEF_FLOAT;
         }
         try {
-            return Float.parseFloat(StringUtils.fixGermanAndRussianInput(value));
+            return Float.parseFloat(value);
         } catch (NumberFormatException e) {
             return DEF_FLOAT;
         }

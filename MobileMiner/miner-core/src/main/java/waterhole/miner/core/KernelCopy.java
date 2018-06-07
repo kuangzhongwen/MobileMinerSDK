@@ -8,14 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import waterhole.miner.core.annotation.ExcuteOnAsyn;
-
 import static android.content.Context.MODE_PRIVATE;
 import static waterhole.miner.core.utils.IOUtils.closeSafely;
 import static waterhole.miner.core.utils.LogUtils.error;
-import static waterhole.miner.core.utils.LogUtils.printStackTrace;
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
-import static waterhole.miner.core.utils.Preconditions.checkOnChildThread;
 
 /**
  * 拷贝kernel文件.
@@ -35,9 +31,7 @@ public final class KernelCopy {
      * @param context 上下文对象
      * @param filename kernel文件名
      */
-    @ExcuteOnAsyn
     public static void copy(Context context, String filename) {
-        checkOnChildThread();
         checkNotNull(context);
         checkNotNull(filename);
 
