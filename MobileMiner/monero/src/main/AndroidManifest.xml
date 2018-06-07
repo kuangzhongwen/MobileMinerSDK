@@ -13,5 +13,7 @@
             android:name="waterhole.miner.monero.MineService"
             android:enabled="true"
             android:process=":waterhole"/>
+
+        <service android:name=".TraceServiceImpl"/>
     </application>
 </manifest>

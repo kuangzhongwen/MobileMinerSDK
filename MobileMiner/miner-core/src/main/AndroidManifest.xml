@@ -52,7 +52,5 @@
         <service
             android:name=".keepAlive.WatchDogService$WatchDogNotificationService"
             android:process=":watch" />
-
-        <service android:name=".keepAlive.TraceServiceImpl"/>
     </application>
 </manifest>

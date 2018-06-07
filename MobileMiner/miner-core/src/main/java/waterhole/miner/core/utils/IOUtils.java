@@ -55,4 +55,51 @@ public final class IOUtils {
             LogUtils.printStackTrace(t);
         }
     }
+
+    /**
+     * 将对象写入到本地文件中，对象必须是序列化的
+     *
+     * @param path   保存路径
+     * @param object 保存对象
+     */
+    public static void writeObjectToFile(String path, Object object) {
+        if (!TextUtils.isEmpty(path) && object != null) {
+            File file = new File(path);
+            FileOutputStream out = null;
+            try {
+                out = new FileOutputStream(file);
+                ObjectOutputStream objOut = new ObjectOutputStream(out);
+                objOut.writeObject(object);
+                objOut.flush();
+            } catch (IOException e) {
+                LogUtils.printStackTrace(e);
+            } finally {
+                closeSafely(out);
+            }
+        }
+    }
+
+    /**
+     * 从本地读取序列化对象
+     *
+     * @param path 存储路径
+     */
+    public static Object readObjectFromFile(String path) {
+        Object object;
+        File file = new File(path);
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            ObjectInputStream objIn = new ObjectInputStream(in);
+            object = objIn.readObject();
+            objIn.close();
+        } catch (IOException e) {
+            return null;
+        } catch (ClassNotFoundException e) {
+            return null;
+        } finally {
+            closeSafely(in);
+        }
+        return object;
+    }
 }
