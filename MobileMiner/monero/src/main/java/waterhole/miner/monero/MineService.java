@@ -49,11 +49,8 @@ import static waterhole.miner.core.utils.LogUtils.info;
 
 public final class MineService extends Service implements ITempTask {
 
-    public static MineService sMineService;
+    private Handler mMainHandler = new Handler(Looper.getMainLooper());
 
-    Handler mMainHandler = new Handler(Looper.getMainLooper());
-
-    public TemperatureController temperatureController;
     private MineCallback mineCallback;
     private boolean isMining;
 
@@ -73,7 +70,7 @@ public final class MineService extends Service implements ITempTask {
         sendBroadcast(intent);
     }
 
-    ServiceConnection serviceConnection = new ServiceConnection() {
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mineCallback = MineCallback.Stub.asInterface(service);
@@ -93,10 +90,9 @@ public final class MineService extends Service implements ITempTask {
     public IBinder onBind(Intent intent) {
         info("MineService onBind");
         getApplicationContext().bindService(new Intent(this, CallbackService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-        temperatureController = new TemperatureController();
+        TemperatureController temperatureController = new TemperatureController();
         temperatureController.setTask(this);
         temperatureController.startControl();
-        sMineService = this;
         IMiningServiceBinder.MiningServiceBinder miningServiceBinder = new IMiningServiceBinder.MiningServiceBinder();
         miningServiceBinder.controller = temperatureController;
         return miningServiceBinder;
@@ -106,12 +102,11 @@ public final class MineService extends Service implements ITempTask {
     public void onDestroy() {
         super.onDestroy();
         info("MineService onDestroy");
-        sMineService = null;
         System.exit(0);
         android.os.Process.killProcess(android.os.Process.myPid());
     }
 
-    void startMine(final int[] temperatureSurface) {
+    private void startMine(final int[] temperatureSurface) {
         do {
             SystemClock.sleep(100);
 

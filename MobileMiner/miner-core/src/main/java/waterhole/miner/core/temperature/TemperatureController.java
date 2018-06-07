@@ -1,19 +1,16 @@
 package waterhole.miner.core.temperature;
 
-import android.content.Context;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
 import java.util.List;
-
-import waterhole.miner.core.NoProGuard;
 
 import static waterhole.miner.core.utils.LogUtils.error;
 
 /**
  * 温控任务
  */
-public class TemperatureController implements NoProGuard {
+public class TemperatureController {
 
     private int stopTemperature = 70 * 1000;
     private int startTemperature = 35 * 1000;

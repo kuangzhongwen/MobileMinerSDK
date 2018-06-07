@@ -21,9 +21,7 @@ import static waterhole.miner.core.utils.LogUtils.error;
 public final class XmrMiner extends AbstractMiner {
 
     private IMiningServiceBinder mServiceBinder;
-
     private MineReceiver mineReceiver;
-
 
     private final ServiceConnection mServerConnection = new ServiceConnection() {
         @Override

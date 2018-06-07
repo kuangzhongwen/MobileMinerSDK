@@ -1,6 +1,5 @@
 package waterhole.miner.core.temperature;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import java.io.InputStream;
@@ -10,6 +9,7 @@ import java.util.List;
 import static waterhole.miner.core.utils.LogUtils.error;
 
 public class ThermalInfoUtil {
+
     public static String batteryTemperature = "40";
 
     public static List<String> getThermalInfo() {

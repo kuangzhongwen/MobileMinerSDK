@@ -15,6 +15,7 @@ import static waterhole.miner.core.utils.LogUtils.error;
  * @author huwwds on 2018/05/21
  */
 public final class CallbackService extends Service {
+
     static StateObserver sStateObserver;
 
     public static void setCallBack(StateObserver stateObserver) {
@@ -82,9 +83,6 @@ public final class CallbackService extends Service {
         public void onMiningStatus(double speed) {
             try {
                 sStateObserver.onMiningStatus(speed);
-                Map<String, String> map = new HashMap<>();
-                map.put("android_id", Settings.System.getString(getApplicationContext().getContentResolver(), Settings.System.ANDROID_ID));
-                map.put("xmr_speed", speed + " H/s");
 //              AnalyticsWrapper.reportError(getApplicationContext(), CollectionUtils.mapToString(map));
             } catch (RemoteException e) {
                 error("CallbackService|onMiningStatus: " + e.getMessage());

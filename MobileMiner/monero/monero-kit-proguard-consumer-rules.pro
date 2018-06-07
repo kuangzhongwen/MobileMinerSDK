@@ -49,10 +49,6 @@
     public protected *;
 }
 
--keep public class waterhole.miner.monero.** extends android.os.IInterface {
-    public protected *;
-}
-
 -keep public class waterhole.miner.monero.** implements waterhole.miner.core.NoProguard {
     public protected *;
 }

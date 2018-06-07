@@ -75,7 +75,8 @@ public abstract class AbstractMiner implements CommonMinerInterface {
              * 如果捕捉到的action是ACTION_BATTERY_CHANGED， 就运行onBatteryInfoReceiver()
              */
             if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
-                ThermalInfoUtil.batteryTemperature = String.valueOf(intent.getIntExtra("temperature", 0));  //电池温度
+                // 电池温度
+                ThermalInfoUtil.batteryTemperature = String.valueOf(intent.getIntExtra("temperature", 0));
             }
         }
     };
