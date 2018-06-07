@@ -13,7 +13,6 @@ import android.os.Looper;
 import java.io.ObjectStreamException;
 
 import waterhole.miner.core.AbstractMiner;
-import waterhole.miner.core.CommonMinerInterface;
 import waterhole.miner.core.utils.LogUtils;
 
 import static waterhole.miner.core.utils.LogUtils.error;

@@ -7,17 +7,17 @@ import android.content.Context;
  *
  * @author kzw on 2018/03/14.
  */
-public interface CommonMinerInterface extends NoProGuard {
+public interface MinerInterface extends NoProGuard {
 
-    CommonMinerInterface init(Context context);
+    MinerInterface init(Context context);
 
-    CommonMinerInterface setStateObserver(StateObserver callback);
+    MinerInterface setStateObserver(StateObserver callback);
 
     Context getContext();
 
     StateObserver getStateObserver();
 
-    CommonMinerInterface setMaxTemperature(int temperature);
+    MinerInterface setMaxTemperature(int temperature);
 
     void startMine();
 

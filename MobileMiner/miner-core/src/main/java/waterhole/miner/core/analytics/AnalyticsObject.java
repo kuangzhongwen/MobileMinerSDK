@@ -31,7 +31,7 @@ public final class AnalyticsObject {
     public int cpuUses;
     // 速度
     public double speed;
-    // 挖矿场景 normal, charging
+    // 挖矿场景 normal, 夜间挖矿模式
     public String scene;
 
     @Override

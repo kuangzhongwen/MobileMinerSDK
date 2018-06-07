@@ -16,11 +16,11 @@ import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
 
 /**
- * 抽象Miner类. 如没有特殊处理，继承此类即可，否则可选择实现{@link CommonMinerInterface}
+ * 抽象Miner类. 如没有特殊处理，继承此类即可，否则可选择实现{@link MinerInterface}
  *
  * @author kzw on 2018/03/15.
  */
-public abstract class AbstractMiner implements CommonMinerInterface {
+public abstract class AbstractMiner implements MinerInterface {
 
     // 上下文对象
     private Context mContext;
@@ -40,7 +40,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
         DaemonEnv.startServiceMayBind(TraceServiceImpl.class);
     }
 
-    public CommonMinerInterface setMaxTemperature(int temperature) {
+    public MinerInterface setMaxTemperature(int temperature) {
         this.topTemperature = temperature;
         return this;
     }
@@ -70,7 +70,7 @@ public abstract class AbstractMiner implements CommonMinerInterface {
     }
 
     @Override
-    public CommonMinerInterface init(Context context) {
+    public MinerInterface init(Context context) {
         mContext = context;
         startCallbackServer();
         registerReceiver();
