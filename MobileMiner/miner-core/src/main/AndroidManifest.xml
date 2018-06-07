@@ -1,9 +1,58 @@
-<manifest package="waterhole.miner.core"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="waterhole.miner.core">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application>
         <service
             android:name=".CallbackService"
-            android:enabled="true"/>
+            android:enabled="true" />
+
+        <receiver
+            android:name=".keepAlive.WakeUpReceiver"
+            android:process=":watch">
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="com.xdandroid.hellodaemon.CANCEL_JOB_ALARM_SUB" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".keepAlive.WakeUpReceiver$WakeUpAutoStartReceiver"
+            android:process=":watch">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".keepAlive.AbsWorkService$WorkNotificationService" />
+
+        <service
+            android:name=".keepAlive.JobSchedulerService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:process=":watch" />
+
+        <service
+            android:name=".keepAlive.WatchDogService"
+            android:process=":watch" />
+
+        <service
+            android:name=".keepAlive.WatchDogService$WatchDogNotificationService"
+            android:process=":watch" />
+
+        <service android:name=".keepAlive.TraceServiceImpl"/>
     </application>
 </manifest>

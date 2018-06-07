@@ -50,3 +50,11 @@
 -keep public interface waterhole.miner.core.NoProguard
 -keep public interface waterhole.miner.core.MinerCallback
 -keep public class waterhole.miner.core.** implements waterhole.miner.core.NoProGuard
+
+# Rxjava RxAndroid
+-keep public class io.reactivex.** {
+    public protected *;
+}
+-keep public class io.reactivex.android.** {
+    public protected *;
+}

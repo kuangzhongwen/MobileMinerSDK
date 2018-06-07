@@ -1,5 +1,6 @@
 package waterhole.miner.core;
 
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,9 @@ import android.content.IntentFilter;
 import android.text.TextUtils;
 
 import java.util.List;
+
+import waterhole.miner.core.keepAlive.DaemonEnv;
+import waterhole.miner.core.keepAlive.TraceServiceImpl;
 import waterhole.miner.core.temperature.ThermalInfoUtil;
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
@@ -25,6 +29,16 @@ public abstract class AbstractMiner implements CommonMinerInterface {
     private StateObserver mMineCallback;
 
     protected int topTemperature = -1;
+
+    public static void initApplication(Application application) {
+        if (application == null) {
+            throw new IllegalArgumentException("application is null");
+        }
+        // 需要在 Application 的 onCreate() 中调用一次 DaemonEnv.initialize()
+        DaemonEnv.initialize(application, TraceServiceImpl.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        TraceServiceImpl.sShouldStopService = false;
+        DaemonEnv.startServiceMayBind(TraceServiceImpl.class);
+    }
 
     public CommonMinerInterface setMaxTemperature(int temperature) {
         this.topTemperature = temperature;
