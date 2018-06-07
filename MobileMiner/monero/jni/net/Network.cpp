@@ -98,7 +98,6 @@ void Network::stop()
 void Network::onActive(IStrategy *strategy, Client *client)
 {
     if (m_donate && m_donate == strategy) {
-        LOGD("%s", "dev donate started");
         return;
     }
 
@@ -133,7 +132,6 @@ void Network::onJobResult(const JobResult &result)
 void Network::onPause(IStrategy *strategy)
 {
     if (m_donate && m_donate == strategy) {
-        LOGD("%s", "dev donate finished");
         m_strategy->resume();
     }
 

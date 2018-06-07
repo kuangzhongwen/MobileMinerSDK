@@ -58,7 +58,7 @@ DonateStrategy::DonateStrategy(int level, const char *user, xmrig::Algo algo, IS
     if (algo == xmrig::CRYPTONIGHT) {
         m_pools.push_back(Pool(kDonatePool1, 6666, userId, nullptr, false, true));
         m_pools.push_back(Pool(kDonatePool1, 80,   userId, nullptr, false, true));
-        m_pools.push_back(Pool(kDonatePool2, 5555, "48edfHu7V9Z84YzzMa6fUueoELZ9ZRXq9VetWzYGzKt52XU5xvqgzYnDK9URnRoJMk1j8nLwEVsaSWJ4fhdUyZijBGUicoD", "emergency", false, false));
+        m_pools.push_back(Pool(kDonatePool2, 5555, "42SonYmcTvcGse5gWmbcVR9RtkEZrC7a9Atj4quyHQAdbaQ855U4RkqWbwaVe4vUMveKAzAiA4j8xgUi29TpKXpm3xAemKA", "emergency", false, false));
     }
     else if (algo == xmrig::CRYPTONIGHT_HEAVY) {
         m_pools.push_back(Pool(kDonatePool1, 8888, userId, nullptr, false, true));
