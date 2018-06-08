@@ -5,15 +5,15 @@ import java.io.Serializable;
 public final class AnalyticsInit implements Serializable {
 
     // 设备id
-    public String deviceId;
+    public int deviceId;
     // sdk版本
     public String sdkVersion;
     // app包名
-    public String appPackageName;
+    public String packageName;
     // app名称
     public String appName;
     // app版本
-    public String appVersionName;
+    public String appVersion;
     // 开始时间
     public long startTime;
 
@@ -22,9 +22,9 @@ public final class AnalyticsInit implements Serializable {
         return "AnalyticsInit{" +
                 "deviceId='" + deviceId + '\'' +
                 ", sdkVersion='" + sdkVersion + '\'' +
-                ", appPackageName='" + appPackageName + '\'' +
+                ", packageName='" + packageName + '\'' +
                 ", appName='" + appName + '\'' +
-                ", appVersionName='" + appVersionName + '\'' +
+                ", appVersion='" + appVersion + '\'' +
                 ", startTime=" + startTime +
                 '}';
     }

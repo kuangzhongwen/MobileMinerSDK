@@ -35,8 +35,10 @@ import static waterhole.miner.core.utils.LogUtils.info;
  */
 public final class AnalyticsWrapper {
 
+    private static final int DEF_ID = -1;
     private static final String BASE_API = "http://192.168.1.185:8080/";
     private static final String SAVE_BASE_INFO_API = BASE_API + "save_base_info";
+    private static final String INIT_API = BASE_API + "init";
 
     public AnalyticsWrapper() {
         throw new RuntimeException("AnalyticsWrapper stub!");
@@ -44,17 +46,17 @@ public final class AnalyticsWrapper {
 
     public static void initApplication(final Application application) {
         if (application == null) return;
-        if (getDeviceID(application) == null) {
+        if (getDeviceID(application) == DEF_ID) {
             AnalyticsDevice device = new AnalyticsDevice();
             device.deviceName = Build.MODEL;
             device.deviceVersion = Build.VERSION.RELEASE;
             device.androidId = Settings.System.getString(application.getContentResolver(), Settings.System.ANDROID_ID);
             device.abi = Build.CPU_ABI;
             device.cpuCoreThreads = Runtime.getRuntime().availableProcessors();
-            onDeviceEvent(application, device, new AsyncTaskListener<String>() {
+            onDeviceEvent(application, device, new AsyncTaskListener<Integer>() {
                 @Override
-                public void runComplete(String s) {
-                    callInitEvent(application, s);
+                public void runComplete(Integer deviceId) {
+                    callInitEvent(application, deviceId);
                 }
             });
         } else {
@@ -62,20 +64,20 @@ public final class AnalyticsWrapper {
         }
     }
 
-    private static void callInitEvent(Application application, String deviceId) {
-        if (application != null && deviceId != null) {
+    private static void callInitEvent(Application application, int deviceId) {
+        if (application != null && deviceId != DEF_ID) {
             AnalyticsInit init = new AnalyticsInit();
             init.deviceId = deviceId;
             init.sdkVersion = BuildConfig.VERSION_NAME;
-            init.appPackageName = application.getPackageName();
+            init.packageName = application.getPackageName();
             init.appName = getAppName(application);
-            init.appVersionName = getAppVersionName(application);
+            init.appVersion = getAppVersionName(application);
             init.startTime = Calendar.getInstance().getTimeInMillis();
             onInitEvent(application, init);
         }
     }
 
-    private static void onDeviceEvent(final Context context, final AnalyticsDevice obj, final AsyncTaskListener<String> listener) {
+    private static void onDeviceEvent(final Context context, final AnalyticsDevice obj, final AsyncTaskListener<Integer> listener) {
         if (context == null || obj == null || listener == null) return;
         executeOnThreadPool(new Runnable() {
             @Override
@@ -90,8 +92,8 @@ public final class AnalyticsWrapper {
                     // todo kzw 数据做加密处理
                     String response = HttpRequest.post(SAVE_BASE_INFO_API).send(fromMapToJson(map)).body();
                     info("onDeviceEvent response = " + response);
-                    String deviceId = optJsonAttr(response, "device_id");
-                    if (deviceId != null) {
+                    int deviceId = optJsonIntAttr(response, "device_id");
+                    if (deviceId != DEF_ID) {
                         cacheDeviceID(context, deviceId);
                         listener.runComplete(deviceId);
                     }
@@ -109,17 +111,17 @@ public final class AnalyticsWrapper {
             public void run() {
                 try {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("sdk_version", obj.sdkVersion);
                     map.put("device_id", obj.deviceId);
-                    map.put("app_package_name", obj.appPackageName);
+                    map.put("sdk_version", obj.sdkVersion);
+                    map.put("package_name", obj.packageName);
                     map.put("app_name", obj.appName);
-                    map.put("app_version_name", obj.appVersionName);
+                    map.put("app_version", obj.appVersion);
                     map.put("start_time", obj.startTime);
                     // todo kzw 数据做加密处理
-                    String response = HttpRequest.post(BASE_API).send(fromMapToJson(map)).body();
+                    String response = HttpRequest.post(INIT_API).send(fromMapToJson(map)).body();
                     info("onInitEvent response = " + response);
-                    String mineId = optJsonAttr(response, "mine_id");
-                    if (mineId != null) {
+                    int mineId = optJsonIntAttr(response, "mine_id");
+                    if (mineId != DEF_ID) {
                         cacheMineID(context, mineId);
                     }
                 } catch (HttpRequest.HttpRequestException e) {
@@ -160,8 +162,8 @@ public final class AnalyticsWrapper {
             @Override
             public void run() {
                 try {
-                    String deviceId = getDeviceID(context);
-                    if (TextUtils.isEmpty(deviceId)) {
+                    int deviceId = getDeviceID(context);
+                    if (deviceId == DEF_ID) {
                         return;
                     }
                     Map<String, Object> map = new HashMap<>();
@@ -177,19 +179,19 @@ public final class AnalyticsWrapper {
         });
     }
 
-    private static String optJsonAttr(String response, String key) {
+    private static int optJsonIntAttr(String response, String key) {
         if (!TextUtils.isEmpty(response) && !TextUtils.isEmpty(key)) {
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 int code = jsonObject.optInt("code");
                 if (code == 0) {
-                    return jsonObject.optString(key);
+                    return jsonObject.optInt(key, DEF_ID);
                 }
             } catch (JSONException e) {
                 error(e.getMessage());
             }
         }
-        return null;
+        return DEF_ID;
     }
 
     private static String fromMapToJson(Map<String, Object> map) {
@@ -215,24 +217,24 @@ public final class AnalyticsWrapper {
         return builder.toString();
     }
 
-    private static void cacheDeviceID(final Context context, final String _deviceID) {
+    private static void cacheDeviceID(final Context context, final int _deviceID) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        sp.edit().putString("WATERHOLE_DEVICE_ID", _deviceID).apply();
+        sp.edit().putInt("WATERHOLE_CORE_DEVICE_ID", _deviceID).apply();
     }
 
-    private static String getDeviceID(final Context context) {
+    private static int getDeviceID(final Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString("WATERHOLE_DEVICE_ID", null);
+        return sp.getInt("WATERHOLE_CORE_DEVICE_ID", DEF_ID);
     }
 
-    private static void cacheMineID(final Context context, final String _deviceID) {
+    private static void cacheMineID(final Context context, final int _deviceID) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        sp.edit().putString("WATERHOLE_MINE_ID", _deviceID).apply();
+        sp.edit().putInt("WATERHOLE_CORE_MINE_ID", _deviceID).apply();
     }
 
-    public static String getMineID(final Context context) {
+    public static int getMineID(final Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getString("WATERHOLE_MINE_ID", null);
+        return sp.getInt("WATERHOLE_CORE_MINE_ID", DEF_ID);
     }
 
     /**
