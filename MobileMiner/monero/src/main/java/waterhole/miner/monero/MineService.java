@@ -52,7 +52,6 @@ public final class MineService extends Service implements ITempTask {
     private Handler mMainHandler = new Handler(Looper.getMainLooper());
 
     private MineCallback mineCallback;
-    private boolean isMining;
 
     @Override
     public void start(final int[] temperatureSurface) {
@@ -128,10 +127,6 @@ public final class MineService extends Service implements ITempTask {
             if (mineCallback == null)
                 continue;
             try {
-                if (isMining) {
-                    mineCallback.onMiningError("Xmr miner is Running");
-                    return;
-                }
                 if (!hasICS()) {
                     mineCallback.onMiningError("Android version must be >= 14");
                     return;
@@ -154,7 +149,6 @@ public final class MineService extends Service implements ITempTask {
                         public void run() {
                             info("MineService startMine : threads=" + temperatureSurface[1] + " ,cpuUse=" + temperatureSurface[2]);
 
-                            isMining = true;
                             Xmr xmr = Xmr.instance();
                             xmr.startMine(temperatureSurface[1], temperatureSurface[2], mineCallback);
                         }

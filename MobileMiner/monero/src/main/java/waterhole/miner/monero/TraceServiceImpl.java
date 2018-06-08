@@ -107,22 +107,19 @@ public class TraceServiceImpl extends AbsWorkService {
     public void startWork(Intent intent, int flags, int startId) {
         info("keep alive: 检查磁盘中是否有上次销毁时保存的数据");
         sDisposable = Observable
-                .interval(3, TimeUnit.SECONDS)
-                //取消任务时取消定时唤醒
+                .interval(30, TimeUnit.SECONDS)
+                // 取消任务时取消定时唤醒
                 .doOnDispose(new Action() {
                     @Override
                     public void run() throws Exception {
-                        info("keep alive: 保存数据到磁盘。");
+                        info("keep alive: cancel.");
                         cancelJobAlarmSub();
                     }
                 })
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long count) {
-                        info("keep alive: 每 3 秒采集一次数据... count = " + count);
-                        if (count > 0 && count % 18 == 0) {
-                            info("keep alive: 保存数据到磁盘。 saveCount = " + (count / 18 - 1));
-                        }
+                        info("keep alive: 每 30 秒采集一次数据... count = " + count);
                         NightConfiguration.instance().getConfigObject(getApplicationContext(),
                                 new AsyncTaskListener<NightConfigObject>() {
                                     @Override

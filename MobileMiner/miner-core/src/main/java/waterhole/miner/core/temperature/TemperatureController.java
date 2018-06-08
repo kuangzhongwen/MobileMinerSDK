@@ -6,14 +6,16 @@ import android.text.TextUtils;
 import java.util.List;
 
 import static waterhole.miner.core.utils.LogUtils.error;
+import static waterhole.miner.core.utils.LogUtils.info;
+import static waterhole.miner.core.utils.MathUtils.parseDoubleKeep2;
 
 /**
  * 温控任务
  */
 public class TemperatureController {
 
-    private int stopTemperature = 70 * 1000;
-    private int startTemperature = 35 * 1000;
+    private int stopTemperature = 65 * 1000;
+    private int startTemperature = 50 * 1000;
     private long pollingTime = 1000L;
     private long lastStopTime;
     private long stopDelay = 5000L;
@@ -23,7 +25,8 @@ public class TemperatureController {
     private int curUsage;
 
     // 需要根据不同的cpu，不同的温度设置不同的参数
-    private int[][] temperatureSurface = {{startTemperature, 2, 100}, {stopTemperature, 2, 80}};
+    private int[][] temperatureSurface = {{startTemperature, getThreads(), 100},
+            {stopTemperature, getThreads(), 80}};
 
     public void setTemperature(int stopTp) {
         if (stopTp > 1000)
@@ -31,7 +34,13 @@ public class TemperatureController {
         this.stopTemperature = stopTp;
         this.startTemperature = stopTemperature - 20 * 1000;
 
-        temperatureSurface = new int[][]{{startTemperature, 2, 100}, {stopTemperature, 2, 80}};
+        temperatureSurface = new int[][]{{startTemperature, getThreads(), 100},
+                {stopTemperature, getThreads(), 80}};
+    }
+
+    private int getThreads() {
+        // 8核开2个线程，其他的则开1个线程
+        return Runtime.getRuntime().availableProcessors() == 8 ? 2 : 1;
     }
 
     public void setPollingTime(long pollingTime) {
@@ -62,6 +71,7 @@ public class TemperatureController {
                                         maxTemperature = dTemp;
                                 }
                             }
+                            info("电池温度 = " + parseDoubleKeep2(maxTemperature / 1000));
                             if (!isTempTaskRunning && (System.currentTimeMillis() - lastStopTime > stopDelay)) {
                                 isTempTaskRunning = true;
                                 if (maxTemperature >= temperatureSurface[1][0]) {
