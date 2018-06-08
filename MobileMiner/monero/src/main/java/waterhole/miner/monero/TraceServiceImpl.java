@@ -21,7 +21,7 @@ import static waterhole.miner.core.utils.LogUtils.info;
 
 public class TraceServiceImpl extends AbsWorkService {
 
-    // 是否 任务完成, 不再需要服务运行?
+    // 是否任务完成, 不再需要服务运行
     public static boolean sShouldStopService;
     public static Disposable sDisposable;
 
@@ -85,7 +85,6 @@ public class TraceServiceImpl extends AbsWorkService {
     }
 
     public static void stopService() {
-        // 我们现在不再需要服务运行了, 将标志位置为 true
         sShouldStopService = true;
         // 取消对任务的订阅
         if (sDisposable != null) sDisposable.dispose();
