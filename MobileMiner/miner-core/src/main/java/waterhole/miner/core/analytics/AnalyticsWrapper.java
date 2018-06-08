@@ -39,6 +39,7 @@ public final class AnalyticsWrapper {
     private static final String BASE_API = "http://192.168.1.185:8080/";
     private static final String SAVE_BASE_INFO_API = BASE_API + "save_base_info";
     private static final String INIT_API = BASE_API + "init";
+    private static final String STORE_ERROR = BASE_API + "store_err";
 
     public AnalyticsWrapper() {
         throw new RuntimeException("AnalyticsWrapper stub!");
@@ -170,7 +171,7 @@ public final class AnalyticsWrapper {
                     map.put("device_id", deviceId);
                     map.put("error", error);
                     // todo kzw 数据做加密处理
-                    int code = HttpRequest.post(BASE_API).send(fromMapToJson(map)).code();
+                    int code = HttpRequest.post(STORE_ERROR).send(fromMapToJson(map)).code();
                     info("onError code = " + code);
                 } catch (HttpRequest.HttpRequestException e) {
                     error(e.getMessage());
