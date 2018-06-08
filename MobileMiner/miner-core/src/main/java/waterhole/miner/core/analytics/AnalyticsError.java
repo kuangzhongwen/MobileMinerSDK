@@ -5,17 +5,17 @@ package waterhole.miner.core.analytics;
  *
  * @author kzw on 2018/06/05.
  */
-public final class AnalyticsErrorObject {
+public final class AnalyticsError {
 
-    // 唯一标识
-    public String androidId;
+    // 设备id
+    public String deviceId;
     // 错误信息
     public String error;
 
     @Override
     public String toString() {
         return "AnalyticsErrorObject{" +
-                "androidId='" + androidId + '\'' +
+                "deviceId='" + deviceId + '\'' +
                 ", error='" + error + '\'' +
                 '}';
     }

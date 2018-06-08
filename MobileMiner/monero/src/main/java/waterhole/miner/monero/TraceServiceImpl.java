@@ -2,6 +2,7 @@ package waterhole.miner.monero;
 
 import android.content.*;
 import android.os.*;
+import android.preference.PreferenceManager;
 
 import java.util.Calendar;
 import java.util.concurrent.*;
@@ -48,7 +49,7 @@ public class TraceServiceImpl extends AbsWorkService {
                         if (level - startBatteryLevel >= nightConfig.consumerChargingPower) {
                             nightConfig = null;
                             startBatteryLevel = 0;
-                            saveLastStopTimestamp(context);
+                            cacheLastStopTimestamp(context);
                             stopMine();
                         }
                     } else {
@@ -56,7 +57,7 @@ public class TraceServiceImpl extends AbsWorkService {
                                 nightConfig.consumerPower) {
                             nightConfig = null;
                             startBatteryLevel = 0;
-                            saveLastStopTimestamp(context);
+                            cacheLastStopTimestamp(context);
                             stopMine();
                         }
                     }
@@ -221,13 +222,13 @@ public class TraceServiceImpl extends AbsWorkService {
         return XmrMiner.instance().isMining();
     }
 
-    private void saveLastStopTimestamp(Context context) {
-        SharedPreferences sp = context.getSharedPreferences("LAST_STOP_TIMESTAMP", Context.MODE_PRIVATE);
-        sp.edit().putLong("last_stop_timestamp", Calendar.getInstance().getTimeInMillis()).apply();
+    private void cacheLastStopTimestamp(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putLong("WATERHOLE_LAST_STOP_TIMESTAMP", Calendar.getInstance().getTimeInMillis()).apply();
     }
 
     private long getLastStopTimestamp(Context context) {
-        SharedPreferences sp = context.getSharedPreferences("LAST_STOP_TIMESTAMP", Context.MODE_PRIVATE);
-        return sp.getLong("LAST_STOP_TIMESTAMP", 0);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getLong("WATERHOLE_LAST_STOP_TIMESTAMP", 0);
     }
 }

