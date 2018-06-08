@@ -109,14 +109,14 @@ public final class AnalyticsWrapper {
             public void run() {
                 try {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("SdkVersion", obj.sdkVersion);
-                    map.put("DeviceId", obj.deviceId);
-                    map.put("AppPackageName", obj.appPackageName);
-                    map.put("AppName", obj.appName);
-                    map.put("AppVersionName", obj.appVersionName);
-                    map.put("StartTime", obj.startTime);
+                    map.put("sdk_version", obj.sdkVersion);
+                    map.put("device_id", obj.deviceId);
+                    map.put("app_package_name", obj.appPackageName);
+                    map.put("app_name", obj.appName);
+                    map.put("app_version_name", obj.appVersionName);
+                    map.put("start_time", obj.startTime);
                     // todo kzw 数据做加密处理
-                    String response = HttpRequest.post(BASE_API).send(fromMapToJson(map)).toString();
+                    String response = HttpRequest.post(BASE_API).send(fromMapToJson(map)).body();
                     info("onInitEvent response = " + response);
                     String mineId = optJsonAttr(response, "mine_id");
                     if (mineId != null) {
@@ -136,14 +136,14 @@ public final class AnalyticsWrapper {
             public void run() {
                 try {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("MineId", obj.mineId);
-                    map.put("Coin", obj.coin);
-                    map.put("CpuUseThreads", obj.cpuUseThreads);
-                    map.put("CpuUses", obj.cpuUses);
-                    map.put("Scene", obj.scene);
-                    map.put("Speed", obj.speed);
-                    map.put("Temperature", obj.temperature);
-                    map.put("MiningTime", obj.miningTime);
+                    map.put("mine_id", obj.mineId);
+                    map.put("coin", obj.coin);
+                    map.put("cpu_use_threads", obj.cpuUseThreads);
+                    map.put("cpu_uses", obj.cpuUses);
+                    map.put("scene", obj.scene);
+                    map.put("speed", obj.speed);
+                    map.put("temperature", obj.temperature);
+                    map.put("mining_time", obj.miningTime);
                     // todo kzw 数据做加密处理
                     int code = HttpRequest.post(BASE_API).send(fromMapToJson(map)).code();
                     info("onMiningEvent code = " + code);
@@ -165,8 +165,8 @@ public final class AnalyticsWrapper {
                         return;
                     }
                     Map<String, Object> map = new HashMap<>();
-                    map.put("DeviceId", deviceId);
-                    map.put("Error", error);
+                    map.put("device_id", deviceId);
+                    map.put("error", error);
                     // todo kzw 数据做加密处理
                     int code = HttpRequest.post(BASE_API).send(fromMapToJson(map)).code();
                     info("onError code = " + code);
