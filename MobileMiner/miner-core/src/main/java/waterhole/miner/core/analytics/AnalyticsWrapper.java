@@ -36,7 +36,7 @@ import static waterhole.miner.core.utils.LogUtils.info;
 public final class AnalyticsWrapper {
 
     private static final String BASE_API = "http://192.168.1.185:8080/";
-    private static final String API = BASE_API + "update_device_state";
+    private static final String SAVE_BASE_INFO_API = BASE_API + "save_base_info";
 
     public AnalyticsWrapper() {
         throw new RuntimeException("AnalyticsWrapper stub!");
@@ -82,13 +82,13 @@ public final class AnalyticsWrapper {
             public void run() {
                 try {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("DeviceName", obj.deviceName);
-                    map.put("DeviceVersion", obj.deviceVersion);
-                    map.put("AndroidId", obj.androidId);
-                    map.put("Abi", obj.abi);
-                    map.put("CpuCoreThreads", obj.cpuCoreThreads);
+                    map.put("device_name", obj.deviceName);
+                    map.put("device_version", obj.deviceVersion);
+                    map.put("android_id", obj.androidId);
+                    map.put("abi", obj.abi);
+                    map.put("cpu_core_threads", obj.cpuCoreThreads);
                     // todo kzw 数据做加密处理
-                    String response = HttpRequest.post(API).send(fromMapToJson(map)).toString();
+                    String response = HttpRequest.post(SAVE_BASE_INFO_API).send(fromMapToJson(map)).body();
                     info("onDeviceEvent response = " + response);
                     String deviceId = optJsonAttr(response, "device_id");
                     if (deviceId != null) {
@@ -116,7 +116,7 @@ public final class AnalyticsWrapper {
                     map.put("AppVersionName", obj.appVersionName);
                     map.put("StartTime", obj.startTime);
                     // todo kzw 数据做加密处理
-                    String response = HttpRequest.post(API).send(fromMapToJson(map)).toString();
+                    String response = HttpRequest.post(BASE_API).send(fromMapToJson(map)).toString();
                     info("onInitEvent response = " + response);
                     String mineId = optJsonAttr(response, "mine_id");
                     if (mineId != null) {
@@ -145,7 +145,7 @@ public final class AnalyticsWrapper {
                     map.put("Temperature", obj.temperature);
                     map.put("MiningTime", obj.miningTime);
                     // todo kzw 数据做加密处理
-                    int code = HttpRequest.post(API).send(fromMapToJson(map)).code();
+                    int code = HttpRequest.post(BASE_API).send(fromMapToJson(map)).code();
                     info("onMiningEvent code = " + code);
                 } catch (HttpRequest.HttpRequestException e) {
                     error(e.getMessage());
@@ -168,7 +168,7 @@ public final class AnalyticsWrapper {
                     map.put("DeviceId", deviceId);
                     map.put("Error", error);
                     // todo kzw 数据做加密处理
-                    int code = HttpRequest.post(API).send(fromMapToJson(map)).code();
+                    int code = HttpRequest.post(BASE_API).send(fromMapToJson(map)).code();
                     info("onError code = " + code);
                 } catch (HttpRequest.HttpRequestException e) {
                     error(e.getMessage());
