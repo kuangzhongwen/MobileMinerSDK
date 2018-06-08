@@ -37,8 +37,8 @@ import waterhole.miner.core.temperature.TemperatureController;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.APIUtils.hasICS;
-import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
+import static waterhole.miner.core.utils.LogUtils.errorWithReport;
 
 public final class MineService extends Service implements ITempTask {
 
@@ -69,7 +69,7 @@ public final class MineService extends Service implements ITempTask {
             try {
                 mineCallback.onConnectPoolBegin();
             } catch (Exception e) {
-                error("MineService|ServiceConnection: " + e.getMessage());
+                errorWithReport(getApplicationContext(), "MineService|ServiceConnection: " + e.getMessage());
             }
         }
 
@@ -84,7 +84,7 @@ public final class MineService extends Service implements ITempTask {
         getApplicationContext().bindService(new Intent(this, CallbackService.class), serviceConnection, Context.BIND_AUTO_CREATE);
         TemperatureController temperatureController = new TemperatureController();
         temperatureController.setTask(this);
-        temperatureController.startControl();
+        temperatureController.startControl(getApplicationContext());
         IMiningServiceBinder.MiningServiceBinder miningServiceBinder = new IMiningServiceBinder.MiningServiceBinder();
         miningServiceBinder.controller = temperatureController;
         return miningServiceBinder;
@@ -118,7 +118,7 @@ public final class MineService extends Service implements ITempTask {
                     return;
                 }
             } catch (Exception e) {
-                error("MineService|startMine: " + e.getMessage());
+                errorWithReport(getApplicationContext(), "MineService|startMine: " + e.getMessage());
             }
             mMainHandler.post(new Runnable() {
                 @Override

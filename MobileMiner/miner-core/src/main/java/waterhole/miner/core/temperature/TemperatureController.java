@@ -1,11 +1,12 @@
 package waterhole.miner.core.temperature;
 
+import android.content.Context;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
 import java.util.List;
 
-import static waterhole.miner.core.utils.LogUtils.error;
+import static waterhole.miner.core.utils.LogUtils.errorWithReport;
 import static waterhole.miner.core.utils.LogUtils.info;
 import static waterhole.miner.core.utils.MathUtils.parseDoubleKeep2;
 
@@ -51,7 +52,7 @@ public class TemperatureController {
         tempTask = iTempTask;
     }
 
-    public void startControl() {
+    public void startControl(final Context context) {
         if (tempTask == null)
             throw new NullPointerException("the temp task must be set first");
 
@@ -90,7 +91,7 @@ public class TemperatureController {
                                 tempTask.stop();
                             }
                         } catch (Exception e) {
-                            error("TemperatureController|startControl: " + e.getMessage());
+                            errorWithReport(context, "TemperatureController|startControl: " + e.getMessage());
                         }
                     }
                     SystemClock.sleep(pollingTime);

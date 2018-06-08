@@ -154,15 +154,19 @@ public final class AnalyticsWrapper {
         });
     }
 
-    public static void onErrorEvent(final AnalyticsError obj) {
-        if (obj == null) return;
+    public static void onErrorEvent(final Context context, final String error) {
+        if (context == null || TextUtils.isEmpty(error)) return;
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
                 try {
+                    String deviceId = getDeviceID(context);
+                    if (TextUtils.isEmpty(deviceId)) {
+                        return;
+                    }
                     Map<String, Object> map = new HashMap<>();
-                    map.put("DeviceId", obj.deviceId);
-                    map.put("Error", obj.error);
+                    map.put("DeviceId", deviceId);
+                    map.put("Error", error);
                     // todo kzw 数据做加密处理
                     int code = HttpRequest.post(API).send(fromMapToJson(map)).code();
                     info("onError code = " + code);
@@ -241,7 +245,7 @@ public final class AnalyticsWrapper {
             int labelRes = packageInfo.applicationInfo.labelRes;
             return context.getResources().getString(labelRes);
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            error(e.getMessage());
         }
         return null;
     }
@@ -259,7 +263,7 @@ public final class AnalyticsWrapper {
             return packageInfo.versionName;
 
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            error(e.getMessage());
         }
         return null;
     }

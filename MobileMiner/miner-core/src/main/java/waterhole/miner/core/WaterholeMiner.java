@@ -1,5 +1,6 @@
 package waterhole.miner.core;
 
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,8 +9,10 @@ import android.text.TextUtils;
 
 import java.util.List;
 
+import waterhole.miner.core.analytics.AnalyticsWrapper;
+import waterhole.miner.core.config.NightConfiguration;
 import waterhole.miner.core.temperature.ThermalInfoUtil;
-import static waterhole.miner.core.utils.LogUtils.error;
+import static waterhole.miner.core.utils.LogUtils.errorWithReport;
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
 
 /**
@@ -17,7 +20,7 @@ import static waterhole.miner.core.utils.Preconditions.checkNotNull;
  *
  * @author kzw on 2018/03/15.
  */
-public abstract class AbstractMiner implements MinerInterface {
+public abstract class WaterholeMiner implements MinerInterface {
 
     // 上下文对象
     private Context mContext;
@@ -27,13 +30,23 @@ public abstract class AbstractMiner implements MinerInterface {
 
     protected int topTemperature = -1;
 
+    public static void initApplication(final Application application) {
+        if (application == null) {
+            throw new IllegalArgumentException("application is null");
+        }
+        // 获取夜挖配置
+        NightConfiguration.instance().fetchConfig(application);
+        // 统计设备信息，初始化挖矿数据
+        AnalyticsWrapper.initApplication(application);
+    }
+
     public MinerInterface setMaxTemperature(int temperature) {
         this.topTemperature = temperature;
         return this;
     }
 
     public double getCurrentTemperature() {
-        double maxTemperature = 0;
+        double maxTemperature;
         try {
             List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
             maxTemperature = -1;
@@ -50,7 +63,7 @@ public abstract class AbstractMiner implements MinerInterface {
             if (maxTemperature > 100)
                 maxTemperature /= 10;
         } catch (Exception e) {
-            error("AbstractMiner|getCurrentTemperature: " + e.getMessage());
+            errorWithReport(getContext(), "WaterholeMiner|getCurrentTemperature: " + e.getMessage());
             return 40;
         }
         return maxTemperature;
@@ -94,7 +107,7 @@ public abstract class AbstractMiner implements MinerInterface {
     }
 
     @Override
-    public AbstractMiner setStateObserver(StateObserver stateObserver) {
+    public WaterholeMiner setStateObserver(StateObserver stateObserver) {
         mMineCallback = stateObserver;
         CallbackService.setCallBack(stateObserver);
         return this;

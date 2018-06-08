@@ -2,10 +2,9 @@ package waterhole.miner.eth;
 
 import java.io.ObjectStreamException;
 
-import waterhole.miner.core.AbstractMiner;
-import waterhole.miner.core.MinerInterface;
+import waterhole.miner.core.WaterholeMiner;
 
-public final class EthMiner extends AbstractMiner {
+public final class EthMiner extends WaterholeMiner {
 
     private EthMiner() {
     }
@@ -20,11 +19,6 @@ public final class EthMiner extends AbstractMiner {
 
     private Object readResolve() throws ObjectStreamException {
         return instance();
-    }
-
-    @Override
-    public MinerInterface setWalletAddr(String walletAddr) {
-        return null;
     }
 
     @Override

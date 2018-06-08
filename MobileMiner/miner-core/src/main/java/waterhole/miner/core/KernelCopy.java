@@ -10,7 +10,7 @@ import java.io.OutputStream;
 
 import static android.content.Context.MODE_PRIVATE;
 import static waterhole.miner.core.utils.IOUtils.closeSafely;
-import static waterhole.miner.core.utils.LogUtils.error;
+import static waterhole.miner.core.utils.LogUtils.errorWithReport;
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
 
 /**
@@ -47,7 +47,7 @@ public final class KernelCopy {
                 out.write(b, 0, sz);
             }
         } catch (IOException e) {
-            error("KernelCopy|copy: " + e.getMessage());
+            errorWithReport(context, "KernelCopy|copy: " + e.getMessage());
         } finally {
             closeSafely(in);
             closeSafely(out);

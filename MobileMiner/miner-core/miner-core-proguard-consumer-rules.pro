@@ -46,7 +46,7 @@
     java.lang.Object readResolve();
 }
 
--keep public class waterhole.miner.core.AbstractMiner
+-keep public class waterhole.miner.core.WaterholeMiner
 -keep public interface waterhole.miner.core.NoProguard
 -keep public interface waterhole.miner.core.MinerCallback
 -keep public class waterhole.miner.core.** implements waterhole.miner.core.NoProGuard

@@ -6,8 +6,6 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 
-import waterhole.miner.core.utils.LogUtils;
-
 import static waterhole.miner.core.utils.LogUtils.error;
 
 /**
