@@ -87,6 +87,7 @@ public final class AnalyticsWrapper {
                     map.put("AndroidId", obj.androidId);
                     map.put("Abi", obj.abi);
                     map.put("CpuCoreThreads", obj.cpuCoreThreads);
+                    // todo kzw 数据做加密处理
                     String response = HttpRequest.post(API).send(fromMapToJson(map)).toString();
                     info("onDeviceEvent response = " + response);
                     String deviceId = optJsonAttr(response, "device_id");
@@ -114,6 +115,7 @@ public final class AnalyticsWrapper {
                     map.put("AppName", obj.appName);
                     map.put("AppVersionName", obj.appVersionName);
                     map.put("StartTime", obj.startTime);
+                    // todo kzw 数据做加密处理
                     String response = HttpRequest.post(API).send(fromMapToJson(map)).toString();
                     info("onInitEvent response = " + response);
                     String mineId = optJsonAttr(response, "mine_id");
@@ -142,6 +144,7 @@ public final class AnalyticsWrapper {
                     map.put("Speed", obj.speed);
                     map.put("Temperature", obj.temperature);
                     map.put("MiningTime", obj.miningTime);
+                    // todo kzw 数据做加密处理
                     int code = HttpRequest.post(API).send(fromMapToJson(map)).code();
                     info("onMiningEvent code = " + code);
                 } catch (HttpRequest.HttpRequestException e) {
@@ -160,6 +163,7 @@ public final class AnalyticsWrapper {
                     Map<String, Object> map = new HashMap<>();
                     map.put("DeviceId", obj.deviceId);
                     map.put("Error", obj.error);
+                    // todo kzw 数据做加密处理
                     int code = HttpRequest.post(API).send(fromMapToJson(map)).code();
                     info("onError code = " + code);
                 } catch (HttpRequest.HttpRequestException e) {
