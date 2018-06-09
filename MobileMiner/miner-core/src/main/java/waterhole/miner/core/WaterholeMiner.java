@@ -24,7 +24,6 @@ public abstract class WaterholeMiner implements MinerInterface {
 
     // 上下文对象
     private Context mContext;
-
     // 挖矿回调
     private StateObserver mMineCallback;
 
@@ -41,7 +40,7 @@ public abstract class WaterholeMiner implements MinerInterface {
     }
 
     public MinerInterface setMaxTemperature(int temperature) {
-        this.topTemperature = temperature;
+        topTemperature = temperature;
         return this;
     }
 
@@ -81,13 +80,9 @@ public abstract class WaterholeMiner implements MinerInterface {
         mContext.registerReceiver(mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
 
-    /* 创建广播接收器 */
-    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            /*
-             * 如果捕捉到的action是ACTION_BATTERY_CHANGED， 就运行onBatteryInfoReceiver()
-             */
             if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
                 // 电池温度
                 ThermalInfoUtil.batteryTemperature = String.valueOf(intent.getIntExtra("temperature", 0));

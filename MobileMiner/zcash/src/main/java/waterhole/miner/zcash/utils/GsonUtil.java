@@ -16,6 +16,7 @@ import waterhole.miner.core.utils.LogUtils;
  * Email：huwwds@gmail.com
  */
 public final class GsonUtil {
+
     private static Gson gson = null;
 
     /**

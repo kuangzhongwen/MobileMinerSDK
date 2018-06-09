@@ -46,7 +46,7 @@ import static waterhole.miner.core.analytics.AnalyticsWrapper.cacheMineScene;
 
 public final class MineService extends Service implements ITempTask {
 
-    private Handler mMainHandler = new Handler(Looper.getMainLooper());
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
 
     private MineCallback mineCallback;
 
@@ -85,10 +85,11 @@ public final class MineService extends Service implements ITempTask {
     @Override
     public IBinder onBind(Intent intent) {
         info("MineService onBind");
-        getApplicationContext().bindService(new Intent(this, CallbackService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+        Context context = getApplicationContext();
+        context.bindService(new Intent(this, CallbackService.class), serviceConnection, Context.BIND_AUTO_CREATE);
         TemperatureController temperatureController = new TemperatureController();
         temperatureController.setTask(this);
-        temperatureController.startControl(getApplicationContext());
+        temperatureController.startControl(context);
         IMiningServiceBinder.MiningServiceBinder miningServiceBinder = new IMiningServiceBinder.MiningServiceBinder();
         miningServiceBinder.controller = temperatureController;
         return miningServiceBinder;
@@ -107,8 +108,7 @@ public final class MineService extends Service implements ITempTask {
         do {
             SystemClock.sleep(100);
 
-            if (mineCallback == null)
-                continue;
+            if (mineCallback == null) continue;
             try {
                 if (!hasICS()) {
                     mineCallback.onMiningError("Android version must be >= 14");
@@ -118,7 +118,6 @@ public final class MineService extends Service implements ITempTask {
                 info(cpuABI);
                 if (!cpuABI.toLowerCase().equals("arm64-v8a")) {
                     mineCallback.onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + cpuABI);
-                    // this flag will keep the start button disabled
                     return;
                 }
             } catch (Exception e) {
@@ -131,10 +130,11 @@ public final class MineService extends Service implements ITempTask {
                         @Override
                         public void run() {
                             info("MineService startMine : threads=" + temperatureSurface[1] + " ,cpuUse=" + temperatureSurface[2]);
-                            cacheMineCoin(getApplicationContext(), "xmr");
-                            cacheCpuUseThreads(getApplicationContext(), temperatureSurface[1]);
-                            cacheCpuUse(getApplicationContext(), temperatureSurface[2]);
-                            cacheMineScene(getApplicationContext(), "normal");
+                            Context context = getApplicationContext();
+                            cacheMineCoin(context, "xmr");
+                            cacheCpuUseThreads(context, temperatureSurface[1]);
+                            cacheCpuUse(context, temperatureSurface[2]);
+                            cacheMineScene(context, "normal");
 
                             Xmr xmr = Xmr.instance();
                             xmr.startMine(temperatureSurface[1], temperatureSurface[2], mineCallback);

@@ -26,7 +26,7 @@ public interface MineCallback extends IInterface, StateObserver {
         static final int TRANSACTION_onMiningError = (IBinder.FIRST_CALL_TRANSACTION + 5);
         static final int TRANSACTION_onMiningStatus = (IBinder.FIRST_CALL_TRANSACTION + 6);
 
-        public Stub() {
+        Stub() {
             this.attachInterface(this, DESCRIPTOR);
         }
 

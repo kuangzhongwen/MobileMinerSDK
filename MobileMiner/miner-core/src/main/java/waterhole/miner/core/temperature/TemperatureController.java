@@ -15,7 +15,7 @@ import static waterhole.miner.core.utils.MathUtils.parseDoubleKeep2;
 /**
  * 温控任务
  */
-public class TemperatureController {
+public final class TemperatureController {
 
     private int stopTemperature = 65 * 1000;
     private int startTemperature = 50 * 1000;
@@ -68,7 +68,7 @@ public class TemperatureController {
                                 }
                             }
                             double formatTemp = parseDoubleKeep2(maxTemperature / 1000);
-                            info("电池温度 = " + formatTemp);
+                            info("CPU temperature = " + formatTemp);
                             AnalyticsWrapper.cacheCpuTemperature(context, formatTemp);
                             if (!isTempTaskRunning && (System.currentTimeMillis() - lastStopTime > stopDelay)) {
                                 isTempTaskRunning = true;

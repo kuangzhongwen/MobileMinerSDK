@@ -9,7 +9,7 @@ import android.os.*;
  * 运行在 :watch 子进程中.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class JobSchedulerService extends JobService {
+public final class JobSchedulerService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {

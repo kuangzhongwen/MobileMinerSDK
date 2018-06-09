@@ -56,7 +56,7 @@ public abstract class AbsWorkService extends Service {
         // 启动守护服务，运行在:watch子进程中
         DaemonEnv.startServiceMayBind(WatchDogService.class);
 
-        //业务逻辑: 实际使用时，根据需求，将这里更改为自定义的条件，判定服务应当启动还是停止 (任务是否需要运行)
+        // 业务逻辑: 实际使用时，根据需求，将这里更改为自定义的条件，判定服务应当启动还是停止 (任务是否需要运行)
         Boolean shouldStopService = shouldStopService(intent, flags, startId);
         if (shouldStopService != null) {
             if (shouldStopService) stopService(intent, flags, startId);
@@ -81,13 +81,13 @@ public abstract class AbsWorkService extends Service {
     }
 
     void startService(Intent intent, int flags, int startId) {
-        //检查服务是否不需要运行
+        // 检查服务是否不需要运行
         Boolean shouldStopService = shouldStopService(intent, flags, startId);
         if (shouldStopService != null && shouldStopService) return;
-        //若还没有取消订阅，说明任务仍在运行，为防止重复启动，直接 return
+        // 若还没有取消订阅，说明任务仍在运行，为防止重复启动，直接 return
         Boolean workRunning = isWorkRunning(intent, flags, startId);
         if (workRunning != null && workRunning) return;
-        //业务逻辑
+        // 业务逻辑
         startWork(intent, flags, startId);
     }
 
@@ -100,9 +100,9 @@ public abstract class AbsWorkService extends Service {
      * 而是通过 onStart() 里自定义的条件，来决定服务是否应当启动或停止。
      */
     void stopService(Intent intent, int flags, int startId) {
-        //取消对任务的订阅
+        // 取消对任务的订阅
         stopWork(intent, flags, startId);
-        //取消 Job / Alarm / Subscription
+        // 取消 Job / Alarm / Subscription
         cancelJobAlarmSub();
     }
 

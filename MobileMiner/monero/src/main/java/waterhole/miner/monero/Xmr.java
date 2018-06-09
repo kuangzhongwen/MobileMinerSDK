@@ -4,10 +4,16 @@ import java.io.ObjectStreamException;
 
 import waterhole.miner.core.MineCallback;
 
+import static waterhole.miner.core.utils.LogUtils.error;
+
 final class Xmr {
 
     static {
-        System.loadLibrary("monero-miner");
+        try {
+            System.loadLibrary("monero-miner");
+        } catch (Exception e) {
+            error(e.getMessage());
+        }
     }
 
     native void startMine(int thread, int cpuUses, MineCallback callback);

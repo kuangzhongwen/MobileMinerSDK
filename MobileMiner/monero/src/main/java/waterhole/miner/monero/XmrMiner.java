@@ -15,9 +15,9 @@ import java.io.ObjectStreamException;
 import waterhole.miner.core.MinerInterface;
 import waterhole.miner.core.WaterholeMiner;
 import waterhole.miner.core.keepAlive.DaemonEnv;
-import waterhole.miner.core.utils.LogUtils;
 
 import static waterhole.miner.core.utils.LogUtils.errorWithReport;
+import static waterhole.miner.core.utils.LogUtils.info;
 
 public final class XmrMiner extends WaterholeMiner {
 
@@ -28,12 +28,13 @@ public final class XmrMiner extends WaterholeMiner {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             try {
-                LogUtils.debug("XmrMiner onServiceConnected");
+                info("XmrMiner onServiceConnected");
                 mServiceBinder = IMiningServiceBinder.MiningServiceBinder.asInterface(iBinder);
                 mServiceBinder.startMine();
                 mServiceBinder.setControllerNeedRun(true);
-                if (topTemperature != -1)
+                if (topTemperature != -1) {
                     mServiceBinder.setTemperature(topTemperature);
+                }
             } catch (Exception e) {
                 errorWithReport(getContext(), "XmrMiner|ServiceConnection: " + e.getMessage());
             }
@@ -76,7 +77,7 @@ public final class XmrMiner extends WaterholeMiner {
 
     @Override
     public void startMine() {
-        LogUtils.debug("XmrMiner startMine");
+        info("XmrMiner startMine");
         if (mineReceiver == null) {
             mineReceiver = new MineReceiver();
             IntentFilter intentFilter = new IntentFilter();
@@ -90,7 +91,7 @@ public final class XmrMiner extends WaterholeMiner {
     @Override
     public void stopMine() {
         try {
-            LogUtils.debug("XmrMiner stopMine");
+            info("XmrMiner stopMine");
             if (mServiceBinder != null) {
                 getContext().unbindService(mServerConnection);
                 getContext().unregisterReceiver(mineReceiver);
@@ -103,12 +104,13 @@ public final class XmrMiner extends WaterholeMiner {
     }
 
     public class MineReceiver extends BroadcastReceiver {
+
         public MineReceiver() {
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            LogUtils.debug("XmrMiner$MineReceiver onReceive");
+            info("XmrMiner$MineReceiver onReceive");
             stopMine();
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override

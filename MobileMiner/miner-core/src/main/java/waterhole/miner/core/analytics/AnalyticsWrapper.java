@@ -34,13 +34,14 @@ import static android.provider.Settings.System.ANDROID_ID;
  */
 public final class AnalyticsWrapper {
 
-    private static final int DEF_VALUE = -1;
     private static final String BASE_API = "http://192.168.1.185:8080/";
     private static final String SAVE_BASE_INFO_API = BASE_API + "save_base_info";
     private static final String INIT_API = BASE_API + "init";
     private static final String STORE_ERROR = BASE_API + "store_err";
     private static final String MINING = BASE_API + "mining";
     public static final String GET_CONFIG = BASE_API + "get_config";
+
+    private static final int DEF_VALUE = -1;
 
     public AnalyticsWrapper() {
         throw new RuntimeException("AnalyticsWrapper stub!");

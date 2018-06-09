@@ -9,7 +9,7 @@ import android.provider.*;
 
 import java.util.*;
 
-public class IntentWrapper {
+public final class IntentWrapper {
 
     //Android 7.0+ Doze 模式
     protected static final int DOZE = 98;
