@@ -28,7 +28,7 @@ public class TemperatureController {
     private int curUsage;
 
     // 需要根据不同的cpu，不同的温度设置不同的参数
-    private int[][] temperatureSurface = {{startTemperature, 1, 100}, {stopTemperature, 1, 80}};
+    private int[][] temperatureSurface = {{startTemperature, 1, 30}, {stopTemperature, 1, 30}};
 
     public void setTemperature(int stopTp) {
         if (stopTp > 1000)
@@ -36,7 +36,7 @@ public class TemperatureController {
         this.stopTemperature = stopTp;
         this.startTemperature = stopTemperature - 20 * 1000;
 
-        temperatureSurface = new int[][]{{startTemperature, 1, 100}, {stopTemperature, 1, 80}};
+        temperatureSurface = new int[][]{{startTemperature, 1, 30}, {stopTemperature, 1, 30}};
     }
 
     public void setPollingTime(long pollingTime) {
