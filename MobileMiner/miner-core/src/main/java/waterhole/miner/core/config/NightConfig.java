@@ -7,7 +7,7 @@ import java.io.Serializable;
  *
  * 然后如果在充电，就唤醒cpu去挖，消耗15%的电，如果未充电，则判断电量是否低于30%，如果低于则不挖，高于则挖10%的电
  */
-public final class NightConfigObject implements Serializable {
+public final class NightConfig implements Serializable {
 
     // 是否开启夜间挖矿模式 - 夜间挖矿需要考虑是否锁屏，需要唤醒cpu，是否联网了
     public boolean enableNightDaemon;
