@@ -40,6 +40,7 @@ public final class AnalyticsWrapper {
     private static final String INIT_API = BASE_API + "init";
     private static final String STORE_ERROR = BASE_API + "store_err";
     private static final String MINING = BASE_API + "mining";
+    public static final String GET_CONFIG = BASE_API + "get_config";
 
     public AnalyticsWrapper() {
         throw new RuntimeException("AnalyticsWrapper stub!");
