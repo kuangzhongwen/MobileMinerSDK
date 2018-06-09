@@ -1,21 +1,19 @@
 package waterhole.miner.core.analytics;
 
-import java.io.Serializable;
-
-public final class AnalyticsInit implements Serializable {
+final class AnalyticsInit {
 
     // 设备id
-    public int deviceId;
+    int deviceId;
     // sdk版本
-    public String sdkVersion;
+    String sdkVersion;
     // app包名
-    public String packageName;
+    String packageName;
     // app名称
-    public String appName;
+    String appName;
     // app版本
-    public String appVersion;
+    String appVersion;
     // 开始时间
-    public long startTime;
+    long startTime;
 
     @Override
     public String toString() {

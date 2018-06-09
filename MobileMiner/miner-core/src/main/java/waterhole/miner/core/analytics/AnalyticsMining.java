@@ -1,25 +1,23 @@
 package waterhole.miner.core.analytics;
 
-import java.io.Serializable;
-
-public final class AnalyticsMining implements Serializable {
+final class AnalyticsMining {
 
     // 挖矿id
-    public long mineId;
+    long mineId;
     // 币种
-    public String coin;
+    String coin;
     // 使用的线程数
-    public int cpuUseThreads;
+    int cpuUseThreads;
     // cpu使用率
-    public int cpuUses;
+    int cpuUses;
     // 挖矿场景 normal 正常模式, night 夜间挖矿模式
-    public String scene;
+    String scene;
     // 速度
-    public double speed;
+    double speed;
     // 温度
-    public double temperature;
+    double temperature;
     // 挖矿时间戳
-    public long miningTime;
+    long miningTime;
 
     @Override
     public String toString() {

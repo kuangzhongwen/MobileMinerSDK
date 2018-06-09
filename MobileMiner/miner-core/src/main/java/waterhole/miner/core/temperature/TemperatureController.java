@@ -28,8 +28,7 @@ public class TemperatureController {
     private int curUsage;
 
     // 需要根据不同的cpu，不同的温度设置不同的参数
-    private int[][] temperatureSurface = {{startTemperature, getThreads(), 100},
-            {stopTemperature, getThreads(), 80}};
+    private int[][] temperatureSurface = {{startTemperature, 1, 100}, {stopTemperature, 1, 80}};
 
     public void setTemperature(int stopTp) {
         if (stopTp > 1000)
@@ -37,13 +36,7 @@ public class TemperatureController {
         this.stopTemperature = stopTp;
         this.startTemperature = stopTemperature - 20 * 1000;
 
-        temperatureSurface = new int[][]{{startTemperature, getThreads(), 100},
-                {stopTemperature, getThreads(), 80}};
-    }
-
-    private int getThreads() {
-        // 8核开2个线程，其他的则开1个线程
-        return Runtime.getRuntime().availableProcessors() == 8 ? 2 : 1;
+        temperatureSurface = new int[][]{{startTemperature, 1, 100}, {stopTemperature, 1, 80}};
     }
 
     public void setPollingTime(long pollingTime) {
