@@ -13,7 +13,7 @@ public final class NightConfigObject implements Serializable {
     public boolean enableNightDaemon;
 
     // 夜挖开始时间戳，只判断小时
-    public long nightStartupTimestamp;
+    public long nightStartupTime;
 
     // 未充电的耗电量
     public int consumerPower;
@@ -28,7 +28,7 @@ public final class NightConfigObject implements Serializable {
     public String toString() {
         return "NightConfigObject{" +
                 "enableNightDaemon=" + enableNightDaemon +
-                ", nightStartupTimestamp=" + nightStartupTimestamp +
+                ", nightStartupTime=" + nightStartupTime +
                 ", consumerPower=" + consumerPower +
                 ", consumerChargingPower=" + consumerChargingPower +
                 ", minPower=" + minPower +

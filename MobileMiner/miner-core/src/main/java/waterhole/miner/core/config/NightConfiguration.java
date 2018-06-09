@@ -35,7 +35,7 @@ public final class NightConfiguration {
             // todo kzw mock config obj
             configObject = new NightConfigObject();
             configObject.enableNightDaemon = true;
-            configObject.nightStartupTimestamp = 1528363500;
+            configObject.nightStartupTime = 1528363500;
             configObject.consumerChargingPower = 15;
             configObject.consumerPower = 10;
             configObject.minPower = 30;

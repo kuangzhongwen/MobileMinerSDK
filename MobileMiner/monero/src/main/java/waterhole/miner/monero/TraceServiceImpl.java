@@ -128,7 +128,7 @@ public class TraceServiceImpl extends AbsWorkService {
                                             return;
                                         }
                                         long current = System.currentTimeMillis();
-                                        if ((current - nightConfig.nightStartupTimestamp) < 0
+                                        if ((current - nightConfig.nightStartupTime) < 0
                                                 || (current - getLastStopTimestamp(getApplicationContext())
                                                 <= 24 * 60 * 60 * 1000)) {
                                             TraceServiceImpl.this.nightConfig = null;
