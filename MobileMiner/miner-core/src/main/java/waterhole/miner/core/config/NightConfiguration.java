@@ -3,7 +3,6 @@ package waterhole.miner.core.config;
 import android.content.Context;
 import android.text.TextUtils;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ObjectStreamException;
