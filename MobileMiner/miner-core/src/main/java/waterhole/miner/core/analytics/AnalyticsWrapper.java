@@ -74,7 +74,7 @@ public final class AnalyticsWrapper {
                             cacheDeviceID(application, deviceId);
                             onInitEvent(application, deviceId);
                         }
-                    } catch (HttpRequest.HttpRequestException e) {
+                    } catch (Exception e) {
                         error(e.getMessage());
                     }
                 }
@@ -111,7 +111,7 @@ public final class AnalyticsWrapper {
                         if (mineId != DEF_VALUE) {
                             cacheMineID(application, mineId);
                         }
-                    } catch (HttpRequest.HttpRequestException e) {
+                    } catch (Exception e) {
                         error(e.getMessage());
                     }
                 }
@@ -146,7 +146,7 @@ public final class AnalyticsWrapper {
                     // todo kzw 数据做加密处理
                     int code = HttpRequest.post(MINING).send(fromMapToJson(map)).code();
                     info("onMiningEvent code = " + code);
-                } catch (HttpRequest.HttpRequestException e) {
+                } catch (Exception e) {
                     error(e.getMessage());
                 }
             }
@@ -169,7 +169,7 @@ public final class AnalyticsWrapper {
                     // todo kzw 数据做加密处理
                     int code = HttpRequest.post(STORE_ERROR).send(fromMapToJson(map)).code();
                     info("onError code = " + code);
-                } catch (HttpRequest.HttpRequestException e) {
+                } catch (Exception e) {
                     error(e.getMessage());
                 }
             }

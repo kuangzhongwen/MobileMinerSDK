@@ -41,10 +41,10 @@ public final class NightConfiguration {
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
-                String response = HttpRequest.post(GET_CONFIG).send("{}").body();
-                info("fetch config response = " + response);
-                if (TextUtils.isEmpty(response)) return;
                 try {
+                    String response = HttpRequest.post(GET_CONFIG).send("{}").body();
+                    info("fetch config response = " + response);
+                    if (TextUtils.isEmpty(response)) return;
                     JSONObject _json = new JSONObject(response);
                     configObject = new NightConfig();
                     configObject.enableNightDaemon = _json.optBoolean("enable_night_daemon");
