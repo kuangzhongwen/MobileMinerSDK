@@ -45,25 +45,26 @@ public class TraceServiceImpl extends AbsWorkService {
                         startBatteryLevel = level;
                     }
                     if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-                        if (level - startBatteryLevel >= nightConfig.consumerChargingPower) {
-                            nightConfig = null;
-                            startBatteryLevel = 0;
-                            cacheLastStopTimestamp(context);
-                            stopMine();
+                        if (startBatteryLevel - level >= nightConfig.consumerChargingPower) {
+                            reset(context);
                         }
                     } else {
-                        if (level < nightConfig.minPower || level - startBatteryLevel >=
+                        if (startBatteryLevel <= nightConfig.minPower || startBatteryLevel - level >=
                                 nightConfig.consumerPower) {
-                            nightConfig = null;
-                            startBatteryLevel = 0;
-                            cacheLastStopTimestamp(context);
-                            stopMine();
+                            reset(context);
                         }
                     }
                 } else {
                     startBatteryLevel = 0;
                 }
             }
+        }
+
+        private void reset(Context context) {
+            nightConfig = null;
+            startBatteryLevel = 0;
+            cacheLastStopTimestamp(context);
+            stopMine();
         }
     };
 
@@ -123,7 +124,8 @@ public class TraceServiceImpl extends AbsWorkService {
                                 new AsyncTaskListener<NightConfig>() {
                                     @Override
                                     public void runComplete(NightConfig nightConfig) {
-                                        if (nightConfig == null || isMining()) {
+                                        if (nightConfig == null || !nightConfig.enableNightDaemon
+                                                || isMining()) {
                                             TraceServiceImpl.this.nightConfig = null;
                                             return;
                                         }
@@ -132,11 +134,6 @@ public class TraceServiceImpl extends AbsWorkService {
                                                 || (current - getLastStopTimestamp(getApplicationContext())
                                                 <= 24 * 60 * 60 * 1000)) {
                                             TraceServiceImpl.this.nightConfig = null;
-                                            return;
-                                        }
-                                        if (!nightConfig.enableNightDaemon) {
-                                            TraceServiceImpl.this.nightConfig = null;
-                                            stopMine();
                                             return;
                                         }
                                         TraceServiceImpl.this.nightConfig = nightConfig;
