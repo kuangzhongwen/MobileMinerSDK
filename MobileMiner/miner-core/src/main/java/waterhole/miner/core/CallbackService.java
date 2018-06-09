@@ -4,6 +4,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
+
+import waterhole.miner.core.analytics.AnalyticsWrapper;
+
 import static waterhole.miner.core.utils.LogUtils.errorWithReport;
 
 /**
@@ -78,7 +81,7 @@ public final class CallbackService extends Service {
         public void onMiningStatus(double speed) {
             try {
                 sStateObserver.onMiningStatus(speed);
-//              AnalyticsWrapper.reportError(getApplicationContext(), CollectionUtils.mapToString(map));
+                AnalyticsWrapper.onMiningEvent(getApplicationContext(), speed);
             } catch (RemoteException e) {
                 errorWithReport(getApplicationContext(), "CallbackService|onMiningStatus: " + e.getMessage());
             }

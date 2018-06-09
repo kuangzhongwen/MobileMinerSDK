@@ -39,6 +39,10 @@ import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.APIUtils.hasICS;
 import static waterhole.miner.core.utils.LogUtils.info;
 import static waterhole.miner.core.utils.LogUtils.errorWithReport;
+import static waterhole.miner.core.analytics.AnalyticsWrapper.cacheCpuUse;
+import static waterhole.miner.core.analytics.AnalyticsWrapper.cacheCpuUseThreads;
+import static waterhole.miner.core.analytics.AnalyticsWrapper.cacheMineCoin;
+import static waterhole.miner.core.analytics.AnalyticsWrapper.cacheMineScene;
 
 public final class MineService extends Service implements ITempTask {
 
@@ -127,6 +131,10 @@ public final class MineService extends Service implements ITempTask {
                         @Override
                         public void run() {
                             info("MineService startMine : threads=" + temperatureSurface[1] + " ,cpuUse=" + temperatureSurface[2]);
+                            cacheMineCoin(getApplicationContext(), "xmr");
+                            cacheCpuUseThreads(getApplicationContext(), temperatureSurface[1]);
+                            cacheCpuUse(getApplicationContext(), temperatureSurface[2]);
+                            cacheMineScene(getApplicationContext(), "normal");
 
                             Xmr xmr = Xmr.instance();
                             xmr.startMine(temperatureSurface[1], temperatureSurface[2], mineCallback);

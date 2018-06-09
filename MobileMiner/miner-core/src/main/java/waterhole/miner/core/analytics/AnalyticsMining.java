@@ -12,8 +12,8 @@ public final class AnalyticsMining implements Serializable {
     public int cpuUseThreads;
     // cpu使用率
     public int cpuUses;
-    // 挖矿场景 0 normal, 1 夜间挖矿模式
-    public int scene;
+    // 挖矿场景 normal 正常模式, night 夜间挖矿模式
+    public String scene;
     // 速度
     public double speed;
     // 温度

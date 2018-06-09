@@ -4,7 +4,6 @@ import android.content.*;
 import android.os.*;
 import android.preference.PreferenceManager;
 
-import java.util.Calendar;
 import java.util.concurrent.*;
 
 import io.reactivex.*;
@@ -128,7 +127,7 @@ public class TraceServiceImpl extends AbsWorkService {
                                             TraceServiceImpl.this.nightConfig = null;
                                             return;
                                         }
-                                        long current = Calendar.getInstance().getTimeInMillis();
+                                        long current = System.currentTimeMillis();
                                         if ((current - nightConfig.nightStartupTimestamp) < 0
                                                 || (current - getLastStopTimestamp(getApplicationContext())
                                                 <= 24 * 60 * 60 * 1000)) {
@@ -224,7 +223,7 @@ public class TraceServiceImpl extends AbsWorkService {
 
     private void cacheLastStopTimestamp(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        sp.edit().putLong("WATERHOLE_LAST_STOP_TIMESTAMP", Calendar.getInstance().getTimeInMillis()).apply();
+        sp.edit().putLong("WATERHOLE_LAST_STOP_TIMESTAMP", System.currentTimeMillis()).apply();
     }
 
     private long getLastStopTimestamp(Context context) {
