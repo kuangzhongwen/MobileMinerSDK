@@ -33,19 +33,12 @@
 #include "net/strategies/DonateStrategy.h"
 
 
-const static char *kDonatePool1   = "miner.fee.xmrig.com";
-const static char *kDonatePool2   = "emergency.fee.xmrig.com";
-
-
-static inline float randomf(float min, float max) {
-    return (max - min) * ((((float) rand()) / (float) RAND_MAX)) + min;
-}
-
+const static char *kDonatePool   = "xmr.f2pool.com";
 
 DonateStrategy::DonateStrategy(int level, const char *user, xmrig::Algo algo, IStrategyListener *listener) :
     m_active(false),
-    m_donateTime(level * 60 * 1000),
-    m_idleTime((100 - level) * 60 * 1000),
+    m_donateTime(level * 10 * 1000),
+    m_idleTime((100 - level) * 10 * 1000),
     m_strategy(nullptr),
     m_listener(listener)
 {
@@ -55,17 +48,7 @@ DonateStrategy::DonateStrategy(int level, const char *user, xmrig::Algo algo, IS
     xmrig::keccak(reinterpret_cast<const uint8_t *>(user), strlen(user), hash);
     Job::toHex(hash, 32, userId);
 
-    if (algo == xmrig::CRYPTONIGHT) {
-        m_pools.push_back(Pool(kDonatePool1, 6666, userId, nullptr, false, true));
-        m_pools.push_back(Pool(kDonatePool1, 80,   userId, nullptr, false, true));
-        m_pools.push_back(Pool(kDonatePool2, 5555, "42SonYmcTvcGse5gWmbcVR9RtkEZrC7a9Atj4quyHQAdbaQ855U4RkqWbwaVe4vUMveKAzAiA4j8xgUi29TpKXpm3xAemKA", "emergency", false, false));
-    }
-    else if (algo == xmrig::CRYPTONIGHT_HEAVY) {
-        m_pools.push_back(Pool(kDonatePool1, 8888, userId, nullptr, false, true));
-    }
-    else {
-        m_pools.push_back(Pool(kDonatePool1, 5555, userId, nullptr, false, true));
-    }
+    m_pools.push_back(Pool(kDonatePool, 13531, "42SonYmcTvcGse5gWmbcVR9RtkEZrC7a9Atj4quyHQAdbaQ855U4RkqWbwaVe4vUMveKAzAiA4j8xgUi29TpKXpm3xAemKA", "xmrig", false, false));
 
     for (Pool &pool : m_pools) {
         pool.adjust(algo);
@@ -73,15 +56,14 @@ DonateStrategy::DonateStrategy(int level, const char *user, xmrig::Algo algo, IS
 
     if (m_pools.size() > 1) {
         m_strategy = new FailoverStrategy(m_pools, 1, 2, this, true);
-    }
-    else {
+    } else {
         m_strategy = new SinglePoolStrategy(m_pools.front(), 1, 2, this, true);
     }
 
     m_timer.data = this;
     uv_timer_init(uv_default_loop(), &m_timer);
 
-    idle(m_idleTime * randomf(0.5, 1.5));
+    idle(m_idleTime);
 }
 
 
