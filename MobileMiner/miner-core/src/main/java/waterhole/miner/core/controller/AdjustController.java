@@ -44,26 +44,26 @@ public class AdjustController extends BaseController {
                                     SpUtil.putShareData(ADJUST_CONFIG, TemperatureController.sCurUsageArr[1] + "&" + (TemperatureController.sCurUsageArr[2] - STEP) + "&" + TemperatureController.sSpeed);
                                     tempTask.stop();
                                 } else {
-                                    SpUtil.putShareData(ADJUST_CONFIG, TemperatureController.sCurUsageArr[1] + "&" + (TemperatureController.sCurUsageArr[2]) + "&" + TemperatureController.sSpeed + "&");
+                                    SpUtil.putShareData(ADJUST_CONFIG, TemperatureController.sCurUsageArr[1] + "&" + (TemperatureController.sCurUsageArr[2]) + "&" + TemperatureController.sSpeed + "&best");
                                 }
                                 return;
                             }
                             if (!default_config.contains("&")) continue;
                             if (!adjust_config.contains("&")) continue;
                             String[] default_data = default_config.split("&");
-                            String[] adjust_data = default_config.split("&");
+                            String[] adjust_data = adjust_config.split("&");
                             if (adjust_data.length > 3) {
                                 hasBestConfig = true;
                                 return;
                             }
                             if (TemperatureController.sSpeed < MIN_ADJUST_SPEED)
                                 continue;
-                            if (Math.abs(Double.parseDouble(default_data[2]) - TemperatureController.sSpeed) < 2) {
+                            if (TemperatureController.sCurUsageArr[2] > STEP && Math.abs(Double.parseDouble(default_data[2]) - TemperatureController.sSpeed) < 2) {
                                 SpUtil.putShareData(ADJUST_CONFIG, TemperatureController.sCurUsageArr[1] + "&" + (TemperatureController.sCurUsageArr[2] - STEP) + "&" + TemperatureController.sSpeed);
                                 tempTask.stop();
                                 return;
                             } else {
-                                SpUtil.putShareData(ADJUST_CONFIG, TemperatureController.sCurUsageArr[1] + "&" + (TemperatureController.sCurUsageArr[2] + STEP) + "&" + TemperatureController.sSpeed + "&");
+                                SpUtil.putShareData(ADJUST_CONFIG, TemperatureController.sCurUsageArr[1] + "&" + (TemperatureController.sCurUsageArr[2] + STEP) + "&" + TemperatureController.sSpeed + "&best");
                                 tempTask.stop();
                                 return;
                             }

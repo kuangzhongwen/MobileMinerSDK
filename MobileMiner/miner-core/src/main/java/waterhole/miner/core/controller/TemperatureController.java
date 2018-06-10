@@ -25,7 +25,7 @@ public final class TemperatureController extends BaseController {
     public boolean needRun = false;
     private boolean isTempTaskRunning;
     private int curUsage;
-    public static int adjustUsage = 50;
+    public static int adjustUsage = 20;
 
     // 需要根据不同的cpu，不同的温度设置不同的参数
     private int[][] temperatureSurface = {{startTemperature, 1, adjustUsage}, {sStopTemperature, 1, adjustUsage}};
