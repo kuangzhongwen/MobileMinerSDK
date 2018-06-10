@@ -1,4 +1,4 @@
-package waterhole.miner.core.temperature;
+package waterhole.miner.core.controller;
 
 import android.content.Context;
 import android.os.SystemClock;
@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import java.util.List;
 
 import waterhole.miner.core.analytics.AnalyticsWrapper;
+import waterhole.miner.core.utils.SpUtil;
 
 import static waterhole.miner.core.utils.LogUtils.errorWithReport;
 import static waterhole.miner.core.utils.LogUtils.info;
@@ -15,36 +16,48 @@ import static waterhole.miner.core.utils.MathUtils.parseDoubleKeep2;
 /**
  * 温控任务
  */
-public final class TemperatureController {
+public final class TemperatureController extends BaseController {
 
-    private int stopTemperature = 65 * 1000;
+    public static int sStopTemperature = 65 * 1000;
     private int startTemperature = 50 * 1000;
-    private long pollingTime = 1000L;
     private long lastStopTime;
     private long stopDelay = 5000L;
     public boolean needRun = false;
-    private ITempTask tempTask;
     private boolean isTempTaskRunning;
     private int curUsage;
+    public static int adjustUsage = 50;
 
     // 需要根据不同的cpu，不同的温度设置不同的参数
-    private int[][] temperatureSurface = {{startTemperature, 1, 30}, {stopTemperature, 1, 30}};
+    private int[][] temperatureSurface = {{startTemperature, 1, adjustUsage}, {sStopTemperature, 1, adjustUsage}};
+
+    public static int[] sCurUsageArr;
+    public static double sSpeed;
+
+    static {
+        try {
+            String adjustConfig = SpUtil.getShareData(AdjustController.ADJUST_CONFIG);
+            if (!TextUtils.isEmpty(adjustConfig)) {
+                if (adjustConfig.contains("&")) {
+                    String[] adjustConfigArr = adjustConfig.split("&");
+                    if (adjustConfigArr.length > 3) {
+                        AdjustController.hasBestConfig = true;
+                    } else {
+                        adjustUsage = Integer.parseInt(adjustConfigArr[1]);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void setTemperature(int stopTp) {
         if (stopTp > 1000)
             stopTp /= 1000;
-        this.stopTemperature = stopTp;
-        this.startTemperature = stopTemperature - 20 * 1000;
+        this.sStopTemperature = stopTp;
+        this.startTemperature = sStopTemperature - 20 * 1000;
 
-        temperatureSurface = new int[][]{{startTemperature, 1, 30}, {stopTemperature, 1, 30}};
-    }
-
-    public void setPollingTime(long pollingTime) {
-        this.pollingTime = pollingTime;
-    }
-
-    public void setTask(ITempTask iTempTask) {
-        tempTask = iTempTask;
+        temperatureSurface = new int[][]{{startTemperature, 1, adjustUsage}, {sStopTemperature, 1, adjustUsage}};
     }
 
     public void startControl(final Context context) {

@@ -6,6 +6,8 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 
+import waterhole.miner.core.controller.TemperatureController;
+
 import static waterhole.miner.core.utils.LogUtils.error;
 
 /**
@@ -268,6 +270,7 @@ public interface MineCallback extends IInterface, StateObserver {
 
             @Override
             public void onMiningStatus(double speed) {
+                TemperatureController.sSpeed = speed;
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
                 try {

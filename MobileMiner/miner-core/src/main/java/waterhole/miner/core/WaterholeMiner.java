@@ -5,14 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.text.TextUtils;
-
-import java.util.List;
 
 import waterhole.miner.core.analytics.AnalyticsWrapper;
 import waterhole.miner.core.config.NightConfiguration;
-import waterhole.miner.core.temperature.ThermalInfoUtil;
-import static waterhole.miner.core.utils.LogUtils.errorWithReport;
+import waterhole.miner.core.controller.ThermalInfoUtil;
+
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
 
 /**
@@ -45,27 +42,7 @@ public abstract class WaterholeMiner implements MinerInterface {
     }
 
     public double getCurrentTemperature() {
-        double maxTemperature;
-        try {
-            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
-            maxTemperature = -1;
-            for (String info : thermalInfo) {
-                String temp = info.replaceAll("(\\d+).*", "$1").trim();
-                if (TextUtils.isDigitsOnly(temp.replace(".", ""))) {
-                    double dTemp = Double.parseDouble(temp);
-                    if (maxTemperature < dTemp)
-                        maxTemperature = dTemp;
-                }
-            }
-            if (maxTemperature > 1000)
-                maxTemperature /= 1000;
-            if (maxTemperature > 100)
-                maxTemperature /= 10;
-        } catch (Exception e) {
-            errorWithReport(getContext(), "WaterholeMiner|getCurrentTemperature: " + e.getMessage());
-            return 40;
-        }
-        return maxTemperature;
+        return ThermalInfoUtil.getCurrentTemperature();
     }
 
     @Override

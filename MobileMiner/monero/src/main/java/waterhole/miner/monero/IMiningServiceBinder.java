@@ -6,7 +6,7 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 
-import waterhole.miner.core.temperature.TemperatureController;
+import waterhole.miner.core.controller.TemperatureController;
 
 /**
  * @author huwwds on 2018/05/21

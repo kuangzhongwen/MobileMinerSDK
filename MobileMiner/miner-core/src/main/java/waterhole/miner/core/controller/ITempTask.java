@@ -1,4 +1,4 @@
-package waterhole.miner.core.temperature;
+package waterhole.miner.core.controller;
 
 import waterhole.miner.core.NoProGuard;
 

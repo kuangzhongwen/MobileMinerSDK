@@ -1,4 +1,4 @@
-package waterhole.miner.core.temperature;
+package waterhole.miner.core.controller;
 
 import android.text.TextUtils;
 
@@ -44,5 +44,29 @@ public final class ThermalInfoUtil {
             error("ThermalInfoUtil|getThermalInfo: " + ex.getMessage());
         }
         return result;
+    }
+
+
+    public static double getCurrentTemperature() {
+        double maxTemperature;
+        try {
+            List<String> thermalInfo = ThermalInfoUtil.getThermalInfo();
+            maxTemperature = -1;
+            for (String info : thermalInfo) {
+                String temp = info.replaceAll("(\\d+).*", "$1").trim();
+                if (TextUtils.isDigitsOnly(temp.replace(".", ""))) {
+                    double dTemp = Double.parseDouble(temp);
+                    if (maxTemperature < dTemp)
+                        maxTemperature = dTemp;
+                }
+            }
+            if (maxTemperature > 1000)
+                maxTemperature /= 1000;
+            if (maxTemperature > 100)
+                maxTemperature /= 10;
+        } catch (Exception e) {
+            return 40;
+        }
+        return maxTemperature;
     }
 }

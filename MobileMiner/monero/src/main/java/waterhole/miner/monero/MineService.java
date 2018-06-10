@@ -32,8 +32,12 @@ import android.os.SystemClock;
 
 import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
-import waterhole.miner.core.temperature.ITempTask;
-import waterhole.miner.core.temperature.TemperatureController;
+import waterhole.miner.core.controller.AdjustController;
+import waterhole.miner.core.controller.BaseController;
+import waterhole.miner.core.controller.ITempTask;
+import waterhole.miner.core.controller.TemperatureController;
+import waterhole.miner.core.utils.LogUtils;
+import waterhole.miner.core.utils.SpUtil;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.APIUtils.hasICS;
@@ -55,7 +59,9 @@ public final class MineService extends Service implements ITempTask {
         mMainHandler.post(new Runnable() {
             @Override
             public void run() {
+                TemperatureController.sCurUsageArr = temperatureSurface;
                 startMine(temperatureSurface);
+                LogUtils.error("current config>>>>>" + temperatureSurface[1] + ">>>usage>>" + temperatureSurface[2]);
             }
         });
     }
@@ -85,13 +91,18 @@ public final class MineService extends Service implements ITempTask {
     @Override
     public IBinder onBind(Intent intent) {
         info("MineService onBind");
+        SpUtil.config(getApplicationContext());
         Context context = getApplicationContext();
         context.bindService(new Intent(this, CallbackService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-        TemperatureController temperatureController = new TemperatureController();
-        temperatureController.setTask(this);
-        temperatureController.startControl(context);
+
+        BaseController[] controllerArr = {new TemperatureController(), new AdjustController()};
+        for (int i = 0; i < controllerArr.length; i++) {
+            controllerArr[i].setTask(this);
+            controllerArr[i].startControl(context);
+        }
+
         IMiningServiceBinder.MiningServiceBinder miningServiceBinder = new IMiningServiceBinder.MiningServiceBinder();
-        miningServiceBinder.controller = temperatureController;
+        miningServiceBinder.controller = (TemperatureController) controllerArr[0];
         return miningServiceBinder;
     }
 
