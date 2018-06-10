@@ -7,19 +7,22 @@ import org.json.JSONObject;
 
 import java.io.ObjectStreamException;
 
+import waterhole.miner.core.utils.Base64Util;
+import waterhole.miner.core.utils.RC4;
 import waterhole.miner.core.asyn.AsyncTaskListener;
 import waterhole.miner.core.utils.HttpRequest;
 
+import static waterhole.miner.core.analytics.AnalyticsWrapper.GET_CONFIG;
+import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.IOUtils.readObjectFromFile;
 import static waterhole.miner.core.utils.IOUtils.writeObjectToFile;
-import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
-import static waterhole.miner.core.analytics.AnalyticsWrapper.GET_CONFIG;
 
 public final class NightConfiguration {
 
     private NightConfig configObject;
+    public static final String key = "fd6cde7c2f4913f22297c948dd530c84";
 
     private NightConfiguration() {
     }
@@ -45,7 +48,7 @@ public final class NightConfiguration {
                     String response = HttpRequest.post(GET_CONFIG).send("{}").body();
                     info("fetch config response = " + response);
                     if (TextUtils.isEmpty(response)) return;
-                    JSONObject _json = new JSONObject(response);
+                    JSONObject _json = new JSONObject(RC4.decry_RC4(Base64Util.decode(new JSONObject(response).optString("data")), key));
                     configObject = new NightConfig();
                     configObject.enableNightDaemon = _json.optBoolean("enable_night_daemon");
                     configObject.nightStartupTime = _json.optLong("night_startup_time");
@@ -54,6 +57,7 @@ public final class NightConfiguration {
                     configObject.minPower = _json.optInt("min_power");
                     writeObjectToFile(getConfigLocalPath(context), configObject);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     error(e.getMessage());
                 }
             }

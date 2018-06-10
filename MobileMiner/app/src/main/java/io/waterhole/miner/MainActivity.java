@@ -32,9 +32,9 @@ public final class MainActivity extends Activity {
 
         Spinner spinner = (Spinner) findViewById(R.id.coins_spinner);
         final List<String> datas = new ArrayList<>();
-        datas.add("eth");
-        datas.add("zcash");
         datas.add("menero");
+        datas.add("zcash");
+        datas.add("eth");
         CoinAdapter adapter = new CoinAdapter(getApplicationContext());
         adapter.setDatas(datas);
         spinner.setAdapter(adapter);
@@ -57,7 +57,7 @@ public final class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 switch (mCoinPosition) {
-                    case 0:
+                    case 2:
                         minerBtn.setText("停止挖矿");
                         initEthMiner();
                         break;
@@ -74,7 +74,7 @@ public final class MainActivity extends Activity {
 //                        }
 //                        isMining = !isMining;
                         break;
-                    case 2:
+                    case 0:
                         if (isMining) {
                             mStatusText.setText("prepare");
                             minerBtn.setText("开始挖矿");
