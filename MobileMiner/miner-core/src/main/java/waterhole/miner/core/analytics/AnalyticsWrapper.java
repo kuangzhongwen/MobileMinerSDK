@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import waterhole.miner.core.BuildConfig;
 import waterhole.miner.core.config.NightConfiguration;
@@ -284,7 +285,7 @@ public final class AnalyticsWrapper {
     }
 
     private static String getUniqueID() {
-        return "35" + Build.BOARD.length() % 10 +
+         String m_szDevIDShort = "35" + Build.BOARD.length() % 10 +
                 Build.BRAND.length() % 10 +
                 Build.CPU_ABI.length() % 10 +
                 Build.DEVICE.length() % 10 +
@@ -297,6 +298,8 @@ public final class AnalyticsWrapper {
                 Build.TAGS.length() % 10 +
                 Build.TYPE.length() % 10 +
                 Build.USER.length() % 10;
+         String serial = Build.SERIAL;
+         return new UUID(m_szDevIDShort.hashCode(), serial.hashCode()).toString();
     }
 
     private static int optJsonIntAttr(String response, String key) {
