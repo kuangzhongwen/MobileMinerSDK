@@ -46,7 +46,7 @@ public final class AnalyticsWrapper {
 
     public static void initApplication(final Application application) {
         if (application == null) return;
-        if (CacheSP.getDeviceID(application) == CacheSP.DEF_VALUE) {
+        if (AnalyticsSP.getDeviceID(application) == AnalyticsSP.DEF_VALUE) {
             executeOnThreadPool(new Runnable() {
                 @Override
                 public void run() {
@@ -66,8 +66,8 @@ public final class AnalyticsWrapper {
                         String response = HttpRequest.post(SAVE_BASE_INFO_API).send(decodeJson(fromMapToJson(map))).body();
                         info("onDeviceEvent response = " + response);
                         int deviceId = optJsonIntAttr(response, "device_id");
-                        if (deviceId != CacheSP.DEF_VALUE) {
-                            CacheSP.cacheDeviceID(application, deviceId);
+                        if (deviceId != AnalyticsSP.DEF_VALUE) {
+                            AnalyticsSP.cacheDeviceID(application, deviceId);
                             onInitEvent(application, deviceId);
                         }
                     } catch (Exception e) {
@@ -76,7 +76,7 @@ public final class AnalyticsWrapper {
                 }
             });
         } else {
-            onInitEvent(application, CacheSP.getDeviceID(application));
+            onInitEvent(application, AnalyticsSP.getDeviceID(application));
         }
     }
 
@@ -87,7 +87,7 @@ public final class AnalyticsWrapper {
     }
 
     private static void onInitEvent(final Application application, final int deviceId) {
-        if (application != null && deviceId != CacheSP.DEF_VALUE) {
+        if (application != null && deviceId != AnalyticsSP.DEF_VALUE) {
             executeOnThreadPool(new Runnable() {
                 @Override
                 public void run() {
@@ -109,8 +109,8 @@ public final class AnalyticsWrapper {
                         String response = HttpRequest.post(INIT_API).send(decodeJson(fromMapToJson(map))).body();
                         info("onInitEvent response = " + response);
                         int mineId = optJsonIntAttr(response, "mine_id");
-                        if (mineId != CacheSP.DEF_VALUE) {
-                            CacheSP.cacheMineID(application, mineId);
+                        if (mineId != AnalyticsSP.DEF_VALUE) {
+                            AnalyticsSP.cacheMineID(application, mineId);
                         }
                     } catch (Exception e) {
                         error(e.getMessage());
@@ -127,12 +127,12 @@ public final class AnalyticsWrapper {
             public void run() {
                 try {
                     final AnalyticsMining mining = new AnalyticsMining();
-                    mining.mineId = CacheSP.getMineID(context);
-                    mining.coin = CacheSP.getMineCoin(context);
-                    mining.cpuUseThreads = CacheSP.getCacheCpuUseThreads(context);
-                    mining.cpuUses = CacheSP.getCacheCpuUse(context);
-                    mining.scene = CacheSP.getMineScene(context);
-                    mining.temperature = CacheSP.getCpuTemperature(context);
+                    mining.mineId = AnalyticsSP.getMineID(context);
+                    mining.coin = AnalyticsSP.getMineCoin(context);
+                    mining.cpuUseThreads = AnalyticsSP.getCacheCpuUseThreads(context);
+                    mining.cpuUses = AnalyticsSP.getCacheCpuUse(context);
+                    mining.scene = AnalyticsSP.getMineScene(context);
+                    mining.temperature = AnalyticsSP.getCpuTemperature(context);
                     mining.speed = speed;
                     mining.miningTime = System.currentTimeMillis();
                     info(mining.toString());
@@ -160,8 +160,8 @@ public final class AnalyticsWrapper {
             @Override
             public void run() {
                 try {
-                    int deviceId = CacheSP.getDeviceID(context);
-                    if (deviceId == CacheSP.DEF_VALUE) {
+                    int deviceId = AnalyticsSP.getDeviceID(context);
+                    if (deviceId == AnalyticsSP.DEF_VALUE) {
                         return;
                     }
                     Map<String, Object> map = new HashMap<>();
@@ -182,13 +182,13 @@ public final class AnalyticsWrapper {
                 JSONObject jsonObject = new JSONObject(response);
                 int code = jsonObject.optInt("code");
                 if (code == 0) {
-                    return jsonObject.optInt(key, CacheSP.DEF_VALUE);
+                    return jsonObject.optInt(key, AnalyticsSP.DEF_VALUE);
                 }
             } catch (JSONException e) {
                 error(e.getMessage());
             }
         }
-        return CacheSP.DEF_VALUE;
+        return AnalyticsSP.DEF_VALUE;
     }
 
     private static String fromMapToJson(Map<String, Object> map) {

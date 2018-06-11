@@ -43,10 +43,10 @@ import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.APIUtils.hasICS;
 import static waterhole.miner.core.utils.LogUtils.info;
 import static waterhole.miner.core.utils.LogUtils.errorWithReport;
-import static waterhole.miner.core.analytics.CacheSP.cacheCpuUse;
-import static waterhole.miner.core.analytics.CacheSP.cacheCpuUseThreads;
-import static waterhole.miner.core.analytics.CacheSP.cacheMineCoin;
-import static waterhole.miner.core.analytics.CacheSP.cacheMineScene;
+import static waterhole.miner.core.analytics.AnalyticsSP.cacheCpuUse;
+import static waterhole.miner.core.analytics.AnalyticsSP.cacheCpuUseThreads;
+import static waterhole.miner.core.analytics.AnalyticsSP.cacheMineCoin;
+import static waterhole.miner.core.analytics.AnalyticsSP.cacheMineScene;
 
 public final class MineService extends Service implements ITempTask {
 

@@ -3,7 +3,7 @@ package waterhole.miner.core.analytics;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public final class CacheSP {
+public final class AnalyticsSP {
 
     static final int DEF_VALUE = -1;
 
