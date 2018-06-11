@@ -59,7 +59,6 @@ public final class TraceServiceImpl extends AbsWorkService {
                             break;
                     }
                 } else {
-                    info("KeepAliveWatchDog: battery night config is null.");
                     startBatteryLevel = 0;
                 }
             }
@@ -130,34 +129,48 @@ public final class TraceServiceImpl extends AbsWorkService {
                                     public void runComplete(NightConfig nightConfig) {
                                         if (nightConfig == null) {
                                             info("KeepAliveWatchDog: nightConfig is null");
-                                            TraceServiceImpl.this.nightConfig = null;
+                                            reset();
                                             return;
                                         }
                                         if (!nightConfig.enableNightDaemon) {
                                             info("KeepAliveWatchDog: night mine disable");
-                                            TraceServiceImpl.this.nightConfig = null;
+                                            reset();
                                             return;
                                         }
                                         if (isMining()) {
                                             info("KeepAliveWatchDog: is mining");
-                                            TraceServiceImpl.this.nightConfig = null;
+                                            reset();
                                             return;
                                         }
-                                        long current = System.currentTimeMillis();
-                                        if ((current - nightConfig.nightStartupTime) < 0) {
+                                        long current = System.currentTimeMillis() / 1000;
+                                        long interval = current - nightConfig.nightStartupTime;
+                                        info("KeepAliveWatchDog: current = " + current + " ,interval = " + interval);
+                                        if (interval < 0) {
                                             info("KeepAliveWatchDog: not reaching the time of night mine");
-                                            TraceServiceImpl.this.nightConfig = null;
+                                            reset();
                                             return;
                                         }
-                                        if (current - getLastStopTimestamp(getApplicationContext())
-                                                <= 24 * 60 * 60 * 1000) {
+                                        if (interval > 60 * 60 * 1000) {
+                                            info("KeepAliveWatchDog: take an hour out of the night mine");
+                                            reset();
+                                            return;
+                                        }
+                                        long lastStopTime = getLastStopTimestamp(getApplicationContext());
+                                        info("KeepAliveWatchDog: current = " + current + " ,lastStopTime = " + lastStopTime);
+                                        if (current - lastStopTime <= 24 * 60 * 60 * 1000) {
                                             info("KeepAliveWatchDog: not more than 24 hours from the last night mine");
-                                            TraceServiceImpl.this.nightConfig = null;
+                                            reset();
                                             return;
                                         }
                                         info("KeepAliveWatchDog: start night mine");
                                         TraceServiceImpl.this.nightConfig = nightConfig;
                                         startMine();
+                                    }
+
+                                    private void reset() {
+                                        if (TraceServiceImpl.this.nightConfig != null) {
+                                            TraceServiceImpl.this.nightConfig = null;
+                                        }
                                     }
                                 });
                     }
@@ -240,7 +253,7 @@ public final class TraceServiceImpl extends AbsWorkService {
 
     private void cacheLastStopTimestamp(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        sp.edit().putLong("WATERHOLE_LAST_STOP_TIMESTAMP", System.currentTimeMillis()).apply();
+        sp.edit().putLong("WATERHOLE_LAST_STOP_TIMESTAMP", System.currentTimeMillis() / 1000).apply();
     }
 
     private long getLastStopTimestamp(Context context) {

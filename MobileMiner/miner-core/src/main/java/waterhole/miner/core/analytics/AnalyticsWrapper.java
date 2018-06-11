@@ -98,7 +98,7 @@ public final class AnalyticsWrapper {
                         init.packageName = application.getPackageName();
                         init.appName = AndroidUtils.getAppName(application);
                         init.appVersion = AndroidUtils.getAppVersionName(application);
-                        init.startTime = System.currentTimeMillis();
+                        init.startTime = System.currentTimeMillis() / 1000;
                         Map<String, Object> map = new HashMap<>();
                         map.put("device_id", init.deviceId);
                         map.put("sdk_version", init.sdkVersion);
@@ -134,7 +134,7 @@ public final class AnalyticsWrapper {
                     mining.scene = AnalyticsSP.getMineScene(context);
                     mining.temperature = AnalyticsSP.getCpuTemperature(context);
                     mining.speed = speed;
-                    mining.miningTime = System.currentTimeMillis();
+                    mining.miningTime = System.currentTimeMillis() / 1000;
                     info(mining.toString());
                     Map<String, Object> map = new HashMap<>();
                     map.put("mine_id", mining.mineId);
