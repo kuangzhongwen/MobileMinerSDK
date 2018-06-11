@@ -60,12 +60,12 @@ public final class AnalyticsWrapper {
                         final AnalyticsDevice device = new AnalyticsDevice();
                         device.deviceName = Build.MODEL;
                         device.deviceVersion = Build.VERSION.RELEASE;
+                        device.androidId = getUniqueID();
                         device.abi = Build.CPU_ABI;
                         device.cpuCoreThreads = Runtime.getRuntime().availableProcessors();
                         Map<String, Object> map = new HashMap<>();
                         map.put("device_name", device.deviceName);
                         map.put("device_version", device.deviceVersion);
-                        device.androidId = getUniqueID();
                         map.put("android_id", device.androidId);
                         map.put("abi", device.abi);
                         map.put("cpu_core_threads", device.cpuCoreThreads);
