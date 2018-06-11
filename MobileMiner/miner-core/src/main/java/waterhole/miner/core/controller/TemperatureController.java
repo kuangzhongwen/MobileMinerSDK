@@ -37,13 +37,12 @@ public final class TemperatureController extends BaseController {
         try {
             String adjustConfig = SpUtil.getShareData(AdjustController.ADJUST_CONFIG);
             if (!TextUtils.isEmpty(adjustConfig)) {
-                if (adjustConfig.contains("&")) {
-                    String[] adjustConfigArr = adjustConfig.split("&");
+                if (adjustConfig.contains(":")) {
+                    String[] adjustConfigArr = adjustConfig.split(":");
                     if (adjustConfigArr.length > 3) {
                         AdjustController.hasBestConfig = true;
-                    } else {
-                        adjustUsage = Integer.parseInt(adjustConfigArr[1]);
                     }
+                    adjustUsage = Integer.parseInt(adjustConfigArr[1]);
                 }
             }
         } catch (Exception e) {
