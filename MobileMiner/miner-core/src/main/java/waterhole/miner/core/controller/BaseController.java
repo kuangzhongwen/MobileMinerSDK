@@ -6,8 +6,8 @@ import android.content.Context;
  * Created by huweidong on 2018/06/10
  * email : huwwds@gmail.com
  */
-
 public class BaseController {
+
     protected ITempTask tempTask;
     protected long pollingTime = 1000L;
     protected boolean fullPower = false;

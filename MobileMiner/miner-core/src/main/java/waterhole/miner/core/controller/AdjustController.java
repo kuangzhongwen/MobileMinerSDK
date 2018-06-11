@@ -10,7 +10,7 @@ import waterhole.miner.core.utils.SpUtil;
  * 自适控制器
  */
 
-public class AdjustController extends BaseController {
+public final class AdjustController extends BaseController {
 
     public static final String ADJUST_CONFIG = "adjust_config";
     public static final String DEFAULT_CONFIG = "default_config";
@@ -18,7 +18,6 @@ public class AdjustController extends BaseController {
     public static final int DEFAULT_REDUCE_FREQ_TEMP = 40;
     public static final int MIN_ADJUST_SPEED = 3;
     public static boolean hasBestConfig;
-
 
     @Override
     public void startControl(Context context) {
