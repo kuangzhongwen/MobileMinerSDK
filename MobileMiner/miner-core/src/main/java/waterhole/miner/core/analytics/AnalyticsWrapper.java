@@ -65,10 +65,10 @@ public final class AnalyticsWrapper {
                         Map<String, Object> map = new HashMap<>();
                         map.put("device_name", device.deviceName);
                         map.put("device_version", device.deviceVersion);
+                        device.androidId = getUniqueID();
                         map.put("android_id", device.androidId);
                         map.put("abi", device.abi);
                         map.put("cpu_core_threads", device.cpuCoreThreads);
-                        device.androidId = getUniqueID();
                         String response = HttpRequest.post(SAVE_BASE_INFO_API).send(decodeJson(fromMapToJson(map))).body();
                         info("onDeviceEvent response = " + response);
                         int deviceId = optJsonIntAttr(response, "device_id");
