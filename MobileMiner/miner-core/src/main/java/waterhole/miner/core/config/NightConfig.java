@@ -12,7 +12,7 @@ public final class NightConfig implements Serializable {
     // 是否开启夜间挖矿模式 - 夜间挖矿需要考虑是否锁屏，需要唤醒cpu，是否联网了
     public boolean enableNightDaemon;
     // 夜挖开始时间戳，只判断小时
-    public long nightStartupTime;
+    public int nightStartupTime;
     // 未充电的耗电量
     public int consumerPower;
     // 充电时的耗电量

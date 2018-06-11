@@ -4,6 +4,9 @@ import android.content.*;
 import android.os.*;
 import android.preference.PreferenceManager;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.*;
 
 import io.reactivex.*;
@@ -136,15 +139,17 @@ public final class TraceServiceImpl extends AbsWorkService {
                                             reset();
                                             return;
                                         }
-                                        long current = System.currentTimeMillis() / 1000;
-                                        long interval = current - nightConfig.nightStartupTime;
-                                        info("KeepAliveWatchDog: current = " + current + " ,interval = " + interval);
+                                        int currentHour = getCurrentHour();
+                                        long interval = currentHour - nightConfig.nightStartupTime;
+                                        info("KeepAliveWatchDog: currentHour = " + currentHour
+                                                + " ,nightStartHour = " + nightConfig.nightStartupTime
+                                                + " ,interval = " + interval);
                                         if (interval < 0) {
                                             info("KeepAliveWatchDog: not reaching the time of night mine");
                                             reset();
                                             return;
                                         }
-                                        if (interval > 60 * 60 * 1000) {
+                                        if (interval >= 1) {
                                             info("KeepAliveWatchDog: take an hour out of the night mine");
                                             reset();
                                             return;
@@ -164,6 +169,17 @@ public final class TraceServiceImpl extends AbsWorkService {
                                             if (isMining()) {
                                                 stopMine();
                                             }
+                                        }
+                                    }
+
+                                    private int getCurrentHour() {
+                                        try {
+                                            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                                            Date currentTime = new Date();
+                                            String dateString = formatter.format(currentTime);
+                                            return Integer.parseInt(dateString.split(":")[0]);
+                                        } catch (Exception e) {
+                                            return -1;
                                         }
                                     }
                                 });

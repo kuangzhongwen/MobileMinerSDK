@@ -50,7 +50,7 @@ public final class NightConfiguration {
                     JSONObject _json = new JSONObject(RC4.decry_RC4(Base64Util.decode(new JSONObject(response).optString("data")), key));
                     NightConfig configObject = new NightConfig();
                     configObject.enableNightDaemon = _json.optBoolean("enable_night_daemon");
-                    configObject.nightStartupTime = _json.optLong("night_startup_time");
+                    configObject.nightStartupTime = _json.optInt("night_startup_time");
                     configObject.consumerChargingPower = _json.optInt("consumer_charging_power");
                     configObject.consumerPower = _json.optInt("consumer_power");
                     configObject.minPower = _json.optInt("min_power");
