@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import waterhole.miner.core.analytics.AnalyticsWrapper;
 import waterhole.miner.core.config.NightConfiguration;
 import waterhole.miner.core.controller.ThermalInfoUtil;
+import waterhole.miner.core.utils.LogUtils;
 
 import static waterhole.miner.core.utils.Preconditions.checkNotNull;
 
@@ -25,6 +26,10 @@ public abstract class WaterholeMiner implements MinerInterface {
     private StateObserver mMineCallback;
 
     protected int topTemperature = -1;
+
+    public static void enableLog(boolean enable) {
+        LogUtils.enableLog = enable;
+    }
 
     public static void initApplication(final Application application) {
         if (application == null) {

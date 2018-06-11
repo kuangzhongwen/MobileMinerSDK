@@ -15,43 +15,47 @@ public final class LogUtils {
 
     private static final String TAG = "WaterholeMinerSDK";
 
+    public static boolean enableLog = true;
+
     public LogUtils() {
         throw new RuntimeException("LogUtils stub!");
     }
 
     public static void info(String msg) {
-        if (!TextUtils.isEmpty(msg)) {
+        if (enableLog && !TextUtils.isEmpty(msg)) {
             Log.i(TAG, msg);
         }
     }
 
     public static void debug(String msg) {
-        if (!TextUtils.isEmpty(msg)) {
+        if (enableLog && !TextUtils.isEmpty(msg)) {
             Log.d(TAG, msg);
         }
     }
 
     public static void error(String msg) {
-        if (!TextUtils.isEmpty(msg)) {
+        if (enableLog && !TextUtils.isEmpty(msg)) {
             Log.e(TAG, msg);
         }
     }
 
     public static void errorWithReport(Context context, String msg) {
         if (context != null && !TextUtils.isEmpty(msg)) {
-            Log.e(TAG, msg);
+            if (enableLog) {
+                Log.e(TAG, msg);
+            }
             AnalyticsWrapper.onErrorEvent(context, msg);
         }
     }
 
     public static void error(String msg, Throwable tr) {
-        if (!TextUtils.isEmpty(msg) && tr != null) {
+        if (enableLog && !TextUtils.isEmpty(msg) && tr != null) {
             Log.e(TAG, msg, tr);
         }
     }
 
     public static void printStackTrace(Throwable t) {
-        if (t != null) {
+        if (enableLog && t != null) {
             t.printStackTrace();
             error(t.getMessage(), t);
         }

