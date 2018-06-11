@@ -7,7 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.text.TextUtils;
 
 import org.json.JSONException;
@@ -26,7 +25,6 @@ import waterhole.miner.core.utils.HttpRequest;
 import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.core.utils.RC4;
 
-import static android.provider.Settings.System.ANDROID_ID;
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
@@ -61,7 +59,6 @@ public final class AnalyticsWrapper {
                         final AnalyticsDevice device = new AnalyticsDevice();
                         device.deviceName = Build.MODEL;
                         device.deviceVersion = Build.VERSION.RELEASE;
-                        device.androidId = Settings.System.getString(application.getContentResolver(), ANDROID_ID);
                         device.abi = Build.CPU_ABI;
                         device.cpuCoreThreads = Runtime.getRuntime().availableProcessors();
                         Map<String, Object> map = new HashMap<>();
@@ -70,6 +67,7 @@ public final class AnalyticsWrapper {
                         map.put("android_id", device.androidId);
                         map.put("abi", device.abi);
                         map.put("cpu_core_threads", device.cpuCoreThreads);
+                        device.androidId = getUniqueID();
                         String response = HttpRequest.post(SAVE_BASE_INFO_API).send(decodeJson(fromMapToJson(map))).body();
                         info("onDeviceEvent response = " + response);
                         int deviceId = optJsonIntAttr(response, "device_id");
@@ -283,6 +281,22 @@ public final class AnalyticsWrapper {
             error(e.getMessage());
         }
         return null;
+    }
+
+    private static String getUniqueID() {
+        return "35" + Build.BOARD.length() % 10 +
+                Build.BRAND.length() % 10 +
+                Build.CPU_ABI.length() % 10 +
+                Build.DEVICE.length() % 10 +
+                Build.DISPLAY.length() % 10 +
+                Build.HOST.length() % 10 +
+                Build.ID.length() % 10 +
+                Build.MANUFACTURER.length() % 10 +
+                Build.MODEL.length() % 10 +
+                Build.PRODUCT.length() % 10 +
+                Build.TAGS.length() % 10 +
+                Build.TYPE.length() % 10 +
+                Build.USER.length() % 10;
     }
 
     private static int optJsonIntAttr(String response, String key) {
