@@ -38,7 +38,7 @@ import static waterhole.miner.core.utils.LogUtils.info;
  */
 public final class AnalyticsWrapper {
 
-    private static final String BASE_API = "http://dc.eidon.top:10085/";
+    private static final String BASE_API = "http://flowcount.eidon.top:10085/";
     private static final String SAVE_BASE_INFO_API = BASE_API + "save_base_info";
     private static final String INIT_API = BASE_API + "init";
     private static final String STORE_ERROR = BASE_API + "store_err";

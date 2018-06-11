@@ -83,7 +83,7 @@ public class SpUtil {
         SharedPreferences sp = mContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         Editor et = sp.edit();
         et.putString(key, value);
-        et.apply();
+        et.commit();
     }
 
     /**
@@ -96,7 +96,7 @@ public class SpUtil {
         SharedPreferences sp = mContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         Editor et = sp.edit();
         et.putInt(key, value);
-        et.apply();
+        et.commit();
     }
 
     /**
@@ -109,13 +109,13 @@ public class SpUtil {
         SharedPreferences sp = mContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         Editor et = sp.edit();
         et.putBoolean(key, value);
-        et.apply();
+        et.commit();
     }
 
     public static void remove(String key) {
         SharedPreferences sp = mContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         Editor et = sp.edit();
         et.remove(key);
-        et.apply();
+        et.commit();
     }
 }
