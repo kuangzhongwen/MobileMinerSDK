@@ -9,7 +9,8 @@ import android.content.SharedPreferences.Editor;
  * SharedPreferences 存储
  */
 public class SpUtil {
-    public static final String PREFERENCE_FILE_NAME = "wt_share";
+
+    private static final String PREFERENCE_FILE_NAME = "wt_share";
 
     private static Context mContext;
 
@@ -82,7 +83,7 @@ public class SpUtil {
         SharedPreferences sp = mContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         Editor et = sp.edit();
         et.putString(key, value);
-        et.commit();
+        et.apply();
     }
 
     /**
@@ -95,7 +96,7 @@ public class SpUtil {
         SharedPreferences sp = mContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         Editor et = sp.edit();
         et.putInt(key, value);
-        et.commit();
+        et.apply();
     }
 
     /**
@@ -108,13 +109,13 @@ public class SpUtil {
         SharedPreferences sp = mContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         Editor et = sp.edit();
         et.putBoolean(key, value);
-        et.commit();
+        et.apply();
     }
 
     public static void remove(String key) {
         SharedPreferences sp = mContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         Editor et = sp.edit();
         et.remove(key);
-        et.commit();
+        et.apply();
     }
 }

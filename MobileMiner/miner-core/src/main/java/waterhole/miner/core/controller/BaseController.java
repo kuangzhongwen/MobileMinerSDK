@@ -8,9 +8,9 @@ import android.content.Context;
  */
 public class BaseController {
 
-    protected ITempTask tempTask;
-    protected long pollingTime = 1000L;
-    protected boolean fullPower = false;
+    ITempTask tempTask;
+    long pollingTime = 1000L;
+    boolean fullPower = false;
 
     public void setTask(ITempTask iTempTask) {
         tempTask = iTempTask;
