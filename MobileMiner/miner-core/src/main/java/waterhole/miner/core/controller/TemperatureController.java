@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import java.util.List;
 
-import waterhole.miner.core.analytics.AnalyticsWrapper;
+import waterhole.miner.core.analytics.CacheSP;
 import waterhole.miner.core.utils.SpUtil;
 
 import static waterhole.miner.core.utils.LogUtils.errorWithReport;
@@ -82,7 +82,7 @@ public final class TemperatureController extends BaseController {
                             }
                             double formatTemp = parseDoubleKeep2(maxTemperature / 1000);
                             info("CPU temperature = " + formatTemp);
-                            AnalyticsWrapper.cacheCpuTemperature(context, formatTemp);
+                            CacheSP.cacheCpuTemperature(context, formatTemp);
                             if (!isTempTaskRunning && (System.currentTimeMillis() - lastStopTime > stopDelay)) {
                                 isTempTaskRunning = true;
                                 if (maxTemperature >= temperatureSurface[1][0]) {

