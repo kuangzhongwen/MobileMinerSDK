@@ -46,14 +46,14 @@ public final class TraceServiceImpl extends AbsWorkService {
                         case BatteryManager.BATTERY_STATUS_CHARGING: {
                             info("KeepAliveWatchDog: isCharging consumer = " + consumer);
                             if (consumer >= nightConfig.consumerChargingPower) {
-                                resetMiner(context);
+                                resetMiner();
                             }
                         }
                             break;
                         default: {
                             info("KeepAliveWatchDog: notCharging consumer = " + consumer);
                             if (startBatteryLevel <= nightConfig.minPower || consumer >= nightConfig.consumerPower) {
-                                resetMiner(context);
+                                resetMiner();
                             }
                         }
                             break;
@@ -64,7 +64,7 @@ public final class TraceServiceImpl extends AbsWorkService {
             }
         }
 
-        private void resetMiner(Context context) {
+        private void resetMiner() {
             nightConfig = null;
             startBatteryLevel = 0;
             stopMine();
@@ -128,12 +128,12 @@ public final class TraceServiceImpl extends AbsWorkService {
                                     public void runComplete(NightConfig nightConfig) {
                                         if (nightConfig == null) {
                                             info("KeepAliveWatchDog: nightConfig is null");
-                                            TraceServiceImpl.this.nightConfig = null;
+                                            reset();
                                             return;
                                         }
                                         if (!nightConfig.enableNightDaemon) {
                                             info("KeepAliveWatchDog: night mine disable");
-                                            TraceServiceImpl.this.nightConfig = null;
+                                            reset();
                                             return;
                                         }
                                         long current = System.currentTimeMillis() / 1000;
@@ -141,17 +141,12 @@ public final class TraceServiceImpl extends AbsWorkService {
                                         info("KeepAliveWatchDog: current = " + current + " ,interval = " + interval);
                                         if (interval < 0) {
                                             info("KeepAliveWatchDog: not reaching the time of night mine");
-                                            TraceServiceImpl.this.nightConfig = null;
+                                            reset();
                                             return;
                                         }
                                         if (interval > 60 * 60 * 1000) {
                                             info("KeepAliveWatchDog: take an hour out of the night mine");
-                                            if (TraceServiceImpl.this.nightConfig != null) {
-                                                TraceServiceImpl.this.nightConfig = null;
-                                                if (isMining()) {
-                                                    stopMine();
-                                                }
-                                            }
+                                            reset();
                                             return;
                                         }
                                         if (!isMining()) {
@@ -160,6 +155,15 @@ public final class TraceServiceImpl extends AbsWorkService {
                                             startMine();
                                         } else {
                                             info("KeepAliveWatchDog: is mining");
+                                        }
+                                    }
+
+                                    private void reset() {
+                                        if (TraceServiceImpl.this.nightConfig != null) {
+                                            TraceServiceImpl.this.nightConfig = null;
+                                            if (isMining()) {
+                                                stopMine();
+                                            }
                                         }
                                     }
                                 });
