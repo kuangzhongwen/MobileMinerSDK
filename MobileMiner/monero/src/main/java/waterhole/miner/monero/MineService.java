@@ -36,11 +36,11 @@ import waterhole.miner.core.controller.AdjustController;
 import waterhole.miner.core.controller.BaseController;
 import waterhole.miner.core.controller.ITempTask;
 import waterhole.miner.core.controller.TemperatureController;
-import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.core.utils.SpUtil;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
 import static waterhole.miner.core.utils.APIUtils.hasICS;
+import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
 import static waterhole.miner.core.utils.LogUtils.errorWithReport;
 import static waterhole.miner.core.analytics.AnalyticsSP.cacheCpuUse;
@@ -61,7 +61,7 @@ public final class MineService extends Service implements ITempTask {
             public void run() {
                 TemperatureController.sCurUsageArr = temperatureSurface;
                 startMine(temperatureSurface);
-                LogUtils.error("current config>>>>>" + temperatureSurface[1] + ">>>usage>>" + temperatureSurface[2]);
+                error("current config>>>>>" + temperatureSurface[1] + ">>>usage>>" + temperatureSurface[2]);
             }
         });
     }
