@@ -18,9 +18,9 @@ char *argv_key[] = {
 
 char *argv_value[] = {
         (char*)"556",
-        (char*)"xmr.waterhole.xyz:3333",
-        (char*)"4AA753i22y9geEN12RekyT1Sfoz16n2KqgNnai6ZVaHbZWuMFhXPnav4Cj1GMKsoisQsJ9mRc8yyjNg1c8WQ6P3T6hUobpH",
+        (char*)"monerohash.com:2222",
+        (char*)"42SonYmcTvcGse5gWmbcVR9RtkEZrC7a9Atj4quyHQAdbaQ855U4RkqWbwaVe4vUMveKAzAiA4j8xgUi29TpKXpm3xAemKA",
         (char*)"worker1:651043704@qq.com",
-        "15"
+        "0"
         };
 #endif //MOBILEMINER_CONFIG_H

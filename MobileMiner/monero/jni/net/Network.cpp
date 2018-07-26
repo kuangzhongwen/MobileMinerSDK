@@ -181,10 +181,12 @@ bool Network::isColors() const
 void Network::setJob(Client *client, const Job &job, bool donate)
 {
     LOGD("new job from %s:%d diff %d algo %s",
-                      "xmr.waterhole.xyz", 3333, job.diff(), job.algorithm().shortName());
+                      client->host(), client->port(), job.diff(), job.algorithm().shortName());
     std::string message = "new job from";
     message += " ";
-    message += "xmr.waterhole.xyz:3333";
+    message += client->host();
+    message += ":";
+    message += toString(client->port());
     message += " diff ";
     message += toString(job.diff());
     message += " algo ";
