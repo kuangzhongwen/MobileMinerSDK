@@ -58,7 +58,7 @@ public class PlayerMusicService extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopPlayMusic();
-        Log.d(TAG, TAG + "---->onCreate,停止服务");
+        Log.d(TAG, TAG + "---->onDestroy,停止服务");
         // 重启自己
         Intent intent = new Intent(getApplicationContext(), PlayerMusicService.class);
         startService(intent);
