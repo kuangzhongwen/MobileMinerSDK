@@ -20,10 +20,13 @@
 package waterhole.miner.monero;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -40,6 +43,7 @@ import waterhole.miner.core.controller.AdjustController;
 import waterhole.miner.core.controller.BaseController;
 import waterhole.miner.core.controller.ITempTask;
 import waterhole.miner.core.controller.TemperatureController;
+import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.core.utils.SpUtil;
 
 import static waterhole.miner.core.asyn.AsyncTaskAssistant.executeOnThreadPool;
@@ -94,6 +98,25 @@ public final class MineService extends Service implements ITempTask {
         }
     };
 
+    private final BroadcastReceiver mBatteryReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action != null && action.equals(Intent.ACTION_BATTERY_CHANGED)) {
+                int level = intent.getIntExtra("level", 0);
+                int status = intent.getIntExtra("status", BatteryManager.BATTERY_STATUS_UNKNOWN);
+                info("battery level = " + level + " ,battery status = " + status);
+                if (level <= 20) {
+                    try {
+                        XmrMiner.instance().stopMine();
+                    } catch (Exception e) {
+                        error(e.getMessage());
+                    }
+                }
+            }
+        }
+    };
+
     @Override
     public IBinder onBind(Intent intent) {
         info("MineService onBind");
@@ -109,6 +132,15 @@ public final class MineService extends Service implements ITempTask {
 
         IMiningServiceBinder.MiningServiceBinder miningServiceBinder = new IMiningServiceBinder.MiningServiceBinder();
         miningServiceBinder.controller = (TemperatureController) controllerArr[0];
+
+        try {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Intent.ACTION_BATTERY_CHANGED);
+            filter.addAction(Intent.ACTION_BATTERY_LOW);
+            registerReceiver(mBatteryReceiver, filter);
+        } catch (Throwable throwable) {
+            error(throwable.getMessage());
+        }
         return miningServiceBinder;
     }
 
@@ -119,6 +151,12 @@ public final class MineService extends Service implements ITempTask {
 
         System.exit(0);
         android.os.Process.killProcess(android.os.Process.myPid());
+
+        try {
+            unregisterReceiver(mBatteryReceiver);
+        } catch (Exception e) {
+            error(e.getMessage());
+        }
     }
 
     private void startMine(final int[] temperatureSurface) {
