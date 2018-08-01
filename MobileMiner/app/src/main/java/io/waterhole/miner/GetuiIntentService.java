@@ -2,7 +2,6 @@ package io.waterhole.miner;
 
 import static waterhole.miner.core.utils.LogUtils.error;
 import static waterhole.miner.core.utils.LogUtils.info;
-import static waterhole.miner.core.utils.MathUtils.parseDoubleKeep2;
 
 import android.content.Context;
 
