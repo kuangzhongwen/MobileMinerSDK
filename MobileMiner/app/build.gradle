@@ -12,6 +12,16 @@ android {
         versionCode 20180309
         versionName "1.0.0"
         multiDexEnabled true
+
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a"
+        }
+
+        manifestPlaceholders = [
+                GETUI_APP_ID : "3SVeOEWO7M8jbYVaXHzGq2",
+                GETUI_APP_KEY : "zoSkwfkJq77HxrVx7BMxr1",
+                GETUI_APP_SECRET : "Dn5mwEKNJ7AIksjZCLH9y1"
+        ]
     }
 
     sourceSets {
@@ -49,6 +59,8 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    compile 'com.getui:sdk:2.12.4.0'
 
     // aar引用方式
 //    compile(name: 'miner-core-release', ext: 'aar')
