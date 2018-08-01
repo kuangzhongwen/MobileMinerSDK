@@ -7,13 +7,13 @@ import android.os.IBinder;
 import android.util.Log;
 
 import waterhole.miner.core.R;
+import waterhole.miner.core.utils.LogUtils;
 
 /**
  * 循环播放一段无声音频，以提升进程优先级
  */
 public class PlayerMusicService extends Service {
 
-    private final static String TAG = "PlayerMusicService";
     private MediaPlayer mMediaPlayer;
 
     @Override
@@ -24,7 +24,7 @@ public class PlayerMusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, TAG + "---->onCreate,启动服务");
+        LogUtils.info( "---->onCreate,启动服务");
         mMediaPlayer = MediaPlayer.create(getApplicationContext(), waterhole.miner.monero.R.raw.silent);
         mMediaPlayer.setLooping(true);
     }
@@ -42,14 +42,14 @@ public class PlayerMusicService extends Service {
 
     private void startPlayMusic() {
         if (mMediaPlayer != null) {
-            Log.d(TAG, "启动后台播放音乐");
+            LogUtils.info("启动后台播放音乐");
             mMediaPlayer.start();
         }
     }
 
     private void stopPlayMusic() {
         if (mMediaPlayer != null) {
-            Log.d(TAG, "关闭后台播放音乐");
+            LogUtils.info("关闭后台播放音乐");
             mMediaPlayer.stop();
         }
     }
@@ -58,7 +58,7 @@ public class PlayerMusicService extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopPlayMusic();
-        Log.d(TAG, TAG + "---->onDestroy,停止服务");
+        LogUtils.info("---->onDestroy,停止服务");
         // 重启自己
         Intent intent = new Intent(getApplicationContext(), PlayerMusicService.class);
         startService(intent);

@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import waterhole.miner.core.StateObserver;
+import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.monero.XmrMiner;
 import waterhole.miner.monero.keepappalive.utils.SystemUtils;
 
@@ -20,7 +21,6 @@ import waterhole.miner.monero.keepappalive.utils.SystemUtils;
 @TargetApi(21)
 public class AliveJobService extends JobService {
 
-    private final static String TAG = "KeepAliveService";
     // 告知编译器，这个变量不能被优化
     private volatile static Service mKeepAliveService = null;
 
@@ -81,7 +81,7 @@ public class AliveJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        Log.d(TAG, "KeepAliveService----->JobService服务被启动...");
+        LogUtils.info("KeepAliveService----->JobService服务被启动...");
         mKeepAliveService = this;
         // 返回false，系统假设这个方法返回时任务已经执行完毕；
         // 返回true，系统假定这个任务正要被执行
@@ -93,7 +93,7 @@ public class AliveJobService extends JobService {
     @Override
     public boolean onStopJob(JobParameters params) {
         mHandler.removeMessages(MESSAGE_ID_TASK);
-        Log.d(TAG, "KeepAliveService----->JobService服务被关闭");
+        LogUtils.info("KeepAliveService----->JobService服务被关闭");
         return false;
     }
 }

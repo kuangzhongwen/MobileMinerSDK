@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
+import waterhole.miner.core.utils.LogUtils;
 
 /**
  * 静态监听锁屏、解锁、开屏广播
@@ -43,7 +44,7 @@ public class ScreenReceiverUtil {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.d("KeepAppAlive", "SreenLockReceiver-->监听到系统广播：" + action);
+            LogUtils.info("SreenLockReceiver-->监听到系统广播：" + action);
             if (mStateReceiverListener == null) {
                 return;
             }

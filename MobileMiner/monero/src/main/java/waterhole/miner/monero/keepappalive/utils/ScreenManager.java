@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
+import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.monero.keepappalive.SinglePixelActivity;
 
 /**
@@ -13,7 +14,6 @@ import waterhole.miner.monero.keepappalive.SinglePixelActivity;
  */
 public class ScreenManager {
 
-    private static final String TAG = "ScreenManager";
     private Context mContext;
     private static ScreenManager mSreenManager;
     // 使用弱引用，防止内存泄漏
@@ -38,7 +38,7 @@ public class ScreenManager {
 
     // 启动SinglePixelActivity
     public void startActivity() {
-        Log.d(TAG, "准备启动SinglePixelActivity...");
+        LogUtils.info("准备启动SinglePixelActivity...");
         Intent intent = new Intent(mContext, SinglePixelActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
@@ -46,7 +46,7 @@ public class ScreenManager {
 
     // 结束SinglePixelActivity
     public void finishActivity() {
-        Log.d(TAG, "准备结束SinglePixelActivity...");
+        LogUtils.info("准备结束SinglePixelActivity...");
         if (mActivityRef != null) {
             Activity mActivity = mActivityRef.get();
             if (mActivity != null) {

