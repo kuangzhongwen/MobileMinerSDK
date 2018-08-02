@@ -1,18 +1,12 @@
 package waterhole.miner.monero.keepappalive.service;
 
-import static waterhole.miner.core.utils.LogUtils.error;
-import static waterhole.miner.core.utils.LogUtils.info;
-
 import android.annotation.TargetApi;
 import android.app.Service;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import waterhole.miner.core.StateObserver;
 import waterhole.miner.core.utils.LogUtils;
-import waterhole.miner.monero.XmrMiner;
 import waterhole.miner.monero.keepappalive.utils.SystemUtils;
 
 /**
@@ -34,44 +28,8 @@ public class AliveJobService extends JobService {
         @Override
         public boolean handleMessage(Message msg) {
             // 具体任务逻辑
-            if (!SystemUtils.isAPPALive(getApplicationContext()) && !XmrMiner.instance().isMining()) {
-                XmrMiner.instance().init(getApplicationContext()).setStateObserver(new StateObserver() {
-
-                    @Override
-                    public void onConnectPoolBegin() {
-                        info("onConnectPoolBegin");
-                    }
-
-                    @Override
-                    public void onConnectPoolSuccess() {
-                        info("onConnectPoolSuccess");
-                    }
-
-                    @Override
-                    public void onConnectPoolFail(String error) {
-                        error("onConnectPoolFail: " + error);
-                    }
-
-                    @Override
-                    public void onPoolDisconnect(String error) {
-                        error("onPoolDisconnect: " + error);
-                    }
-
-                    @Override
-                    public void onMessageFromPool(String message) {
-                        info("onMessageFromPool: " + message);
-                    }
-
-                    @Override
-                    public void onMiningError(String error) {
-                        error("onMiningError = " + error);
-                    }
-
-                    @Override
-                    public void onMiningStatus(double speed) {
-                        info("onMiningStatus speed = " + speed);
-                    }
-                }).startMine();
+            if (!SystemUtils.isAPPALive(getApplicationContext())) {
+                LogUtils.info("KeepAliveService-----> be killed...");
             }
             // 通知系统任务执行结束
             jobFinished((JobParameters) msg.obj, false);

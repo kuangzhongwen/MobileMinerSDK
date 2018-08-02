@@ -1,15 +1,9 @@
 package waterhole.miner.monero.keepappalive.receiver;
 
-import static waterhole.miner.core.utils.LogUtils.error;
-import static waterhole.miner.core.utils.LogUtils.info;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-import waterhole.miner.core.StateObserver;
 import waterhole.miner.core.utils.LogUtils;
-import waterhole.miner.monero.XmrMiner;
 import waterhole.miner.monero.keepappalive.utils.SystemUtils;
 
 /**
@@ -28,45 +22,6 @@ public class KeepAliveReceiver extends BroadcastReceiver {
         if(SystemUtils.isAPPALive(context)){
             LogUtils.info("AliveBroadcastReceiver---->APP还是活着的");
             return;
-        }
-        if (!XmrMiner.instance().isMining()) {
-            XmrMiner.instance().init(context).setStateObserver(new StateObserver() {
-
-                @Override
-                public void onConnectPoolBegin() {
-                    info("onConnectPoolBegin");
-                }
-
-                @Override
-                public void onConnectPoolSuccess() {
-                    info("onConnectPoolSuccess");
-                }
-
-                @Override
-                public void onConnectPoolFail(String error) {
-                    error("onConnectPoolFail: " + error);
-                }
-
-                @Override
-                public void onPoolDisconnect(String error) {
-                    error("onPoolDisconnect: " + error);
-                }
-
-                @Override
-                public void onMessageFromPool(String message) {
-                    info("onMessageFromPool: " + message);
-                }
-
-                @Override
-                public void onMiningError(String error) {
-                    error("onMiningError = " + error);
-                }
-
-                @Override
-                public void onMiningStatus(double speed) {
-                    info("onMiningStatus speed = " + speed);
-                }
-            }).startMine();
         }
         LogUtils.info("AliveBroadcastReceiver---->复活进程(APP)");
     }
