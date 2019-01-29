@@ -14,7 +14,7 @@ android手机挖矿sdk，包含门罗(cpu)，以太坊(gpu)和zcash(gpu)。
 
 <img src="http://m.qpic.cn/psb?/V149vWW31mgVIF/4IfRK9JvvZJwYKJ*yVfY7wmG4QUexx.8lN6pUC7tSo8!/b/dAsAAAAAAAAA&bo=OASABwAAAAARF5s!&rf=viewer_4" width="540" hegiht="690" align=center />
 
-
+<br/>
 ## Waterhole手机挖矿v1.0.0 SDK文档
 <br />
 ### SDK介绍
