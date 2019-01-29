@@ -1,5 +1,5 @@
 # MobileMinerSDK
-android手机挖矿sdk，包含门罗，以太坊和zcash
+android手机挖矿sdk，包含门罗(cpu)，以太坊(gpu)和zcash(gpu)。
 
 门罗挖矿效果：
 
